@@ -1,0 +1,48 @@
+import { lazy } from 'react';
+import MainLayout from '@/components/Layouts';
+import { routePath } from './routePath';
+
+export const routeConfig = [
+  {
+    route: routePath.LOGIN,
+    page: lazy(() => import('@/pages/Auth/Login')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    route: routePath.HOME,
+    page: lazy(() => import('@/pages/Overview')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.OVERVIEW,
+    page: lazy(() => import('@/pages/Overview')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.USER_DETAIL,
+    page: lazy(() => import('@/pages/UserDetail')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.WITHDRAWAL_MANAGER,
+    page: lazy(() => import('@/pages/WithdrawalManager')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.NOT_FOUND,
+    page: lazy(() => import('@/pages/NotFound')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    route: '*',
+    page: lazy(() => import('@/pages/NotFound')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+];

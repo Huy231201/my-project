@@ -1,8 +1,7 @@
-node_modules
-/.cache
-.eslintignore
-.gitignore
-.git
-LICENSE
-build
-dist
+build/
+node_modules/
+internals/generators/
+internals/scripts/
+package-lock.json
+yarn.lock
+package.json
