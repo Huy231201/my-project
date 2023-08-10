@@ -1,0 +1,19 @@
+// ==============================|| OVERRIDES - BADGE ||============================== //
+
+import { Theme } from '@mui/material/styles';
+
+export default function Badge(theme: Theme) {
+  return {
+    MuiBadge: {
+      styleOverrides: {
+        standard: {
+          minWidth: theme.spacing(2),
+          height: theme.spacing(2),
+          padding: theme.spacing(0.5),
+          backgroundColor: theme.palette.error.dark,
+          color: 'white',
+        },
+      },
+    },
+  };
+}
