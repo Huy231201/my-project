@@ -107,6 +107,8 @@ module.exports = {
     'react/no-array-index-key': 0,
     'react/no-unused-prop-types': 0,
     'require-yield': 0,
+    'no-shadow': 0,
+    '@typescript-eslint/no-shadow': 2,
   },
   settings: {
     'import/parsers': {

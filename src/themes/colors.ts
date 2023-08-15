@@ -36,7 +36,7 @@ export const primary = withAlphas({
   veryLight: '#a0c0f3',
   light: '#79a6ee',
   main: '#3f80e6',
-  dark: '#298CFD',
+  dark: '#FF8F0B',
   darkest: '#11479e',
   black: '#0f3e89',
 });

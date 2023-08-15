@@ -1,87 +1,173 @@
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import { useMemo } from 'react';
+import Box from '@mui/material/Box';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DRAWER_SIDEBAR_WIDTH, APP_BAR_HEIGHT } from '../constants';
+import { DRAWER_SIDEBAR_WIDTH, DRAWER_SIDEBAR_WIDTH_MINI, APP_BAR_HEIGHT } from '../constants';
 import SidebarItem from './SidebarItem';
-import { SvgName } from '@/components/Icons';
 import { getAccessToken } from '@/utils/common';
+import { Theme, CSSObject, styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import Divider from '@mui/material/Divider';
+import { SvgName } from '@/components/Icons';
 import { routePath } from '@/routes/routePath';
+
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: DRAWER_SIDEBAR_WIDTH,
+  top: APP_BAR_HEIGHT,
+  height: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  top: APP_BAR_HEIGHT,
+  height: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: DRAWER_SIDEBAR_WIDTH_MINI,
+  [theme.breakpoints.up('sm')]: {
+    width: DRAWER_SIDEBAR_WIDTH_MINI,
+  },
+});
 
 interface SidebarConfigItem {
   label: string;
   nameIcon: SvgName;
   nameHoverIcon: SvgName;
   href: string;
-  routes: string[];
+  routes?: string[];
+  divider?: boolean;
 }
+
+const MuiDrawer = styled(Drawer, { shouldForwardProp: prop => prop !== 'open' })(({ theme, open }) => ({
+  width: DRAWER_SIDEBAR_WIDTH,
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
+  ...(open && {
+    ...openedMixin(theme),
+    '& .MuiDrawer-paper': openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    '& .MuiDrawer-paper': closedMixin(theme),
+  }),
+}));
 
 function MuiSideBar() {
   const isLogin = !!getAccessToken();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const SidebarConfig = useMemo<SidebarConfigItem[]>(
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const SidebarConfig = useMemo<Array<SidebarConfigItem>>(
     () => [
+      {
+        label: window.T('Browser Metric'),
+        nameIcon: 'browser-metric',
+        nameHoverIcon: 'browser-metric-white',
+        href: routePath.BROWSER_METRIC,
+        routes: [routePath.BROWSER_METRIC, routePath.HOME],
+      },
       {
         label: window.T('Overview'),
         nameIcon: 'dashboard',
         nameHoverIcon: 'dashboard-white',
         href: routePath.OVERVIEW,
-        routes: [routePath.OVERVIEW, routePath.HOME],
+        divider: true,
       },
       {
         label: window.T('User Detail'),
         nameIcon: 'user-group',
         nameHoverIcon: 'user-group-white',
         href: routePath.USER_DETAIL,
-        routes: [routePath.USER_DETAIL],
       },
       {
         label: window.T('Withdrawal Manage'),
         nameIcon: 'wallet',
         nameHoverIcon: 'wallet-white',
         href: routePath.WITHDRAWAL_MANAGER,
-        routes: [routePath.WITHDRAWAL_MANAGER],
+      },
+      {
+        label: window.T('Payouts'),
+        nameIcon: 'payouts',
+        nameHoverIcon: 'payouts-white',
+        href: routePath.PAYOUTS,
       },
     ],
     [],
   );
 
+  const handleDrawerToggle = () => {
+    setOpenDrawer(prev => !prev);
+  };
+
   if (!isLogin) return null;
   return (
-    <Drawer
-      open
-      sx={{
-        width: DRAWER_SIDEBAR_WIDTH,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: DRAWER_SIDEBAR_WIDTH,
-          boxSizing: 'border-box',
-          height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
-          position: 'relative',
-        },
-      }}
-      variant="persistent"
-      anchor="left"
-    >
-      <List
+    <MuiDrawer open={openDrawer} variant="permanent">
+      <List>
+        {SidebarConfig.map(item =>
+          item.divider ? (
+            <>
+              <Divider
+                sx={{
+                  my: 2,
+                }}
+              />
+              <SidebarItem
+                key={item.label}
+                openDrawer={openDrawer}
+                active={(item.routes || [item.href]).includes(location.pathname)}
+                label={item.label}
+                nameIcon={item.nameIcon}
+                nameHoverIcon={item.nameHoverIcon}
+                onClick={() => navigate(item.href)}
+              />
+            </>
+          ) : (
+            <SidebarItem
+              key={item.label}
+              openDrawer={openDrawer}
+              active={(item.routes || [item.href]).includes(location.pathname)}
+              label={item.label}
+              nameIcon={item.nameIcon}
+              nameHoverIcon={item.nameHoverIcon}
+              onClick={() => navigate(item.href)}
+            />
+          ),
+        )}
+      </List>
+      <Box
         sx={{
-          py: 2,
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          left: 0,
+          height: 40,
+          '& button': {
+            width: '100%',
+          },
+          '& svg': {
+            fontSize: 20,
+          },
         }}
       >
-        {SidebarConfig.map(item => (
-          <SidebarItem
-            key={item.label}
-            active={item.routes.includes(location.pathname)}
-            label={item.label}
-            nameIcon={item.nameIcon}
-            nameHoverIcon={item.nameHoverIcon}
-            onClick={() => navigate(item.href)}
-          />
-        ))}
-      </List>
-    </Drawer>
+        <Divider />
+        <IconButton onClick={handleDrawerToggle}>
+          {openDrawer ? <KeyboardDoubleArrowLeftIcon /> : <KeyboardDoubleArrowRightIcon />}
+        </IconButton>
+      </Box>
+    </MuiDrawer>
   );
 }
 

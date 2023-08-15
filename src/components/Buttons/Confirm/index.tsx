@@ -5,6 +5,7 @@ import { alpha, SxProps, Theme } from '@mui/material/styles';
 
 type Props = {
   label?: string;
+  type: 'button' | 'submit' | 'reset';
   backgroundColor?: string;
   sx?: SxProps<Theme>;
   onClick?: () => void;
@@ -34,9 +35,16 @@ const MuiButton = withStyles(theme => ({
 }))(LoadingButton);
 
 function ConfirmButton(props: Props) {
-  const { label = 'Approve', sx, backgroundColor, onClick } = props;
+  const { type = 'button', label = 'Approve', sx, backgroundColor, onClick } = props;
   return (
-    <MuiButton variant="contained" loadingPosition="start" sx={sx} backgroundColor={backgroundColor} onClick={onClick}>
+    <MuiButton
+      type={type}
+      variant="contained"
+      loadingPosition="start"
+      sx={sx}
+      backgroundColor={backgroundColor}
+      onClick={onClick}
+    >
       {label}
     </MuiButton>
   );

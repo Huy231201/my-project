@@ -7,10 +7,15 @@ import * as React from 'react';
 import { withStyles } from '@mui/styles';
 import HerondIcon from '@/components/Icons';
 import { HeaderCellProps, RowProp } from '../utils';
+import { CheckboxField } from '@/components/Fields';
 
 interface EnhancedTableProps {
+  checkbox: boolean;
+  indeterminate: boolean;
+  isSelectAll: boolean;
   headCells: HeaderCellProps[];
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof RowProp) => void;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: 'asc' | 'desc';
   orderBy: string | number | symbol;
 }
@@ -42,7 +47,7 @@ function IconSortCustom() {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { headCells, order, orderBy, onRequestSort } = props;
+  const { checkbox, indeterminate, isSelectAll, headCells, order, orderBy, onRequestSort, onSelectAllClick } = props;
   const createSortHandler = (property: keyof RowProp) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
@@ -55,6 +60,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           borderBottom: '1px solid #DCE0E3',
         }}
       >
+        {checkbox && (
+          <TableCell padding="checkbox">
+            <CheckboxField
+              color="primary"
+              indeterminate={indeterminate}
+              checked={isSelectAll}
+              onChange={onSelectAllClick}
+            />
+          </TableCell>
+        )}
         {headCells.map((headCell: HeaderCellProps) => (
           <TableCell
             key={headCell.id}

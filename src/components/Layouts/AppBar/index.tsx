@@ -74,16 +74,30 @@ function ResponsiveAppBar() {
         backgroundColor: 'white',
         borderBottom: '1px solid #DCE0E3',
         height: APP_BAR_HEIGHT,
+        position: 'fixed',
+        zIndex: 1,
+        top: 0,
       }}
     >
-      <Container maxWidth={false}>
-        <Toolbar disableGutters>
+      <Container
+        maxWidth={false}
+        sx={{
+          height: '100%',
+        }}
+      >
+        <Toolbar
+          disableGutters
+          sx={{
+            height: '100%',
+          }}
+        >
           <Box
             onClick={() => navigate('/')}
             sx={{
               display: 'flex',
-              alignItem: 'center',
+              alignItems: 'center',
               justifyContent: 'center',
+              height: '100%',
             }}
           >
             <CardMedia
@@ -98,14 +112,16 @@ function ResponsiveAppBar() {
               variant="body1"
               noWrap
               sx={{
-                mt: '2px',
-                fontSize: '2.2rem',
+                mt: '6px',
+                fontSize: '2.4rem',
                 fontWeight: 400,
                 color: '#7A818C',
                 textDecoration: 'none',
+                overflow: 'visible',
+                pl: 1,
               }}
             >
-              Affiliate
+              Portal
             </Typography>
           </Box>
 
@@ -148,7 +164,7 @@ function ResponsiveAppBar() {
               <>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    <Avatar alt="H" />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -175,7 +191,7 @@ function ResponsiveAppBar() {
                 </Menu>
               </>
             ) : (
-              <ConfirmButton label={window.T('Login')} sx={{ mr: 1 }} onClick={handleLogin} />
+              <ConfirmButton type="button" label={window.T('Login')} sx={{ mr: 1 }} onClick={handleLogin} />
             )}
           </Box>
         </Toolbar>

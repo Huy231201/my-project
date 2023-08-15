@@ -1,7 +1,7 @@
-import React from 'react';
+import WithDrawalManagerContainer from '@/containers/WithDrawalManager';
 
 function WithDrawalManagerPage() {
-  return <div>WithDrawalManagerPage</div>;
+  return <WithDrawalManagerContainer />;
 }
 
 export default WithDrawalManagerPage;

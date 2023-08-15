@@ -91,7 +91,12 @@ instance.interceptors.response.use(
           .finally(() => {
             retryMethod = null;
           })
-          .catch(error => Promise.reject(error));
+          .catch(error =>
+            // setTimeout(() => {
+            //   window.location.href = '/login';
+            // }, 1000);
+            Promise.reject(error),
+          );
 
         return retryMethod.then(token => {
           origReqConfig.headers.Authorization = `Bearer ${token}`;
