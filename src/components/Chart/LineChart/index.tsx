@@ -12,10 +12,9 @@ import {
   ScriptableContext,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import Popper from '@mui/material/Popper';
 import { externalTooltipHandler } from './utils';
-import { useMemo } from 'react';
-import { LineChartProps } from './types';
+import { useMemo, useRef } from 'react';
+import { LineChartProps } from '../types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -28,8 +27,8 @@ interface Chart extends ChartJS {
 }
 
 function LineChart(props: LineChartProps) {
-  const { labels, datasets } = props;
-
+  const { idTooltip = '', labels, datasets } = props;
+  const chartRef = useRef();
   const options = useMemo(
     () =>
       ({
@@ -67,7 +66,7 @@ function LineChart(props: LineChartProps) {
                 return `Total: ${total}`;
               },
             },
-            external: externalTooltipHandler,
+            external: externalTooltipHandler(idTooltip),
           },
         },
         scales: {
@@ -128,7 +127,7 @@ function LineChart(props: LineChartProps) {
         chart.draw();
 
         if (event.type === 'mouseout') {
-          const modal = document.getElementById('line-chart-modal');
+          const modal = document.getElementById(idTooltip);
           if (modal && !modal.matches(':hover') && modal?.firstElementChild) {
             modal.firstElementChild.remove();
           }
@@ -165,6 +164,7 @@ function LineChart(props: LineChartProps) {
       }}
     >
       <Line
+        ref={chartRef}
         options={options}
         data={{
           labels: labels,
@@ -172,9 +172,6 @@ function LineChart(props: LineChartProps) {
         }}
         plugins={[plugin]}
       />
-      <Popper open>
-        <Box id="line-chart-modal" />
-      </Popper>
     </Box>
   );
 }

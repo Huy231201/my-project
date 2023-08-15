@@ -22,6 +22,5 @@
   },
   "include": ["./.eslintrc.js", "src"],
   "exclude": ["node_modules", "**/node_modules/*", "dist", "**/dist/*"],
-  "references": [{ "path": "./tsconfig.node.json" }],
   "typeRoots": ["src/types/custom.d.ts"]
 }

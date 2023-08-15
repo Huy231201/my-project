@@ -1,7 +1,10 @@
 export type Order = 'asc' | 'desc';
 
+type rowData = number | string | boolean | undefined;
+
 export interface RowProp {
-  [key: string]: number | string;
+  id: number | string;
+  [key: string]: rowData;
 }
 
 export interface HeaderCellProps {
@@ -26,7 +29,7 @@ export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 export function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+): (a: { [key in Key]: rowData }, b: { [key in Key]: rowData }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);

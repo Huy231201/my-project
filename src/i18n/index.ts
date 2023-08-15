@@ -3,9 +3,13 @@ import i18nNext from 'i18next';
 import { useEffect } from 'react';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
-import { locale } from 'dayjs';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
+
+import { locale, extend } from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+
+extend(weekday);
 
 const getLanguage = () => LocalStorage.get(LOCAL_KEYS.LANGUAGE_TOKEN) || 'en';
 

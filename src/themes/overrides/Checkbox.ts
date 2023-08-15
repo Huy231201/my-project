@@ -1,12 +1,11 @@
 // ==============================|| OVERRIDES - CHECKBOX ||============================== //
-import { Theme } from '@mui/material/styles';
 
-export default function Checkbox(theme: Theme) {
+export default function Checkbox() {
   return {
     MuiCheckbox: {
       styleOverrides: {
         root: {
-          color: theme.palette.secondary.light,
+          color: '#4a505c',
         },
       },
     },

@@ -20,14 +20,15 @@ const MuiButton = withStyles(() => ({
 
 type Props = {
   label?: string;
+  type: 'button' | 'submit' | 'reset';
   sx?: SxProps<Theme>;
   onClick?: () => void;
 };
 
 function CancelButton(props: Props) {
-  const { label = 'Reject', sx = {}, onClick } = props;
+  const { type = 'button', label = 'Reject', sx = {}, onClick } = props;
   return (
-    <MuiButton variant="outlined" sx={sx} onClick={onClick}>
+    <MuiButton type={type} variant="outlined" sx={sx} onClick={onClick}>
       {label}
     </MuiButton>
   );

@@ -18,3 +18,7 @@ export const setCredential = (credentials: CredentialsType) => {
   LocalStorage.set(LOCAL_KEYS.REFRESH_TOKEN, refreshToken);
   LocalStorage.set(LOCAL_KEYS.EXPIRATION_TOKEN, expiration);
 };
+
+export function numberWithCommas(x = 0) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}

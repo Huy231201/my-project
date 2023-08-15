@@ -12,10 +12,13 @@ const MuiOutlinedInput = styled(OutlinedInput)({
   backgroundColor: 'white',
   margin: '0px !important',
   padding: '12px',
-  minWidth: 240,
+  minWidth: 220,
   '& .MuiInputBase-input': {
     cursor: 'pointer',
     padding: '4px',
+  },
+  '& fieldset': {
+    borderColor: '#A1A9B5',
   },
 });
 

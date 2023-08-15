@@ -1,5 +1,5 @@
 import { ScriptableTooltipContext } from 'chart.js';
-export const externalTooltipHandler = (context: ScriptableTooltipContext<'line'>) => {
+export const externalTooltipHandler = (idTooltip: string) => (context: ScriptableTooltipContext<'line'>) => {
   const { tooltip, chart } = context;
   const { datasets } = chart.data;
   const dataPoints = tooltip.dataPoints || [];
@@ -8,7 +8,7 @@ export const externalTooltipHandler = (context: ScriptableTooltipContext<'line'>
 
   const total = datasets.reduce((acc, item) => acc + Number(item.data[dataIndex] || 0), 0);
 
-  const modal = document.getElementById('line-chart-modal');
+  const modal = document.getElementById(idTooltip);
   if (modal && tooltip.body) {
     while (modal?.firstChild) {
       modal.firstChild.remove();

@@ -22,6 +22,10 @@ const MuiInputBase = styled(InputBase)({
     height: 24,
     cursor: 'pointer',
   },
+  '&:hover': {
+    borderColor: '#79a6ee',
+    boxShadow: '0 0 0 2px rgba(63, 128, 230, 0.2)',
+  },
 });
 
 interface Props {

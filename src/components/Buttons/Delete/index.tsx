@@ -24,15 +24,16 @@ const MuiButton = withStyles(() => ({
 
 type Props = {
   label: string;
+  type: 'button' | 'submit' | 'reset';
   bgColor?: string;
   sx?: SxProps<Theme>;
   onClick?: () => void;
 };
 
 function DeleteButton(props: Props) {
-  const { label = 'Delete', sx = {}, bgColor, onClick } = props;
+  const { type = 'button', label = 'Delete', sx = {}, bgColor, onClick } = props;
   return (
-    <MuiButton variant="contained" loadingPosition="start" sx={sx} bgColor={bgColor} onClick={onClick}>
+    <MuiButton type={type} variant="contained" loadingPosition="start" sx={sx} bgColor={bgColor} onClick={onClick}>
       {label}
     </MuiButton>
   );

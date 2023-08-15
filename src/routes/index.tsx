@@ -1,13 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
-import { Suspense } from 'react';
+import { Suspense, FC, ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { routeConfig } from './config';
 import AuthLayout from './AuthLayout';
 
+import 'react-toastify/dist/ReactToastify.css';
+
+const LayoutDefault: FC<{ children: ReactNode }> = ({ children }) => <>{children}</>;
+
 function Routing() {
   return (
     <Routes>
-      {routeConfig.map(({ route = '', page: Component, Layout, isPrivate = false }) => (
+      {routeConfig.map(({ route = '', page: Component, Layout = LayoutDefault, isPrivate = false }) => (
         <Route
           key={route}
           path={route}

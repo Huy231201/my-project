@@ -1,185 +1,187 @@
-import { useMemo, useState, useEffect } from 'react';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-
-import SimpleCard, { SimpleCardProps } from '@/components/Card';
-import HerondTable from '@/components/Table';
-import {
-  UserHeadCells,
-  rowsUserHeadCells,
-  RegionHeadCell,
-  rowsRegionCell,
-  ChanelHeadCell,
-  rowsChanelCell,
-} from './dumpData';
+import { SimpleCard } from '@/components/Card';
+import { SimpleCardProps } from '@/components/Card/types';
+import IntersectionChart from './CustomLineChart';
 import { DateRangePicker } from '@/components/Fields';
-import IntersectionChart from './IntersectionChart';
-import { useGetMetricQuery } from '@/services/overview';
+import {
+  useGetOverviewQuery,
+  useGetMetricClickQuery,
+  useGetMetricDownloadQuery,
+  useGetMetricValidUserQuery,
+  useGetMetricAffiliateQuery,
+} from '@/services/overview';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Popper from '@mui/material/Popper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { numberWithCommas } from '@/utils/common';
 
-interface CardType extends SimpleCardProps {
+interface CardDataProps extends SimpleCardProps {
   id: number;
+  contentKey: string;
 }
 
-interface MetricItem {
-  title: string;
-  key: string;
+interface FilterProps {
+  dateRange: Array<Date | null>;
+  dataUpdate: number;
 }
 
-function OverviewContainer() {
-  const { data: metrics, isSuccess: isGetMetricSuccess } = useGetMetricQuery({});
+const CardDataDefault = [
+  {
+    id: 1,
+    label: window.T('Daily Active User'),
+    icon: 'user-group-orange',
+    contentKey: 'dau',
+  },
+  {
+    id: 2,
+    label: window.T('Downloads'),
+    icon: 'download',
+    contentKey: 'downloads',
+  },
+  {
+    id: 3,
+    label: window.T('Valid Users'),
+    icon: 'user',
+    contentKey: 'valid',
+  },
+  {
+    id: 4,
+    label: window.T('Click-through Rate'),
+    icon: 'percentage',
+    contentKey: 'rate',
+  },
+  {
+    id: 5,
+    label: window.T('Total Cost'),
+    subLabel: window.T('(USDT)'),
+    icon: 'dollar',
+    contentKey: 'totalCost',
+  },
+  {
+    id: 6,
+    label: window.T('Total Withdraw'),
+    subLabel: window.T('(USDT)'),
+    icon: 'receive',
+    contentKey: 'totalWithdraw',
+  },
+  {
+    id: 7,
+    label: window.T('Affiliate Users'),
+    icon: 'sharing',
+    contentKey: 'user',
+  },
+  {
+    id: 8,
+    label: window.T('Cost per Affiliate User'),
+    subLabel: window.T('(USDT)'),
+    icon: 'dollar',
+    contentKey: 'cost',
+  },
+] as CardDataProps[];
 
-  const CardData = useMemo<CardType[]>(
-    () => [
-      {
-        id: 1,
-        label: 'Daily Active User',
-        icon: 'user',
-        content: '732,234.5',
-      },
-      {
-        id: 2,
-        label: 'Downloads',
-        icon: 'download',
-        content: '732,234.5',
-      },
-      {
-        id: 3,
-        label: 'Valid Users',
-        icon: 'user',
-        content: '732,234.5',
-      },
-      {
-        id: 4,
-        label: 'Click-through Rate',
-        icon: 'percentage',
-        content: '732,234.5',
-      },
-      {
-        id: 5,
-        label: 'Total Cost',
-        subLabel: '(USDT)',
-        icon: 'dollar',
-        content: '732,234.5',
-      },
-      {
-        id: 6,
-        label: 'Total Withdraw',
-        subLabel: '(USDT)',
-        icon: 'receive',
-        content: '732,234.5',
-      },
-      {
-        id: 7,
-        label: 'Affiliate Users',
-        icon: 'sharing',
-        content: '732,234.5',
-      },
-      {
-        id: 8,
-        label: 'Cost per Affiliate User',
-        subLabel: '(USDT)',
-        icon: 'dollar',
-        content: '732,234.5',
-      },
-    ],
-    [],
+const MetricConfigDump = [
+  {
+    title: window.T('Click Overview'),
+    useApi: useGetMetricClickQuery,
+  },
+  {
+    title: window.T('Download Overview'),
+    useApi: useGetMetricDownloadQuery,
+  },
+  {
+    title: window.T('Valid User Overview'),
+    useApi: useGetMetricValidUserQuery,
+  },
+  {
+    title: window.T('Affiliate User Overview'),
+    useApi: useGetMetricAffiliateQuery,
+  },
+];
+
+function BrowserMetric() {
+  const [cardData, setCardData] = useState<CardDataProps[]>(CardDataDefault);
+  const [filter, setFilter] = useState<FilterProps>({
+    dateRange: [dayjs().weekday(-6).toDate(), dayjs().weekday(0).toDate()],
+    dataUpdate: new Date().getTime(),
+  });
+
+  const { data: overview, isFetching: isFetchingOverview } = useGetOverviewQuery(
+    {
+      startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
+      endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
+    },
+    {
+      skip: !filter.dateRange[0] || !filter.dateRange[1],
+    },
   );
 
-  const [metricData, setMetricData] = useState<MetricItem[]>([]);
-
   useEffect(() => {
-    if (isGetMetricSuccess && metrics?.length > 0) {
-      const convertMetrics = metrics.map((item: string) => ({
-        title: item.split('.').slice(1).join(' '),
-        key: item,
+    if (!isFetchingOverview && overview) {
+      const data = CardDataDefault.map(item => ({
+        ...item,
+        content: numberWithCommas(overview?.[item.contentKey] || 0),
       }));
-      setMetricData(convertMetrics);
+      setCardData(data);
     }
-  }, [isGetMetricSuccess]);
+  }, [isFetchingOverview, overview]);
+
+  const onChangeDateRange = (dateRange: Array<Date | null>) => {
+    if (dateRange[0] && dateRange[1]) {
+      setFilter({
+        dateRange,
+        dataUpdate: new Date().getTime(),
+      });
+    }
+  };
 
   return (
     <Container
       maxWidth={false}
       sx={{
-        my: 2,
+        py: 3,
       }}
     >
       <Stack direction="row" justifyContent="space-between">
         <Typography variant="h3">{window.T('Overview')}</Typography>
         <Box>
-          <DateRangePicker />
+          <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
         </Box>
       </Stack>
-      <Grid container spacing={2.5}>
-        {CardData.map(item => (
+      <Grid container spacing={2} mb={4}>
+        {cardData.map(item => (
           <Grid key={item.id} item xs={12} md={6} lg={3}>
             <SimpleCard label={item.label} subLabel={item?.subLabel} icon={item.icon} content={item.content} />
           </Grid>
         ))}
       </Grid>
-      <Button variant="contained">{window.T('Show Modal Filter')}</Button>
       <Grid
-        mt={1}
         container
-        spacing={2.5}
+        spacing={2}
         sx={{
-          minHeight: 600,
+          mt: -2.5,
         }}
       >
-        {metricData.map(item => (
-          <Grid item xs={12} md={6} xl={4}>
-            <IntersectionChart title={item.title} metricKey={item.key} />
+        {MetricConfigDump.map(item => (
+          <Grid item xs={12} md={6}>
+            <IntersectionChart
+              title={item.title}
+              useApi={item.useApi}
+              dataUpdate={filter.dataUpdate}
+              dateRange={filter.dateRange}
+              idTooltip="line-chart-modal-overview"
+            />
           </Grid>
         ))}
       </Grid>
-      <Stack
-        sx={{
-          mt: 4.5,
-          backgroundColor: 'white',
-          p: 4,
-          borderRadius: 1,
-        }}
-      >
-        <Stack pt={1} pb={4} direction="row" justifyContent="space-between">
-          <Typography variant="h5">{window.T('Affiliate User List')}</Typography>
-          <Typography variant="h5">{window.T('255 items')}</Typography>
-        </Stack>
-        <HerondTable headCells={UserHeadCells} rows={rowsUserHeadCells()} />
-      </Stack>
-      <Stack
-        sx={{
-          mt: 4.5,
-          backgroundColor: 'white',
-          p: 4,
-          borderRadius: 1,
-        }}
-      >
-        <Stack pt={1} pb={4} direction="row" justifyContent="space-between">
-          <Typography variant="h5">{window.T('Performance by Region')}</Typography>
-          <Typography variant="h5">{window.T('255 items')}</Typography>
-        </Stack>
-        <HerondTable headCells={RegionHeadCell} rows={rowsRegionCell()} />
-      </Stack>
-      <Stack
-        sx={{
-          mt: 4.5,
-          backgroundColor: 'white',
-          p: 4,
-          borderRadius: 1,
-        }}
-      >
-        <Stack pt={1} pb={4} direction="row" justifyContent="space-between">
-          <Typography variant="h5">{window.T('Performance by Channel')}</Typography>
-          <Typography variant="h5">{window.T('255 items')}</Typography>
-        </Stack>
-        <HerondTable headCells={ChanelHeadCell} rows={rowsChanelCell()} />
-      </Stack>
+      <Popper open>
+        <Box id="line-chart-modal-overview" />
+      </Popper>
     </Container>
   );
 }
 
-export default OverviewContainer;
+export default BrowserMetric;

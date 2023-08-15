@@ -11,7 +11,13 @@ export const routeConfig = [
   },
   {
     route: routePath.HOME,
-    page: lazy(() => import('@/pages/Overview')),
+    page: lazy(() => import('@/pages/BrowserMetric')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.BROWSER_METRIC,
+    page: lazy(() => import('@/pages/BrowserMetric')),
     Layout: MainLayout,
     isPrivate: true,
   },
@@ -34,15 +40,19 @@ export const routeConfig = [
     isPrivate: true,
   },
   {
+    route: routePath.PAYOUTS,
+    page: lazy(() => import('@/pages/Payouts')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
     route: routePath.NOT_FOUND,
     page: lazy(() => import('@/pages/NotFound')),
-    Layout: MainLayout,
     isPrivate: false,
   },
   {
     route: '*',
     page: lazy(() => import('@/pages/NotFound')),
-    Layout: MainLayout,
     isPrivate: false,
   },
 ];

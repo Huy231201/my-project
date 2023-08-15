@@ -14,6 +14,7 @@ import DollarSvg from '@/assets/icons/dollar.svg';
 import DownloadSvg from '@/assets/icons/download.svg';
 import UserGroupSvg from '@/assets/icons/user-group.svg';
 import UserGroupWhiteSvg from '@/assets/icons/user-group-white.svg';
+import UserGroupOrangeSvg from '@/assets/icons/user-group-orange.svg';
 import InformationSvg from '@/assets/icons/information.svg';
 import PercentageSvg from '@/assets/icons/percentage.svg';
 import ReceiveSvg from '@/assets/icons/receive.svg';
@@ -22,6 +23,10 @@ import UserSvg from '@/assets/icons/user.svg';
 import WalletSvg from '@/assets/icons/wallet.svg';
 import WalletWhiteSvg from '@/assets/icons/wallet-white.svg';
 import UpDownSvg from '@/assets/icons/up-down.svg';
+import PayoutsSvg from '@/assets/icons/payouts.svg';
+import PayoutsWhiteSvg from '@/assets/icons/payouts-white.svg';
+import BrowserMetricSvg from '@/assets/icons/browser-metric.svg';
+import BrowserMetricWhiteSvg from '@/assets/icons/browser-metric-white.svg';
 
 const SvgData = {
   close: {
@@ -55,6 +60,9 @@ const SvgData = {
   'user-group-white': {
     svg: UserGroupWhiteSvg,
   },
+  'user-group-orange': {
+    svg: UserGroupOrangeSvg,
+  },
   information: {
     svg: InformationSvg,
   },
@@ -81,6 +89,18 @@ const SvgData = {
   },
   search: {
     svg: SearchSvg,
+  },
+  payouts: {
+    svg: PayoutsSvg,
+  },
+  'payouts-white': {
+    svg: PayoutsWhiteSvg,
+  },
+  'browser-metric': {
+    svg: BrowserMetricSvg,
+  },
+  'browser-metric-white': {
+    svg: BrowserMetricWhiteSvg,
   },
 };
 
