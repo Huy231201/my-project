@@ -14,6 +14,7 @@ export interface HeaderCellProps {
   numeric?: boolean;
   width?: number;
   checkbox?: boolean;
+  sortable?: boolean;
 }
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {

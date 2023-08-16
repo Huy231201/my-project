@@ -10,15 +10,29 @@ import { stableSort, getComparator, Order, HeaderCellProps, RowProp } from './ut
 type KeyRow = string | number;
 
 interface Props {
+  loading?: boolean;
   headCells: readonly HeaderCellProps[];
   rows: readonly RowProp[];
   checkbox?: boolean;
   selected?: Array<KeyRow>;
+  pageIndex: number;
+  totalPages: number;
   onSelectRow?: (data: Array<KeyRow>) => void;
+  onChangePage: (pageIndex: number) => void;
 }
 
 export default function EnhancedTable(props: Props) {
-  const { rows, headCells, checkbox = false, selected = [], onSelectRow } = props;
+  const {
+    loading,
+    rows,
+    headCells,
+    checkbox = false,
+    selected = [],
+    pageIndex,
+    totalPages,
+    onSelectRow,
+    onChangePage,
+  } = props;
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof RowProp>('id');
 
@@ -78,6 +92,7 @@ export default function EnhancedTable(props: Props) {
             onSelectAllClick={handleSelectAll}
           />
           <EnhancedTableBody
+            loading={loading}
             checkbox={checkbox}
             selected={selected}
             rows={rows}
@@ -89,8 +104,13 @@ export default function EnhancedTable(props: Props) {
           />
         </Table>
       </TableContainer>
+      {/* {totalPages && totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+          <Pagination pageIndex={pageIndex} totalPages={totalPages} />
+        </Box>
+      )} */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-        <Pagination />
+        <Pagination pageIndex={pageIndex} totalPages={totalPages} onChangePage={onChangePage} />
       </Box>
     </Box>
   );

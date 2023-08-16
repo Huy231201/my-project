@@ -116,9 +116,9 @@ function MuiSideBar() {
   return (
     <MuiDrawer open={openDrawer} variant="permanent">
       <List>
-        {SidebarConfig.map(item =>
+        {SidebarConfig.map((item, index) =>
           item.divider ? (
-            <>
+            <div key={index}>
               <Divider
                 sx={{
                   my: 2,
@@ -133,7 +133,7 @@ function MuiSideBar() {
                 nameHoverIcon={item.nameHoverIcon}
                 onClick={() => navigate(item.href)}
               />
-            </>
+            </div>
           ) : (
             <SidebarItem
               key={item.label}

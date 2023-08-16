@@ -69,12 +69,9 @@ function CustomLineChart(props: Props) {
         axisYLabel: config.name,
         datasets,
       });
-      // setTimeout(())
       setIsFirstLoad(false);
     }
   }, [inView, isFetching, data]);
-
-  // console.log({rest})
 
   useEffect(() => {
     setIsFirstLoad(true);

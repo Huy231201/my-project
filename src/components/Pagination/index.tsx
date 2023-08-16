@@ -1,7 +1,19 @@
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
-export default function BasicPagination() {
+interface Props {
+  pageIndex: number;
+  totalPages: number;
+  onChangePage: (value: number) => void;
+}
+
+export default function BasicPagination(props: Props) {
+  const { pageIndex, totalPages, onChangePage } = props;
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    onChangePage(value);
+  };
+
   return (
     <Stack spacing={2}>
       <Pagination
@@ -22,7 +34,9 @@ export default function BasicPagination() {
             },
           },
         }}
-        count={10}
+        page={pageIndex}
+        count={totalPages}
+        onChange={handleChange}
       />
     </Stack>
   );
