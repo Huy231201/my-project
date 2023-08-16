@@ -48,7 +48,7 @@ function CustomLineChart(props: Props) {
   );
 
   useEffect(() => {
-    if (isFirstLoad && inView && !isFetching) {
+    if (isFirstLoad && inView && !isFetching && data) {
       const parseDataset = (data?.charts || []).map((item: ChartItem, index: number) => {
         const colorConfig = MetricChartColors[Number(index) % 10];
         return {
@@ -62,13 +62,15 @@ function CustomLineChart(props: Props) {
             gradient.addColorStop(1, colorConfig.gradientStart);
             return gradient;
           },
+          pointBackgroundColor: '#FF821C',
+          pointBorderColor: '#FFF',
         };
       });
 
       setMetricDetail({
         labels: (data?.charts?.[0]?.values || []).map((item: ValueChartItem) => item.key),
         axisXLabel: window.T('Time'),
-        axisYLabel: data.unit,
+        axisYLabel: data?.unit,
         datasets: parseDataset,
       });
       setIsFirstLoad(false);

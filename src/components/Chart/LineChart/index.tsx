@@ -99,6 +99,16 @@ function LineChart(props: LineChartProps) {
           arc: {
             borderWidth: 0,
           },
+          point: {
+            radius: 0,
+            borderRadius: 0,
+            hoverRadius: 6,
+            hoverBorderWidth: 3,
+          },
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: false,
         },
       }) as any,
     [],

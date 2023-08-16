@@ -32,6 +32,7 @@ const PAGE_SIZE = 10;
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
   alignItems: 'center',
+  margin: 4,
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
@@ -207,7 +208,7 @@ function UserDetailContainer() {
           }}
         >
           <CardHeader label={window.T('User information')} icon="user" />
-          <Grid mt={2} container spacing={0.5}>
+          <Grid mt={2} container>
             <Grid item xs={12} md={6}>
               <MuiListItemText
                 primary={`${window.T('Email')}:`}

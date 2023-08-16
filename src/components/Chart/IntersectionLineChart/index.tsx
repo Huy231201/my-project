@@ -19,7 +19,12 @@ export type Ref = HTMLDivElement;
 const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
   const { isLoading, title, idTooltip, metricDetail } = props;
   return (
-    <div ref={ref}>
+    <Box
+      ref={ref}
+      sx={{
+        height: '100%',
+      }}
+    >
       {isLoading ? (
         <Box
           sx={{
@@ -74,7 +79,13 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
               {title}
             </Typography>
           </Stack>
-          <Typography variant="body1" mb={0.5}>
+          <Typography
+            variant="body1"
+            mb={0.5}
+            sx={{
+              height: 22,
+            }}
+          >
             {metricDetail?.axisYLabel}
           </Typography>
           <LineChart idTooltip={idTooltip} labels={metricDetail?.labels} datasets={metricDetail?.datasets} />
@@ -83,7 +94,7 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
           </Typography>
         </Box>
       )}
-    </div>
+    </Box>
   );
 });
 

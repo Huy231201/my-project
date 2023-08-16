@@ -6,6 +6,7 @@ import { CloseWrapper } from './styles';
 import CloseSvg from '@/assets/icons/close.svg';
 import SearchSvg from '@/assets/icons/search.svg';
 import ArrowDownSvg from '@/assets/icons/arrow-down.svg';
+import ArrowLeftSvg from '@/assets/icons/arrow-left.svg';
 import CalendarSvg from '@/assets/icons/calendar.svg';
 import CustomerSvg from '@/assets/icons/customer.svg';
 import DashboardSvg from '@/assets/icons/dashboard.svg';
@@ -35,6 +36,9 @@ const SvgData = {
   },
   'arrow-down': {
     svg: ArrowDownSvg,
+  },
+  'arrow-left': {
+    svg: ArrowLeftSvg,
   },
   calendar: {
     svg: CalendarSvg,

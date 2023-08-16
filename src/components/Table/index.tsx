@@ -18,7 +18,7 @@ interface Props {
   pageIndex: number;
   totalPages: number;
   onSelectRow?: (data: Array<KeyRow>) => void;
-  onChangePage: (pageIndex: number) => void;
+  onChangePage?: (pageIndex: number) => void;
 }
 
 export default function EnhancedTable(props: Props) {
@@ -104,14 +104,11 @@ export default function EnhancedTable(props: Props) {
           />
         </Table>
       </TableContainer>
-      {/* {totalPages && totalPages > 1 && (
+      {totalPages && totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-          <Pagination pageIndex={pageIndex} totalPages={totalPages} />
+          <Pagination pageIndex={pageIndex} totalPages={totalPages} onChangePage={onChangePage} />
         </Box>
-      )} */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-        <Pagination pageIndex={pageIndex} totalPages={totalPages} onChangePage={onChangePage} />
-      </Box>
+      )}
     </Box>
   );
 }

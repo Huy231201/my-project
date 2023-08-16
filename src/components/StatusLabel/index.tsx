@@ -28,12 +28,14 @@ const statusColor = {
 
 const StatusLabel = (props: StatusLabelProps) => {
   const { status = StatusEnum.PENDING } = props;
+
   return (
     <Typography
       variant="body1"
       sx={{
-        color: statusColor[status.toLowerCase()],
+        color: statusColor[status.toLocaleUpperCase()],
       }}
+      className="status-label"
     >
       {status}
     </Typography>
