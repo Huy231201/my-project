@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import { api } from './api';
 
-export const MetricApi = api.injectEndpoints({
+export const Api = api.injectEndpoints({
   endpoints: builder => ({
     getMetric: builder.query({
       query: () => ({
@@ -17,4 +17,4 @@ export const MetricApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetMetricQuery, useGetMetricDetailQuery } = MetricApi;
+export const { useGetMetricQuery, useGetMetricDetailQuery } = Api;

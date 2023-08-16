@@ -10,10 +10,11 @@ interface Props {
   onChange: (dateRange: Array<Date | null>) => void;
   minDate?: Date;
   maxDate?: Date;
+  dateFormat?: string;
 }
 
 function DateRangePicker(props: Props) {
-  const { value, onChange, minDate, maxDate } = props;
+  const { value, onChange, minDate, maxDate, dateFormat = 'dd/MM/yyyy' } = props;
 
   const [dateRange, setDateRange] = useState<Array<Date | null>>(value);
   const [startDate, endDate] = dateRange || [null, null];
@@ -31,6 +32,7 @@ function DateRangePicker(props: Props) {
   return (
     <DatePicker
       selectsRange
+      dateFormat={dateFormat}
       startDate={startDate}
       endDate={endDate}
       onChange={handleChange}

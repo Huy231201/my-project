@@ -79,26 +79,32 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{
               padding: 1.5,
+              fontSize: 14,
             }}
           >
-            <MuiTableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-              IconComponent={IconSortCustom}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box
-                  component="span"
-                  sx={{
-                    display: 'none',
-                  }}
-                >
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </MuiTableSortLabel>
+            {headCell.sortable ? (
+              <MuiTableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+                IconComponent={IconSortCustom}
+              >
+                {headCell.label}
+
+                {orderBy === headCell.id ? (
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'none',
+                    }}
+                  >
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </MuiTableSortLabel>
+            ) : (
+              headCell.label
+            )}
           </TableCell>
         ))}
       </TableRow>

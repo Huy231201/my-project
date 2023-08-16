@@ -106,9 +106,9 @@ instance.interceptors.response.use(
       resetRetry();
     } else {
       const showToast = err.config.headers['show-toast'];
-      const errorMessage = err?.response?.data;
+      const errorMessage = err?.response?.data || {};
       if (showToast) {
-        toast.error(errorMessage.message || errorMessage.error || 'Something went wrong!');
+        toast.error(errorMessage.detail || errorMessage.message || errorMessage.error || 'Something went wrong!');
       }
       throw errorMessage;
     }

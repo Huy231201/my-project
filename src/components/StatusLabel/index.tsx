@@ -6,6 +6,8 @@ export enum StatusEnum {
   REQUESTED = 'REQUESTED',
   SUCCESS = 'SUCCESS',
   REJECTED = 'REJECTED',
+  VALID = 'VALID',
+  NOT_VALID = 'NOT_VALID',
 }
 
 interface StatusLabelProps {
@@ -18,6 +20,8 @@ const statusColor = {
   [StatusEnum.REQUESTED]: '#FF821C',
   [StatusEnum.SUCCESS]: '#2FB301',
   [StatusEnum.REJECTED]: '#F42B2B',
+  [StatusEnum.VALID]: '#32373D',
+  [StatusEnum.NOT_VALID]: '#F42B2B',
 } as {
   [key: string]: string;
 };

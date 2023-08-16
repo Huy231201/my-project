@@ -5,6 +5,10 @@ import { useMemo } from 'react';
 import { withStyles } from '@mui/styles';
 import { stableSort, getComparator, Order, HeaderCellProps, RowProp } from '../utils';
 import { CheckboxField } from '@/components/Fields';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import HerondIcon from '@/components/Icons';
+import Skeleton from '@mui/material/Skeleton';
 
 const MuiTableCell = withStyles({
   root: {
@@ -14,6 +18,7 @@ const MuiTableCell = withStyles({
 })(TableCell);
 
 interface Props {
+  loading?: boolean;
   checkbox: boolean;
   selected: Array<string | number>;
   page?: number;
@@ -25,7 +30,7 @@ interface Props {
 }
 
 function EnhancedTableBody(props: Props) {
-  const { orderHeadCells, rows, order, orderBy, checkbox, selected, onSelectRow } = props;
+  const { loading, orderHeadCells, rows, order, orderBy, checkbox, selected, onSelectRow } = props;
 
   const visibleRows = useMemo(() => stableSort(rows, getComparator(order, orderBy)), [order, orderBy, rows]);
 
@@ -34,6 +39,22 @@ function EnhancedTableBody(props: Props) {
       onSelectRow(event, id);
     }
   };
+
+  if (loading) {
+    return (
+      <TableBody>
+        {new Array(6).fill(0).map((_, idx) => (
+          <TableRow hover role="checkbox" tabIndex={-1} sx={{ cursor: 'pointer' }} key={idx}>
+            {new Array(orderHeadCells.length).fill('0').map((column, index) => (
+              <MuiTableCell align="left" key={index}>
+                <Skeleton animation="wave" />
+              </MuiTableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    );
+  }
 
   return (
     <TableBody>
@@ -63,11 +84,26 @@ function EnhancedTableBody(props: Props) {
       ))}
       {visibleRows?.length < 1 && (
         <TableRow
-          style={{
-            height: '330px',
+          sx={{
+            height: '160px',
+            '& .MuiTableCell-root': {
+              fontSize: 16,
+              textAlign: 'center',
+            },
           }}
         >
-          <TableCell colSpan={6} />
+          <TableCell colSpan={6}>
+            <Box
+              sx={{
+                '& svg': {
+                  fontSize: 40,
+                },
+              }}
+            >
+              <HerondIcon name="search" />
+              <Typography variant="body1">{window.T('No results')}</Typography>
+            </Box>
+          </TableCell>
         </TableRow>
       )}
     </TableBody>

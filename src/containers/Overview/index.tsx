@@ -105,7 +105,7 @@ const MetricConfigDump = [
 function BrowserMetric() {
   const [cardData, setCardData] = useState<CardDataProps[]>(CardDataDefault);
   const [filter, setFilter] = useState<FilterProps>({
-    dateRange: [dayjs().weekday(-6).toDate(), dayjs().weekday(0).toDate()],
+    dateRange: [dayjs().startOf('month').toDate(), new Date()],
     dataUpdate: new Date().getTime(),
   });
 

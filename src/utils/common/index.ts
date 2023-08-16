@@ -22,3 +22,17 @@ export const setCredential = (credentials: CredentialsType) => {
 export function numberWithCommas(x = 0) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+export const validateEmail = (email = '') =>
+  !!String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    );
+
+export const renderTotal = (total: number, afterText: string) => {
+  if (total < 1) {
+    return `${total} ${afterText}`;
+  }
+  return `${numberWithCommas(total)} ${afterText}s`;
+};

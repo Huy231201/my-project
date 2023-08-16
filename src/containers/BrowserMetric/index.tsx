@@ -36,7 +36,7 @@ function BrowserMetric() {
   const [formMetricData, setFormMetricData] = useState<MetricItem[]>([]);
 
   const [filter, setFilter] = useState<FilterProps>({
-    dateRange: [dayjs().weekday(-6).toDate(), dayjs().weekday(0).toDate()],
+    dateRange: [dayjs().startOf('month').toDate(), new Date()],
     dataUpdate: new Date().getTime(),
   });
 
