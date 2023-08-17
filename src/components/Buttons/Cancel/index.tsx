@@ -6,12 +6,12 @@ import { alpha, SxProps, Theme } from '@mui/material/styles';
 const MuiButton = withStyles(() => ({
   root: {
     backgroundColor: 'white',
-    color: '#575F6D',
-    border: '1px solid #D6D9DF',
+    color: '#202226',
+    border: '1px solid #A1A9B5',
     minWidth: 64,
     height: 40,
     '&:hover': {
-      borderColor: alpha('#D6D9DF', 0.6),
+      borderColor: alpha('#A1A9B5', 0.6),
       backgroundColor: alpha('#FFF', 0.6),
     },
     fontWeight: 700,

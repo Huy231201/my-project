@@ -7,7 +7,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   showToast?: boolean;
 }
 
-const NUMBER_RETRIES = 3;
+const NUMBER_RETRIES = 4;
 let retryCount = 0;
 let retryMethod = null;
 

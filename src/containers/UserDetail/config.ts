@@ -1,14 +1,7 @@
 /* eslint-disable quotes */
+import { HeaderCellProps } from '@/components/Table/utils';
 
-interface UserHeadCell {
-  id: string;
-  order: number;
-  label: string;
-  numeric?: boolean;
-  width?: number;
-}
-
-export const UserHeadCells: readonly UserHeadCell[] = [
+export const RecruitedHeadTable: readonly HeaderCellProps[] = [
   {
     id: 'order',
     order: 1,
@@ -37,7 +30,7 @@ export const UserHeadCells: readonly UserHeadCell[] = [
 
 // ---------------------------
 
-export const RegionHeadCell: readonly UserHeadCell[] = [
+export const WithdrawalHistoryHeadTable: readonly HeaderCellProps[] = [
   {
     id: 'order',
     order: 1,
@@ -72,7 +65,7 @@ export const RegionHeadCell: readonly UserHeadCell[] = [
 
 // ----------------------------
 
-export const ChanelHeadCell: readonly UserHeadCell[] = [
+export const LinkListHeadTable: readonly HeaderCellProps[] = [
   {
     id: 'order',
     order: 1,

@@ -61,6 +61,8 @@ function CustomLineChart(props: Props) {
             gradient.addColorStop(1, colorConfig.gradientStart);
             return gradient;
           },
+          pointBackgroundColor: '#FF821C',
+          pointBorderColor: '#FFF',
         };
       });
       setMetricDetail({

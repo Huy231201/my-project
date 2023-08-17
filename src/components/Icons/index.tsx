@@ -6,6 +6,7 @@ import { CloseWrapper } from './styles';
 import CloseSvg from '@/assets/icons/close.svg';
 import SearchSvg from '@/assets/icons/search.svg';
 import ArrowDownSvg from '@/assets/icons/arrow-down.svg';
+import ArrowLeftSvg from '@/assets/icons/arrow-left.svg';
 import CalendarSvg from '@/assets/icons/calendar.svg';
 import CustomerSvg from '@/assets/icons/customer.svg';
 import DashboardSvg from '@/assets/icons/dashboard.svg';
@@ -27,6 +28,8 @@ import PayoutsSvg from '@/assets/icons/payouts.svg';
 import PayoutsWhiteSvg from '@/assets/icons/payouts-white.svg';
 import BrowserMetricSvg from '@/assets/icons/browser-metric.svg';
 import BrowserMetricWhiteSvg from '@/assets/icons/browser-metric-white.svg';
+import EyeSvg from '@/assets/icons/eye.svg';
+import TrashSvg from '@/assets/icons/trash.svg';
 
 const SvgData = {
   close: {
@@ -35,6 +38,9 @@ const SvgData = {
   },
   'arrow-down': {
     svg: ArrowDownSvg,
+  },
+  'arrow-left': {
+    svg: ArrowLeftSvg,
   },
   calendar: {
     svg: CalendarSvg,
@@ -101,6 +107,12 @@ const SvgData = {
   },
   'browser-metric-white': {
     svg: BrowserMetricWhiteSvg,
+  },
+  eye: {
+    svg: EyeSvg,
+  },
+  trash: {
+    svg: TrashSvg,
   },
 };
 

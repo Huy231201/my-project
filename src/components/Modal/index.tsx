@@ -7,7 +7,7 @@ import { withStyles } from '@mui/styles';
 import { SxProps, Theme } from '@mui/material/styles';
 
 interface Props {
-  title: string;
+  title: string | React.ReactNode;
   onClose: () => void;
   open: boolean;
   children: React.ReactNode;

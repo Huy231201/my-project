@@ -66,7 +66,7 @@ const MuiDrawer = styled(Drawer, { shouldForwardProp: prop => prop !== 'open' })
 function MuiSideBar() {
   const isLogin = !!getAccessToken();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -93,10 +93,10 @@ function MuiSideBar() {
         href: routePath.USER_DETAIL,
       },
       {
-        label: window.T('Withdrawal Manage'),
+        label: window.T('Withdrawal Requests'),
         nameIcon: 'wallet',
         nameHoverIcon: 'wallet-white',
-        href: routePath.WITHDRAWAL_MANAGER,
+        href: routePath.WITHDRAWAL_REQUESTS,
       },
       {
         label: window.T('Payouts'),
@@ -127,7 +127,10 @@ function MuiSideBar() {
               <SidebarItem
                 key={item.label}
                 openDrawer={openDrawer}
-                active={(item.routes || [item.href]).includes(location.pathname)}
+                active={
+                  (item.routes || [item.href]).includes(pathname) ||
+                  (item.href.length > 1 && pathname.startsWith(item.href))
+                }
                 label={item.label}
                 nameIcon={item.nameIcon}
                 nameHoverIcon={item.nameHoverIcon}
@@ -138,7 +141,10 @@ function MuiSideBar() {
             <SidebarItem
               key={item.label}
               openDrawer={openDrawer}
-              active={(item.routes || [item.href]).includes(location.pathname)}
+              active={
+                (item.routes || [item.href]).includes(pathname) ||
+                (item.href.length > 1 && pathname.startsWith(item.href))
+              }
               label={item.label}
               nameIcon={item.nameIcon}
               nameHoverIcon={item.nameHoverIcon}

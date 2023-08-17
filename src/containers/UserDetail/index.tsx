@@ -25,13 +25,14 @@ import Loading from '@/components/Loading';
 import UserInfoContent from './UserInfoContent';
 import UserTable from './UserTable';
 
-import { UserHeadCells, RegionHeadCell, ChanelHeadCell } from './config';
+import { RecruitedHeadTable, WithdrawalHistoryHeadTable, LinkListHeadTable } from './config';
 
 const PAGE_SIZE = 10;
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
   alignItems: 'center',
+  margin: 4,
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
@@ -207,7 +208,7 @@ function UserDetailContainer() {
           }}
         >
           <CardHeader label={window.T('User information')} icon="user" />
-          <Grid mt={2} container spacing={0.5}>
+          <Grid mt={2} container>
             <Grid item xs={12} md={6}>
               <MuiListItemText
                 primary={`${window.T('Email')}:`}
@@ -259,7 +260,7 @@ function UserDetailContainer() {
           </Grid>
         </Box>
         <UserTable
-          headCells={UserHeadCells}
+          headCells={RecruitedHeadTable}
           title={window.T('Recruited User History') || ''}
           useApi={useGetUserRecruitedQuery}
           params={{
@@ -273,7 +274,7 @@ function UserDetailContainer() {
           onChangePage={handleChangePage('recruited')}
         />
         <UserTable
-          headCells={RegionHeadCell}
+          headCells={WithdrawalHistoryHeadTable}
           title={window.T('Withdrawal History')}
           useApi={useGetUserWithdrawHistoryQuery}
           params={{
@@ -287,7 +288,7 @@ function UserDetailContainer() {
           onChangePage={handleChangePage('withdrawal')}
         />
         <UserTable
-          headCells={ChanelHeadCell}
+          headCells={LinkListHeadTable}
           title={window.T('Link List')}
           useApi={useGetUserCodeQuery}
           params={{

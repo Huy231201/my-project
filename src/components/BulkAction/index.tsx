@@ -5,7 +5,16 @@ import HerondIcon from '@/components/Icons';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-const BulkAction = () => {
+interface Option {
+  label: string;
+  onClick: () => void;
+}
+interface Props {
+  options: Array<Option>;
+}
+
+const BulkAction = (props: Props) => {
+  const { options } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -14,6 +23,13 @@ const BulkAction = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClickItem = (action: () => void) => () => {
+    if (action) {
+      action();
+    }
+    handleClose();
   };
 
   return (
@@ -55,7 +71,11 @@ const BulkAction = () => {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>{window.T('Rejected')}</MenuItem>
+        {options.map((item: Option, key: number) => (
+          <MenuItem key={key} onClick={handleClickItem(item.onClick)}>
+            {item.label}
+          </MenuItem>
+        ))}
       </Menu>
     </Box>
   );

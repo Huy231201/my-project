@@ -45,6 +45,11 @@ function ResponsiveAppBar() {
     window.open(`${import.meta.env.VITE_API_URL}/auth/login`, '_self');
   };
 
+  const handleNavigateDashboard = () => {
+    navigate('/');
+    handleCloseUserMenu();
+  };
+
   const handleLogout = () => {
     LocalStorage.clearAll();
     SessionStorage.clearAll();
@@ -55,11 +60,7 @@ function ResponsiveAppBar() {
   const settings = [
     {
       label: 'Dashboard',
-      onClick: handleCloseUserMenu,
-    },
-    {
-      label: 'Account',
-      onClick: handleCloseUserMenu,
+      onClick: handleNavigateDashboard,
     },
     {
       label: 'Logout',

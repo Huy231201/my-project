@@ -36,3 +36,7 @@ export const renderTotal = (total: number, afterText: string) => {
   }
   return `${numberWithCommas(total)} ${afterText}s`;
 };
+
+export function capitalizeFirstLetter(string = '') {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}

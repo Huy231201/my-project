@@ -5,6 +5,8 @@ export const routePath = {
   OVERVIEW: '/overview',
   USER_DETAIL: '/user-detail',
   PAYOUTS: '/payouts',
-  WITHDRAWAL_MANAGER: '/withdrawal-manager',
+  PAYOUTS_DETAIL: '/payouts/:id',
+  WITHDRAWAL_REQUESTS: '/withdrawal-requests',
+  WITHDRAWAL_REQUESTS_DETAIL: '/withdrawal-requests/:id',
   NOT_FOUND: '/not-found',
 };

@@ -34,8 +34,8 @@ function EnhancedTableBody(props: Props) {
 
   const visibleRows = useMemo(() => stableSort(rows, getComparator(order, orderBy)), [order, orderBy, rows]);
 
-  const handleSelectRow = (id: string | number) => (event: React.MouseEvent<unknown>) => {
-    if (onSelectRow) {
+  const handleSelectRow = (id: string | number, enableCheckbox?: boolean) => (event: React.MouseEvent<unknown>) => {
+    if (enableCheckbox && onSelectRow) {
       onSelectRow(event, id);
     }
   };
@@ -65,7 +65,7 @@ function EnhancedTableBody(props: Props) {
           tabIndex={-1}
           key={index}
           sx={{ cursor: 'pointer', borderBottom: '1px solid #DCE0E3' }}
-          onClick={handleSelectRow(row.id)}
+          onClick={handleSelectRow(row.id, row?.checkbox)}
         >
           {checkbox &&
             (row?.checkbox ? (
@@ -76,7 +76,7 @@ function EnhancedTableBody(props: Props) {
               <MuiTableCell padding="checkbox" />
             ))}
           {orderHeadCells.map(headCell => (
-            <MuiTableCell key={headCell.id} component="th">
+            <MuiTableCell key={headCell.id} component="th" align={headCell.align || 'left'}>
               {row[headCell.id]}
             </MuiTableCell>
           ))}

@@ -14,9 +14,9 @@ interface PropStyles {
   backgroundColor?: string;
 }
 
-const MuiButton = withStyles(theme => ({
+const MuiButton = withStyles(() => ({
   root: {
-    backgroundColor: (props: PropStyles) => props.backgroundColor || theme.palette.primary.dark,
+    backgroundColor: (props: PropStyles) => props.backgroundColor || '#298CFD',
     color: 'white',
     fontWeight: 700,
     border: 'none',
@@ -25,7 +25,7 @@ const MuiButton = withStyles(theme => ({
     whiteSpace: 'nowrap',
     '&:hover': {
       backgroundColor: (props: PropStyles) =>
-        props.backgroundColor ? alpha(props.backgroundColor, 0.6) : alpha(theme.palette.primary.dark, 0.6),
+        props.backgroundColor ? alpha(props.backgroundColor, 0.6) : alpha('#298CFD', 0.6),
     },
     '& .MuiLoadingButton-loadingIndicator': {
       marginRight: 8,

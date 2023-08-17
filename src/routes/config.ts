@@ -34,14 +34,26 @@ export const routeConfig = [
     isPrivate: true,
   },
   {
-    route: routePath.WITHDRAWAL_MANAGER,
-    page: lazy(() => import('@/pages/WithdrawalManager')),
+    route: routePath.WITHDRAWAL_REQUESTS,
+    page: lazy(() => import('@/pages/WithdrawRequests')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.WITHDRAWAL_REQUESTS_DETAIL,
+    page: lazy(() => import('@/pages/WithdrawRequests/detail')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
     route: routePath.PAYOUTS,
     page: lazy(() => import('@/pages/Payouts')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    route: routePath.PAYOUTS_DETAIL,
+    page: lazy(() => import('@/pages/Payouts/detail')),
     Layout: MainLayout,
     isPrivate: true,
   },
