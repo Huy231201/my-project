@@ -3,8 +3,9 @@ export type Order = 'asc' | 'desc';
 type rowData = number | string | boolean | undefined;
 
 export interface RowProp {
-  id: number | string;
   [key: string]: rowData;
+  id: number | string;
+  checkbox?: boolean;
 }
 
 export interface HeaderCellProps {
@@ -15,6 +16,7 @@ export interface HeaderCellProps {
   width?: number;
   checkbox?: boolean;
   sortable?: boolean;
+  align?: 'center' | 'inherit' | 'justify' | 'left' | 'right';
 }
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {

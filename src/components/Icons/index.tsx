@@ -28,6 +28,8 @@ import PayoutsSvg from '@/assets/icons/payouts.svg';
 import PayoutsWhiteSvg from '@/assets/icons/payouts-white.svg';
 import BrowserMetricSvg from '@/assets/icons/browser-metric.svg';
 import BrowserMetricWhiteSvg from '@/assets/icons/browser-metric-white.svg';
+import EyeSvg from '@/assets/icons/eye.svg';
+import TrashSvg from '@/assets/icons/trash.svg';
 
 const SvgData = {
   close: {
@@ -105,6 +107,12 @@ const SvgData = {
   },
   'browser-metric-white': {
     svg: BrowserMetricWhiteSvg,
+  },
+  eye: {
+    svg: EyeSvg,
+  },
+  trash: {
+    svg: TrashSvg,
   },
 };
 

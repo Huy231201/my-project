@@ -10,6 +10,7 @@ interface UserHeadCell {
   label: string;
   numeric?: boolean;
   width?: number;
+  sortable?: boolean;
 }
 // ---------------------------
 export const StatusOptions = [
@@ -71,6 +72,7 @@ export const RegionHeadCell: readonly UserHeadCell[] = [
     id: 'created_at',
     order: 4,
     numeric: true,
+    sortable: true,
     label: window.T('Created At'),
   },
   {

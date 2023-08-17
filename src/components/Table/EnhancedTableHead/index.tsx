@@ -73,7 +73,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell: HeaderCellProps) => (
           <TableCell
             key={headCell.id}
-            align="left"
+            align={headCell?.align || 'left'}
             padding="normal"
             width={headCell?.width}
             sortDirection={orderBy === headCell.id ? order : false}

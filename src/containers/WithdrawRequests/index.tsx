@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import HerondTable from '@/components/Table';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
-import { RegionHeadCell, rowsRegionCell, StatusOptions } from './dumpData';
+import { WithdrawRequestHeadTable, rowsRegionCell, StatusOptions } from './config';
 import { useMemo, useState, MouseEvent } from 'react';
 import { SelectField, SearchInputField, DateRangePicker } from '@/components/Fields';
 import Button from '@mui/material/Button';
@@ -16,11 +16,17 @@ import { useNavigate } from 'react-router-dom';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import { CancelButton } from '@/components/Buttons';
 import { styled } from '@mui/material/styles';
+import HerondIcon from '@/components/Icons';
+import { useGetWithdrawQuery } from '@/services/withdraw';
 
 interface FilterProps {
   searchEmail: string;
   dateRange: Array<Date | null>;
   status: StatusEnum | string;
+  sortBy: string;
+  sortDirection: 0 | 1;
+  page: number;
+  pageSize: number;
 }
 
 const ButtonAction = styled(Button)({
@@ -28,9 +34,9 @@ const ButtonAction = styled(Button)({
   fontSize: '14px',
   fontWeight: 400,
   color: '#32373D',
-  padding: '0px !important',
-  minWidth: 'fit-content !important',
-  minHeight: 'fit-content !important',
+  margin: 'auto',
+  minWidth: '0px !important',
+  minHeight: '0px !important',
   '&:hover, &:active': {
     background: 'transparent',
   },
@@ -44,7 +50,22 @@ function WithdrawRequestsContainer() {
     searchEmail: '',
     dateRange: [dayjs().startOf('month').toDate(), new Date()],
     status: '',
+    sortBy: '',
+    sortDirection: 1,
+    page: 1,
+    pageSize: 10,
   });
+
+  // const { data, isFetching } = useGetWithdrawQuery({
+  //   startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
+  //   endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
+  //   Email: filter.searchEmail,
+  //   status: filter.status,
+  //   SortBy: filter.sortBy,
+  //   sortDirection: filter.sortDirection,
+  //   pageIndex: filter.page,
+  //   pageSize: filter.pageSize,
+  // });
 
   const onChangeDateRange = (dateRange: Array<Date | null>) => {
     if (dateRange[0] && dateRange[1]) {
@@ -88,7 +109,7 @@ function WithdrawRequestsContainer() {
         status: <StatusLabel status={item.status} />,
         action: (
           <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.id)}>
-            {window.T('Detail')}
+            <HerondIcon name="eye" />
           </ButtonAction>
         ),
       })),
@@ -131,11 +152,9 @@ function WithdrawRequestsContainer() {
           </Typography>
         </Box>
         <Stack mt={4} mb={1} direction="row" justifyContent="space-between">
-          <Stack direction="row">
-            <BulkAction options={BulkActionOptions} />
-          </Stack>
+          <Stack direction="row">{selected.length > 0 && <BulkAction options={BulkActionOptions} />}</Stack>
           <Stack direction="row" justifyContent="center" spacing={1.5}>
-            <Typography variant="body1">43 items</Typography>
+            {selected.length > 0 && <Typography variant="body1">43 items</Typography>}
             <Box>
               <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
             </Box>
@@ -160,10 +179,13 @@ function WithdrawRequestsContainer() {
         >
           <HerondTable
             checkbox
-            headCells={RegionHeadCell}
+            pageIndex={1}
+            totalPages={2}
+            headCells={WithdrawRequestHeadTable}
             rows={withDrawalData}
             selected={selected}
             onSelectRow={setSelected}
+            onChangePage={() => {}}
           />
         </Box>
       </Box>

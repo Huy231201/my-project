@@ -49,7 +49,6 @@ const ButtonAction = styled(Button)({
   fontSize: '14px',
   fontWeight: 400,
   color: '#32373D',
-  padding: '0px !important',
   minWidth: 'fit-content !important',
   minHeight: 'fit-content !important',
   '&:hover, &:active': {
@@ -82,7 +81,7 @@ function PayoutsDetailContainer() {
         action: (
           <Stack direction="row" alignItems="center" spacing={1}>
             <ButtonAction variant="text" onClick={() => setShowModalTxDetail(true)}>
-              {window.T('Detail')}
+              <HerondIcon name="eye" />
             </ButtonAction>
             <Box
               sx={{
@@ -92,7 +91,7 @@ function PayoutsDetailContainer() {
               }}
             />
             <ButtonAction variant="text" onClick={() => {}}>
-              {window.T('Remove from list')}
+              <HerondIcon name="trash" />
             </ButtonAction>
           </Stack>
         ),

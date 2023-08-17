@@ -22,7 +22,6 @@ const ButtonAction = styled(Button)({
   fontSize: '14px',
   fontWeight: 400,
   color: '#32373D',
-  padding: '0px !important',
   minWidth: 'fit-content !important',
   minHeight: 'fit-content !important',
   '&:hover, &:active': {
@@ -87,7 +86,7 @@ function WithdrawRequestsContainer() {
         status: <StatusLabel status={item.status} />,
         action: (
           <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.id)}>
-            {window.T('Detail')}
+            <HerondIcon name="eye" />
           </ButtonAction>
         ),
       })),

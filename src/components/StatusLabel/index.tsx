@@ -1,4 +1,5 @@
 import Typography from '@mui/material/Typography';
+import { capitalizeFirstLetter } from '@/utils/common';
 
 export enum StatusEnum {
   PENDING = 'PENDING',
@@ -7,7 +8,7 @@ export enum StatusEnum {
   SUCCESS = 'SUCCESS',
   REJECTED = 'REJECTED',
   VALID = 'VALID',
-  NOT_VALID = 'NOT_VALID',
+  INVALID = 'INVALID',
 }
 
 interface StatusLabelProps {
@@ -21,7 +22,7 @@ const statusColor = {
   [StatusEnum.SUCCESS]: '#2FB301',
   [StatusEnum.REJECTED]: '#F42B2B',
   [StatusEnum.VALID]: '#32373D',
-  [StatusEnum.NOT_VALID]: '#F42B2B',
+  [StatusEnum.INVALID]: '#F42B2B',
 } as {
   [key: string]: string;
 };
@@ -34,10 +35,11 @@ const StatusLabel = (props: StatusLabelProps) => {
       variant="body1"
       sx={{
         color: statusColor[status.toLocaleUpperCase()],
+        textTransform: 'capitalize',
       }}
       className="status-label"
     >
-      {status}
+      {capitalizeFirstLetter(status)}
     </Typography>
   );
 };

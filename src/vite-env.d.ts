@@ -2,6 +2,6 @@
 declare global {
   interface Window {
     I18N: unknown;
-    T: (key: string, value: any) => string;
+    T: (key: string, value?: object) => string;
   }
 }

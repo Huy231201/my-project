@@ -25,7 +25,7 @@ import Loading from '@/components/Loading';
 import UserInfoContent from './UserInfoContent';
 import UserTable from './UserTable';
 
-import { UserHeadCells, RegionHeadCell, ChanelHeadCell } from './config';
+import { RecruitedHeadTable, WithdrawalHistoryHeadTable, LinkListHeadTable } from './config';
 
 const PAGE_SIZE = 10;
 
@@ -260,7 +260,7 @@ function UserDetailContainer() {
           </Grid>
         </Box>
         <UserTable
-          headCells={UserHeadCells}
+          headCells={RecruitedHeadTable}
           title={window.T('Recruited User History') || ''}
           useApi={useGetUserRecruitedQuery}
           params={{
@@ -274,7 +274,7 @@ function UserDetailContainer() {
           onChangePage={handleChangePage('recruited')}
         />
         <UserTable
-          headCells={RegionHeadCell}
+          headCells={WithdrawalHistoryHeadTable}
           title={window.T('Withdrawal History')}
           useApi={useGetUserWithdrawHistoryQuery}
           params={{
@@ -288,7 +288,7 @@ function UserDetailContainer() {
           onChangePage={handleChangePage('withdrawal')}
         />
         <UserTable
-          headCells={ChanelHeadCell}
+          headCells={LinkListHeadTable}
           title={window.T('Link List')}
           useApi={useGetUserCodeQuery}
           params={{

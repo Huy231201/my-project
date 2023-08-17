@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RegionHeadCell, rowsRegionCell } from './dumpData';
+import { WithdrawRequestHeadTable, rowsRegionCell } from './config';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 
 const MuiListItemText = styled(ListItemText)({
@@ -205,7 +205,7 @@ function WithdrawRequestsContainer() {
             1400 items
           </Typography>
         </Stack>
-        <HerondTable pageIndex={1} totalPages={1} headCells={RegionHeadCell} rows={withDrawalData} />
+        <HerondTable pageIndex={1} totalPages={1} headCells={WithdrawRequestHeadTable} rows={withDrawalData} />
       </Box>
       <Modal
         open={showModalReject}
