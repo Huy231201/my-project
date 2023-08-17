@@ -11,6 +11,7 @@ const Main = styled('main', { shouldForwardProp: prop => prop !== 'open' })<{
   flexGrow: 1,
   display: 'flex',
   marginTop: APP_BAR_HEIGHT,
+  backgroundColor: '#EEF1F5',
 }));
 
 const MainLayout: FC<{ children: ReactNode }> = ({ children }) => (
@@ -23,8 +24,6 @@ const MainLayout: FC<{ children: ReactNode }> = ({ children }) => (
         sx={{
           padding: '0px !important',
           minHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
-          // width: `calc(100vw - ${DRAWER_SIDEBAR_WIDTH}px)`,
-          backgroundColor: '#EEF1F5',
           position: 'relative',
         }}
       >

@@ -132,7 +132,6 @@ function ResponsiveAppBar() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              mr: 1.5,
             }}
           >
             <Button
@@ -192,7 +191,7 @@ function ResponsiveAppBar() {
                 </Menu>
               </>
             ) : (
-              <ConfirmButton type="button" label={window.T('Login')} sx={{ mr: 1 }} onClick={handleLogin} />
+              <ConfirmButton type="button" label={window.T('Login')} onClick={handleLogin} />
             )}
           </Box>
         </Toolbar>

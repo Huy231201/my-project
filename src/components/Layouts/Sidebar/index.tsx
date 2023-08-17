@@ -23,6 +23,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  border: 'none',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -34,6 +35,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   }),
   overflowX: 'hidden',
   width: DRAWER_SIDEBAR_WIDTH_MINI,
+  border: 'none',
   [theme.breakpoints.up('sm')]: {
     width: DRAWER_SIDEBAR_WIDTH_MINI,
   },

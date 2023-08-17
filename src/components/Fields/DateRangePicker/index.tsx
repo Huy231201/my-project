@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import DatePicker from 'react-datepicker';
 import InputDatePicker from '../InputDatePicker';
+import useWindowResize from '@/hooks/useWindowResize';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -15,6 +16,7 @@ interface Props {
 
 function DateRangePicker(props: Props) {
   const { value, onChange, minDate, maxDate, dateFormat = 'dd/MM/yyyy' } = props;
+  const { isMobile } = useWindowResize();
 
   const [dateRange, setDateRange] = useState<Array<Date | null>>(value);
   const [startDate, endDate] = dateRange || [null, null];
@@ -32,11 +34,12 @@ function DateRangePicker(props: Props) {
   return (
     <DatePicker
       selectsRange
+      selected={null}
       dateFormat={dateFormat}
       startDate={startDate}
       endDate={endDate}
       onChange={handleChange}
-      monthsShown={2}
+      monthsShown={isMobile ? 1 : 2}
       customInput={<InputDatePicker />}
       minDate={minDate}
       maxDate={maxDate}

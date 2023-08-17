@@ -145,9 +145,19 @@ function BrowserMetric() {
         py: 3,
       }}
     >
-      <Stack direction="row" justifyContent="space-between">
+      <Stack
+        direction={{
+          xs: 'column',
+          sm: 'row',
+        }}
+        justifyContent="space-between"
+        spacing={{
+          xs: 2,
+          sm: 0,
+        }}
+      >
         <Typography variant="h3">{window.T('Overview')}</Typography>
-        <Box>
+        <Box display="flex" justifyContent="flex-end">
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
         </Box>
       </Stack>
