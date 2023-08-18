@@ -34,7 +34,7 @@ function DateRangePicker(props: Props) {
   return (
     <DatePicker
       selectsRange
-      selected={null}
+      selected={endDate}
       dateFormat={dateFormat}
       startDate={startDate}
       endDate={endDate}

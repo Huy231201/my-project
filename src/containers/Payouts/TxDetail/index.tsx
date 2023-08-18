@@ -2,7 +2,7 @@ import { CancelButton } from '@/components/Buttons';
 import { CardHeader } from '@/components/Card';
 import HerondIcon from '@/components/Icons';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
-import StatusLabel from '@/components/StatusLabel';
+import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import HerondTable from '@/components/Table';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -40,7 +40,12 @@ const MuiListItemText = styled(ListItemText)({
   },
 });
 
-function PayoutsDetailContainer(props) {
+interface Props {
+  open: boolean;
+  onClose: () => void;
+}
+
+function TxDetailModal(props: Props) {
   const { open, onClose } = props;
   const [showModalReject, setShowModalReject] = useState<boolean>(false);
 
@@ -123,8 +128,12 @@ function PayoutsDetailContainer(props) {
                 sx={{
                   backgroundColor: '#fff',
                   borderRadius: 1,
-                  p: 4,
                   height: '100%',
+                  p: {
+                    xs: 2,
+                    sm: 3,
+                    md: 4,
+                  },
                 }}
               >
                 <Grid container>
@@ -141,7 +150,7 @@ function PayoutsDetailContainer(props) {
                       }}
                     >
                       <CardHeader label={window.T('Payout Status')} icon="receive" />
-                      <StatusLabel status="pending" />
+                      <StatusLabel status={StatusEnum.PENDING} />
                     </Stack>
 
                     <Grid mt={2} container>
@@ -195,8 +204,12 @@ function PayoutsDetailContainer(props) {
                 sx={{
                   backgroundColor: '#fff',
                   borderRadius: 1,
-                  p: 4,
                   height: '100%',
+                  p: {
+                    xs: 2,
+                    sm: 3,
+                    md: 4,
+                  },
                 }}
               >
                 <CardHeader label={window.T('Payout details')} icon="receive" />
@@ -230,8 +243,12 @@ function PayoutsDetailContainer(props) {
             mt={4}
             sx={{
               background: '#fff',
-              p: 4,
               borderRadius: 1,
+              p: {
+                xs: 2,
+                sm: 3,
+                md: 4,
+              },
             }}
           >
             <Stack direction="row" justifyContent="space-between" mt={1} mb={3}>
@@ -287,4 +304,4 @@ function PayoutsDetailContainer(props) {
   );
 }
 
-export default PayoutsDetailContainer;
+export default TxDetailModal;

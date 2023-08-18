@@ -1,7 +1,7 @@
 import { CancelButton, ConfirmButton } from '@/components/Buttons';
 import { CardHeader } from '@/components/Card';
 import HerondIcon from '@/components/Icons';
-import StatusLabel from '@/components/StatusLabel';
+import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import HerondTable from '@/components/Table';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -151,8 +151,12 @@ function PayoutsDetailContainer() {
             sx={{
               backgroundColor: '#fff',
               borderRadius: 1,
-              p: 4,
               height: '100%',
+              p: {
+                xs: 2,
+                sm: 3,
+                md: 4,
+              },
             }}
           >
             <Stack direction="row" justifyContent="space-between">
@@ -197,8 +201,12 @@ function PayoutsDetailContainer() {
             sx={{
               backgroundColor: '#fff',
               borderRadius: 1,
-              p: 4,
               height: '100%',
+              p: {
+                xs: 2,
+                sm: 3,
+                md: 4,
+              },
             }}
           >
             <Stack direction="row" justifyContent="space-between">
@@ -214,7 +222,7 @@ function PayoutsDetailContainer() {
                 }}
               >
                 <CardHeader label={window.T('Payout Status')} icon="receive" />
-                <StatusLabel status="pending" />
+                <StatusLabel status={StatusEnum.PENDING} />
               </Stack>
               <Stack direction="row" spacing={2}>
                 <CancelButton
@@ -258,7 +266,11 @@ function PayoutsDetailContainer() {
         mt={4}
         sx={{
           background: '#fff',
-          p: 4,
+          p: {
+            xs: 2,
+            sm: 3,
+            md: 4,
+          },
         }}
       >
         <Stack direction="row" justifyContent="space-between" mt={1} mb={3}>

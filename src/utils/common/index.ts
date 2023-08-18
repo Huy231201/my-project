@@ -20,7 +20,8 @@ export const setCredential = (credentials: CredentialsType) => {
 };
 
 export function numberWithCommas(x = 0) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const fixedX = Number(Number(x).toFixed(2));
+  return fixedX.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export const validateEmail = (email = '') =>

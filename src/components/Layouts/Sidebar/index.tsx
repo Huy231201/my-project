@@ -3,7 +3,7 @@ import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DRAWER_SIDEBAR_WIDTH, DRAWER_SIDEBAR_WIDTH_MINI, APP_BAR_HEIGHT } from '../constants';
+import { DRAWER_SIDEBAR_WIDTH, DRAWER_SIDEBAR_WIDTH_CLOSE, APP_BAR_HEIGHT } from '../constants';
 import SidebarItem from './SidebarItem';
 import { getAccessToken } from '@/utils/common';
 import { Theme, CSSObject, styled } from '@mui/material/styles';
@@ -34,10 +34,10 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  width: DRAWER_SIDEBAR_WIDTH_MINI,
+  width: DRAWER_SIDEBAR_WIDTH_CLOSE,
   border: 'none',
   [theme.breakpoints.up('sm')]: {
-    width: DRAWER_SIDEBAR_WIDTH_MINI,
+    width: DRAWER_SIDEBAR_WIDTH_CLOSE,
   },
 });
 

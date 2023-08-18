@@ -32,7 +32,11 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
             borderRadius: 1,
             minHeight: 500,
             position: 'relative',
-            p: 4,
+            p: {
+              xs: 2,
+              sm: 3,
+              md: 4,
+            },
           }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
@@ -70,12 +74,16 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
           sx={{
             backgroundColor: 'white',
             borderRadius: 1,
-            p: 4,
             minHeight: 500,
+            p: {
+              xs: 2,
+              sm: 3,
+              md: 4,
+            },
           }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h4" fontSize="18px">
+            <Typography variant="h4" fontSize="18px" className="truncate-2">
               {title}
             </Typography>
           </Stack>
@@ -85,6 +93,7 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
             sx={{
               height: 22,
             }}
+            className="truncate-1"
           >
             {metricDetail?.axisYLabel}
           </Typography>

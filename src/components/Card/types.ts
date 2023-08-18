@@ -5,4 +5,5 @@ export interface SimpleCardProps {
   subLabel?: string;
   icon: SvgName;
   content?: string;
+  tooltipContent?: string;
 }
