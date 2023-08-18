@@ -51,7 +51,7 @@ const UserTable = (props: Props) => {
       }));
       setRows(newData);
     }
-  }, [data]);
+  }, [data?.length]);
 
   return (
     <Box
@@ -68,7 +68,7 @@ const UserTable = (props: Props) => {
     >
       <Stack pb={3} direction="row" justifyContent="space-between">
         <Typography variant="h4">{title}</Typography>
-        <Typography variant="body1">{renderTotal(0, 'item')}</Typography>
+        <Typography variant="body1">{renderTotal(data?.totalCount || data?.length, 'item')}</Typography>
       </Stack>
       <HerondTable
         loading={isFetching}

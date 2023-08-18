@@ -46,16 +46,6 @@
       "pre-commit": "tsc --noEmit && lint-staged"
     }
   },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
-      "npm run lint:fix",
-      "git add --force"
-    ],
-    "**/*.{js,ts,css,md,html,json}": [
-      "prettier --write",
-      "git add --force"
-    ]
-  },
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

@@ -31,7 +31,7 @@ const PAGE_SIZE = 10;
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'start',
   margin: 4,
   '& .MuiListItemText-primary': {
     fontSize: 16,
@@ -42,6 +42,7 @@ const MuiListItemText = styled(ListItemText)({
     fontSize: 16,
     fontWeight: 400,
     color: '#202226',
+    lineBreak: 'anywhere',
     '& a': {
       color: '#202226',
       '&:hover': {
@@ -320,11 +321,14 @@ function UserDetailContainer() {
       <Typography variant="h3">{window.T('Affiliate user details')}</Typography>
       <Box
         mt={2}
-        mb={4}
+        mb={2}
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          flexDirection: {
+            xs: 'column',
+            md: 'row',
+          },
         }}
       >
         <SearchInputField
@@ -340,7 +344,14 @@ function UserDetailContainer() {
           onSubmit={handleSearchUserEmail}
         />
         {dataGetUserFromEmail?.length > 0 && (
-          <Box>
+          <Box
+            sx={{
+              mt: {
+                xs: 2,
+                md: 0,
+              },
+            }}
+          >
             <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
           </Box>
         )}
