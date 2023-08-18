@@ -204,7 +204,11 @@ function UserDetailContainer() {
           sx={{
             backgroundColor: '#fff',
             borderRadius: 1,
-            p: 4,
+            p: {
+              xs: 2,
+              sm: 3,
+              md: 4,
+            },
           }}
         >
           <CardHeader label={window.T('User information')} icon="user" />

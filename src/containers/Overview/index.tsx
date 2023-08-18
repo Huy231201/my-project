@@ -22,6 +22,7 @@ import { numberWithCommas } from '@/utils/common';
 interface CardDataProps extends SimpleCardProps {
   id: number;
   contentKey: string;
+  tooltipContent?: string;
 }
 
 interface FilterProps {
@@ -35,24 +36,28 @@ const CardDataDefault = [
     label: window.T('Daily Active User'),
     icon: 'user-group-orange',
     contentKey: 'dau',
+    tooltipContent: 'Trung bình cộng của số User sử dụng browser mỗi ngày',
   },
   {
     id: 2,
     label: window.T('Downloads'),
     icon: 'download',
     contentKey: 'downloads',
+    tooltipContent: 'Tổng số Download browser',
   },
   {
     id: 3,
     label: window.T('Valid Users'),
     icon: 'user',
     contentKey: 'valid',
+    tooltipContent: 'Tổng số User đã đủ điều kiện là valid user (download, đăng nhập social, sử dụng 14 ngày)',
   },
   {
     id: 4,
     label: window.T('Click-through Rate'),
     icon: 'percentage',
     contentKey: 'rate',
+    tooltipContent: '=(Valid Users)/(Downloads)*100',
   },
   {
     id: 5,
@@ -60,6 +65,7 @@ const CardDataDefault = [
     subLabel: window.T('(USDT)'),
     icon: 'dollar',
     contentKey: 'totalCost',
+    tooltipContent: 'Tổng số tiền mà các Affiliate User đã earn được',
   },
   {
     id: 6,
@@ -67,12 +73,14 @@ const CardDataDefault = [
     subLabel: window.T('(USDT)'),
     icon: 'receive',
     contentKey: 'totalWithdraw',
+    tooltipContent: 'Tổng số tiền mà các Affiliate Users đã rút thành công',
   },
   {
     id: 7,
     label: window.T('Affiliate Users'),
     icon: 'sharing',
     contentKey: 'user',
+    tooltipContent: 'Tổng số Affiliate User đã tham gia chương trình',
   },
   {
     id: 8,
@@ -80,6 +88,7 @@ const CardDataDefault = [
     subLabel: window.T('(USDT)'),
     icon: 'dollar',
     contentKey: 'cost',
+    tooltipContent: '=(Total Cost)/(Affiliate Users)',
   },
 ] as CardDataProps[];
 
@@ -145,16 +154,32 @@ function BrowserMetric() {
         py: 3,
       }}
     >
-      <Stack direction="row" justifyContent="space-between">
+      <Stack
+        direction={{
+          xs: 'column',
+          sm: 'row',
+        }}
+        justifyContent="space-between"
+        spacing={{
+          xs: 2,
+          sm: 0,
+        }}
+      >
         <Typography variant="h3">{window.T('Overview')}</Typography>
-        <Box>
+        <Box display="flex" justifyContent="flex-end">
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
         </Box>
       </Stack>
       <Grid container spacing={2} mb={4}>
         {cardData.map(item => (
           <Grid key={item.id} item xs={12} md={6} lg={3}>
-            <SimpleCard label={item.label} subLabel={item?.subLabel} icon={item.icon} content={item.content} />
+            <SimpleCard
+              label={item.label}
+              subLabel={item?.subLabel}
+              icon={item.icon}
+              content={item.content}
+              tooltipContent={item.tooltipContent}
+            />
           </Grid>
         ))}
       </Grid>

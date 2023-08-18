@@ -43,6 +43,8 @@ function LoginContainer() {
         boxShadow: 'none',
         textAlign: 'center',
         py: 12,
+        borderRadius: 0,
+        backgroundColor: 'transparent',
       }}
     >
       <Typography variant="h3">{window.T('Please login first')}</Typography>

@@ -101,13 +101,59 @@ function BrowserMetric() {
         py: 3,
       }}
     >
-      <Stack direction="row" justifyContent="space-between">
+      <Stack
+        direction={{
+          xs: 'column',
+          sm: 'row',
+        }}
+        spacing={{
+          xs: 2,
+          sm: 0,
+        }}
+        justifyContent="space-between"
+      >
         <Typography variant="h3">{window.T('Browser Metric')}</Typography>
-        <Box>
+        <Box
+          display="flex"
+          justifyContent={{
+            xs: 'space-between',
+            sm: 'flex-end',
+          }}
+        >
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            display={{
+              xs: 'flex',
+              sm: 'none',
+            }}
+            mb={2}
+          >
+            <Tooltip title="Filter list">
+              <IconButton
+                size="large"
+                sx={{
+                  '& svg': {
+                    fontSize: 24,
+                  },
+                }}
+                onClick={handleOpenFilterMetric}
+              >
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+          </Stack>
         </Box>
       </Stack>
-      <Stack direction="row" justifyContent="flex-end">
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        display={{
+          xs: 'none',
+          sm: 'flex',
+        }}
+      >
         <Tooltip title="Filter list">
           <IconButton
             size="large"
@@ -161,7 +207,11 @@ function BrowserMetric() {
                 variant="rectangular"
                 height={500}
                 sx={{
-                  p: 4,
+                  p: {
+                    xs: 2,
+                    sm: 3,
+                    md: 4,
+                  },
                   borderRadius: 1,
                 }}
               />

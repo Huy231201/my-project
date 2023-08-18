@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ListItem from '@mui/material/ListItem';
 import { styled, useTheme, CSSObject, Theme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import HerondIcon, { SvgName } from '@/components/Icons';
+import useWindowResize from '@/hooks/useWindowResize';
 
 interface Props {
   active: boolean;
@@ -44,7 +45,14 @@ const closedMixin = (theme: Theme): CSSObject => ({
 function SidebarItem(props: Props) {
   const { active, openDrawer, label, nameIcon, nameHoverIcon, onClick } = props;
   const theme = useTheme();
+  const { isMobile } = useWindowResize();
   const [isHover, setIsHover] = useState(false);
+
+  useEffect(() => {
+    if (isHover && isMobile) {
+      setIsHover(false);
+    }
+  }, [isMobile, isHover]);
 
   return (
     <MuiListItem

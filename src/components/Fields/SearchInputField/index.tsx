@@ -44,7 +44,7 @@ interface Props {
 function SearchInputField(props: Props) {
   const { sx, label, msgError, placeholder, ariaLabel, validate = () => {}, onChange, onSubmit } = props;
 
-  const [searchText, setSearchText] = useState('BRVZNZNL42IEUNC@gmail.com');
+  const [searchText, setSearchText] = useState('');
   const [isError, setIsError] = useState(false);
   const searchTextDebounce = useDebounce(searchText, 300);
 
@@ -77,14 +77,13 @@ function SearchInputField(props: Props) {
   };
 
   return (
-    <Box>
+    <Box sx={sx}>
       {label && (
         <Typography variant="subtitle1" sx={{ mr: 1 }}>
           {label}
         </Typography>
       )}
       <MuiInputBase
-        sx={sx}
         placeholder={placeholder}
         inputProps={{ 'aria-label': ariaLabel }}
         endAdornment={

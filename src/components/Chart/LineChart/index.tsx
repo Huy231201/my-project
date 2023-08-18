@@ -171,6 +171,7 @@ function LineChart(props: LineChartProps) {
     <Box
       sx={{
         minHeight: 360,
+        width: '100%',
       }}
     >
       <Line

@@ -143,13 +143,8 @@ input:disabled {
   background-color: #8995a6;
   background: #8995a6;
 }
-.react-datepicker-popper {
-  min-width: 330px;
-}
-.react-datepicker-popper .react-datepicker__triangle {
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
+
+/* Truncate */
 
 .truncate-1 {
   overflow: hidden;
@@ -157,7 +152,7 @@ input:disabled {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  line-break: anywhere;
+  display: inline-block;
 }
 
 .truncate-2 {
@@ -166,7 +161,7 @@ input:disabled {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  line-break: anywhere;
+  display: inline-block;
 }
 
 .truncate-3 {
@@ -175,7 +170,7 @@ input:disabled {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  line-break: anywhere;
+  display: inline-block;
 }
 
 .truncate-4 {
@@ -184,58 +179,5 @@ input:disabled {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
-  line-break: anywhere;
-}
-.Toastify__toast-container {
-  width: 260px !important;
-  z-index: 10000 !important;
-  left: unset !important;
-}
-.Toastify__toast-container svg {
-  height: 100% !important;
-}
-.Toastify__toast {
-  min-height: 44px !important;
-  margin: 0;
-}
-
-.Toastify__toast--success {
-  background-color: #eef8eb !important;
-  color: #333840 !important;
-}
-.Toastify__toast.Toastify__toast-body {
-  color: #333840 !important;
-  font-size: 13px;
-}
-.Toastify__toast .Toastify__toast--error {
-  height: 44px !important;
-  padding: 0px 8px !important;
-  display: flex;
-  align-items: center;
-}
-
-.react-datepicker {
-  font-size: 1.4rem !important;
-}
-
-.react-datepicker__current-month {
-  font-size: 1.6rem !important;
-}
-
-.react-datepicker__header {
-  padding-top: 8px !important;
-}
-
-.react-datepicker__navigation {
-  top: 6px !important;
-}
-
-.react-datepicker__day-name,
-.react-datepicker__day {
-  margin: 0.5rem !important;
-  width: 2.4rem !important;
-  line-height: 2.4rem !important;
-}
-.react-datepicker__triangle {
-  display: none !important;
+  display: inline-block;
 }

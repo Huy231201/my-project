@@ -6,7 +6,7 @@ interface Props {
   content: string;
 }
 
-const UserInfoContent = (props: Props) => {
+const UserInfoContent = (props: Props): JSX.Element => {
   const { loading, content } = props;
   if (loading) {
     return (
@@ -20,7 +20,7 @@ const UserInfoContent = (props: Props) => {
       />
     );
   }
-  return content;
+  return <>{content}</>;
 };
 
 export default UserInfoContent;

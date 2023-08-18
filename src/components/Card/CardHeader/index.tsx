@@ -8,9 +8,10 @@ interface Props {
   label: string;
   subLabel?: string;
   icon: SvgName;
+  tooltipContent?: string;
 }
 
-const CardHeader = ({ label, subLabel, icon }: Props) => (
+const CardHeader = ({ label, subLabel, icon, tooltipContent }: Props) => (
   <Stack direction="row" alignItems="center" spacing={1}>
     <Box
       sx={{
@@ -48,7 +49,7 @@ const CardHeader = ({ label, subLabel, icon }: Props) => (
         </Typography>
       )}
     </Box>
-    <Tooltip title="More information">
+    <Tooltip title={tooltipContent}>
       <Box
         sx={{
           flexShrink: 0,

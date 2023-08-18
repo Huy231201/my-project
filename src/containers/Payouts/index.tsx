@@ -104,8 +104,12 @@ function WithdrawRequestsContainer() {
       <Box
         sx={{
           background: '#fff',
-          p: 4,
           borderRadius: 1.5,
+          p: {
+            xs: 2,
+            sm: 3,
+            md: 4,
+          },
         }}
       >
         <Box>
@@ -118,7 +122,15 @@ function WithdrawRequestsContainer() {
             {window.T('Payouts')}
           </Typography>
         </Box>
-        <Stack mt={4} mb={1} direction="row" justifyContent="space-between">
+        <Stack
+          mt={4}
+          mb={1}
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+          justifyContent="space-between"
+        >
           <Stack direction="row">
             <Button
               variant="outlined"
@@ -132,7 +144,14 @@ function WithdrawRequestsContainer() {
               {window.T('Create new payout')}
             </Button>
           </Stack>
-          <Stack direction="row" justifyContent="center" spacing={1.5}>
+          <Stack
+            direction={{
+              xs: 'column',
+              md: 'row',
+            }}
+            justifyContent="center"
+            spacing={1.5}
+          >
             <Typography variant="body1">43 items</Typography>
             <Box>
               <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
