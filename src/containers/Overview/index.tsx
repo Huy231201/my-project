@@ -166,7 +166,7 @@ function BrowserMetric() {
         }}
       >
         <Typography variant="h3">{window.T('Overview')}</Typography>
-        <Box display="flex" justifyContent="flex-end">
+        <Box>
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
         </Box>
       </Stack>
