@@ -17,12 +17,11 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: copy file to server
-      uses: appleboy/scp-action@v0.1.4
+    - name: copy folder to remote     
+      uses: garygrossgarten/github-action-scp@release
       with:
+        local: dist
+        remote: /home/azureuser/herond/portal-fe
         host: ${{ secrets.AZ_VM_HOST }}
         username: ${{ secrets.AZ_VM_USERNAME }}
-        port: 22
-        key: ${{ secrets.AZ_VM_SSH_KEY }}
-        source: /home/runner/work/herond-portal-fe/herond-portal-fe/dist/*
-        target: /home/azureuser/herond/portal-fe
+        privateKey: ${{ secrets.AZ_VM_SSH_KEY }}
