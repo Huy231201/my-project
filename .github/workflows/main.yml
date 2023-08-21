@@ -20,7 +20,7 @@ jobs:
     - name: copy folder to remote     
       uses: garygrossgarten/github-action-scp@release
       with:
-        local: ${{GITHUB_WORKSPACE}}/dist
+        local: ${{ github.workspace }}/dist
         remote: /home/azureuser/herond/portal-fe
         host: ${{ secrets.AZ_VM_HOST }}
         username: ${{ secrets.AZ_VM_USERNAME }}
