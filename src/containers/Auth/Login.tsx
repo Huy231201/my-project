@@ -49,6 +49,8 @@ function LoginContainer() {
     >
       <Typography variant="h3">{window.T('Please login first')}</Typography>
 
+      <div>aaa {import.meta.env.VITE_API_URL}</div>
+
       {isLoading && (
         <Box
           sx={{
