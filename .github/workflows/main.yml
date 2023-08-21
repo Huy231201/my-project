@@ -1,0 +1,28 @@
+name: Manual Build
+run-name: Build manually triggered by ${{ github.actor }}
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Build tag"
+        required: true
+        default: "latest"
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.AZ_VM_HOST }}
+        username: ${{ secrets.AZ_VM_USERNAME }}
+        port: 22
+        key: ${{ secrets.AZ_VM_SSH_KEY }}
+        source: /build
+        target: /home/azureuser/herond/portal-fe
