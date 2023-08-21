@@ -18,9 +18,9 @@ jobs:
       with:
         node-version: 16
     - name: Install node modules
-      run: npm install
+      run: yarn
     - name: Build
-      run: npm run build
+      run: yarn build
     - name: copy folder to remote     
       uses: garygrossgarten/github-action-scp@release
       with:
