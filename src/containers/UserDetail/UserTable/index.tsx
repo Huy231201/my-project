@@ -2,10 +2,13 @@ import HerondTable from '@/components/Table';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { renderTotal } from '@/utils/common';
+import { renderTotal, truncateStr } from '@/utils/common';
 import { HeaderCellProps, RowProp } from '@/components/Table/utils';
 import { useState, useEffect } from 'react';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
+import dayjs from 'dayjs';
+import { formatDate } from '@/utils/date';
+
 interface Params {
   id: string;
   pageIndex: number;
@@ -16,6 +19,8 @@ interface Params {
 
 interface RowData extends RowProp {
   status?: StatusEnum;
+  transactionId?: string;
+  createdDateTime?: string;
 }
 
 interface Props {
@@ -44,6 +49,8 @@ const UserTable = (props: Props) => {
       const list = Array.isArray(data) ? data : data?.items;
       const newData = (list || []).map((item: RowData, index: number) => ({
         ...item,
+        createdDateTime: formatDate(item?.createdDateTime),
+        transactionId: truncateStr(item?.transactionId),
         order: index + 1,
         ...(item.status && {
           status: <StatusLabel status={item.status} />,
@@ -51,7 +58,7 @@ const UserTable = (props: Props) => {
       }));
       setRows(newData);
     }
-  }, [data?.length]);
+  }, [data?.pageIndex, isFetching]);
 
   return (
     <Box

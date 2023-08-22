@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import Button from '@mui/material/Button';
 import { withStyles } from '@mui/styles';
 import { alpha, SxProps, Theme } from '@mui/material/styles';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const MuiButton = withStyles(() => ({
   root: {
@@ -15,20 +15,29 @@ const MuiButton = withStyles(() => ({
       backgroundColor: alpha('#FFF', 0.6),
     },
     fontWeight: 700,
+    '&:disabled': {
+      borderColor: 'rgb(238 238 238)',
+    },
+    '& .MuiLoadingButton-loadingIndicator': {
+      marginRight: 16,
+      position: 'relative',
+    },
   },
-}))(Button);
+}))(LoadingButton);
 
 type Props = {
   label?: string;
+  loading?: boolean;
+  disabled?: boolean;
   type: 'button' | 'submit' | 'reset';
   sx?: SxProps<Theme>;
   onClick?: () => void;
 };
 
 function CancelButton(props: Props) {
-  const { type = 'button', label = 'Reject', sx = {}, onClick } = props;
+  const { type = 'button', label = 'Reject', loading, disabled, sx = {}, onClick } = props;
   return (
-    <MuiButton type={type} variant="outlined" sx={sx} onClick={onClick}>
+    <MuiButton type={type} loadingPosition="start" sx={sx} loading={loading} disabled={disabled} onClick={onClick}>
       {label}
     </MuiButton>
   );

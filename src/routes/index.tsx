@@ -1,10 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { Suspense, FC, ReactNode } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'react-hot-toast';
 import { routeConfig } from './config';
 import AuthLayout from './AuthLayout';
-
-import 'react-toastify/dist/ReactToastify.css';
 
 const LayoutDefault: FC<{ children: ReactNode }> = ({ children }) => <>{children}</>;
 
@@ -18,15 +16,17 @@ function Routing() {
           element={
             <AuthLayout isPrivate={isPrivate}>
               <Layout>
-                <ToastContainer
+                <Toaster
                   position="bottom-right"
-                  autoClose={3000}
-                  hideProgressBar
-                  pauseOnFocusLoss
-                  pauseOnHover
-                  closeOnClick
-                  rtl={false}
-                  draggable
+                  reverseOrder={false}
+                  gutter={8}
+                  containerClassName=""
+                  containerStyle={{}}
+                  toastOptions={{
+                    // Define default options
+                    className: '',
+                    duration: 3000,
+                  }}
                 />
                 <Suspense fallback={null}>
                   <Component />

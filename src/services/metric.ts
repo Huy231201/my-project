@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import { api } from './api';
+import { removeNullParams } from '@/utils/common';
 
 export const Api = api.injectEndpoints({
   endpoints: builder => ({
@@ -11,7 +12,7 @@ export const Api = api.injectEndpoints({
     }),
     getMetricDetail: builder.query({
       query: query => ({
-        url: `/metric/details?${queryString.stringify(query)}`,
+        url: `/metric/details?${queryString.stringify(removeNullParams(query))}`,
       }),
     }),
   }),

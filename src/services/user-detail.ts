@@ -1,11 +1,12 @@
 import queryString from 'query-string';
 import { api } from './api';
+import { removeNullParams } from '@/utils/common';
 
 export const Api = api.injectEndpoints({
   endpoints: builder => ({
     getUserFromEmail: builder.query({
       query: query => ({
-        url: `/user?${queryString.stringify(query)}`,
+        url: `/user?${queryString.stringify(removeNullParams(query))}`,
       }),
     }),
     getUserInfo: builder.query({
@@ -25,17 +26,17 @@ export const Api = api.injectEndpoints({
     }),
     getUserRecruited: builder.query({
       query: ({ id, ...rest }) => ({
-        url: `/user/${id}/recruited?${queryString.stringify(rest)}`,
+        url: `/user/${id}/recruited?${queryString.stringify(removeNullParams(rest))}`,
       }),
     }),
     getUserWithdrawHistory: builder.query({
       query: ({ id, ...rest }) => ({
-        url: `/user/${id}/withdraw-history?${queryString.stringify(rest)}`,
+        url: `/user/${id}/withdraw-history?${queryString.stringify(removeNullParams(rest))}`,
       }),
     }),
     getUserCode: builder.query({
       query: ({ id, ...rest }) => ({
-        url: `/user/${id}/code?${queryString.stringify(rest)}`,
+        url: `/user/${id}/code?${queryString.stringify(removeNullParams(rest))}`,
       }),
     }),
   }),

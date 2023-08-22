@@ -134,7 +134,7 @@ function ResponsiveAppBar() {
               justifyContent: 'center',
             }}
           >
-            <Button
+            {/* <Button
               id="basic-button"
               sx={{
                 border: 'none',
@@ -159,7 +159,7 @@ function ResponsiveAppBar() {
             >
               <MenuItem onClick={handleClose}>VI</MenuItem>
               <MenuItem onClick={handleClose}>EN</MenuItem>
-            </Menu>
+            </Menu> */}
             {isLogin ? (
               <>
                 <Tooltip title="Open settings">

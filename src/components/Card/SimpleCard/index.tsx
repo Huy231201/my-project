@@ -1,10 +1,11 @@
 import Box from '@mui/material/Box';
 import CardHeader from '../CardHeader';
 import { SimpleCardProps } from '../types';
-import FakeDumpContent from './FakeDumpContent';
+import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 
 function SimpleCard(props: SimpleCardProps) {
-  const { label, subLabel, icon, content, tooltipContent } = props;
+  const { loading, label, subLabel, icon, content, tooltipContent } = props;
 
   return (
     <Box
@@ -23,7 +24,19 @@ function SimpleCard(props: SimpleCardProps) {
     >
       <CardHeader label={label} subLabel={subLabel} icon={icon} tooltipContent={tooltipContent} />
       <Box my={2}>
-        <FakeDumpContent content={content} />
+        {loading ? (
+          <Skeleton variant="text" width={180} height={62} />
+        ) : (
+          <Typography
+            variant="h1"
+            component="p"
+            sx={{
+              fontSize: 44,
+            }}
+          >
+            {content || 0}
+          </Typography>
+        )}
       </Box>
     </Box>
   );

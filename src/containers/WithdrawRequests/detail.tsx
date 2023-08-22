@@ -1,24 +1,65 @@
-import { CancelButton } from '@/components/Buttons';
+import { CancelButton, ConfirmButton } from '@/components/Buttons';
 import { CardHeader } from '@/components/Card';
 import HerondIcon from '@/components/Icons';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import HerondTable from '@/components/Table';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Container from '@/components/Container';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { WithdrawRequestHeadTable, rowsRegionCell } from './config';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EarningDetailHeader } from './config';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
+import { useGetWithdrawDetailQuery, useGetWithdrawEarnQuery, useRejectPaymentsMutation } from '@/services/withdraw';
+import {
+  useGetPayoutDetailQuery,
+  useRemovePayoutTransactionMutation,
+  useRejectPayoutTransactionMutation,
+} from '@/services/payout';
+import { truncateStr } from '@/utils/common';
+import dayjs from 'dayjs';
+import toast from 'react-hot-toast';
+import { formatDate } from '@/utils/date';
+
+interface EarnItem {
+  id: string;
+  earnedAt: string;
+  amount: number;
+  status: StatusEnum;
+}
+
+enum ModalType {
+  PaymentReject = 'payment-reject',
+  PayoutTransactionRemove = 'payout-transaction-remove',
+  PayoutTransactionReject = 'payout-transaction-reject',
+}
+
+const MessageContentModal = {
+  [ModalType.PaymentReject]: {
+    title: window.T('Reject Payment'),
+    content: window.T('Are you sure you want to reject this payment?'),
+    btnConfirmName: window.T('Reject'),
+  },
+  [ModalType.PayoutTransactionRemove]: {
+    title: window.T('Remove Payout Transaction'),
+    content: window.T('Are you sure you want to remove this payout transaction?'),
+    btnConfirmName: window.T('Remove From Payout'),
+  },
+  [ModalType.PayoutTransactionReject]: {
+    title: window.T('Reject Payout Transaction'),
+    content: window.T('Are you sure you want to reject this payout transaction?'),
+    btnConfirmName: window.T('Reject From Payout & Reject'),
+  },
+};
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
+  flexFlow: 'wrap',
   alignItems: 'center',
   margin: 4,
   flex: 'initial',
@@ -26,6 +67,7 @@ const MuiListItemText = styled(ListItemText)({
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
+    whiteSpace: 'nowrap',
   },
   '& .MuiListItemText-secondary': {
     paddingLeft: 4,
@@ -41,37 +83,117 @@ const MuiListItemText = styled(ListItemText)({
   },
 });
 
-function WithdrawRequestsContainer() {
-  const navigate = useNavigate();
-  const [showModalReject, setShowModalReject] = useState<boolean>(false);
+interface Props {
+  isModal?: boolean;
+  transactionId?: string;
+  onBack?: () => void;
+}
 
-  const withDrawalData = useMemo(
+function WithdrawRequestsContainer(props: Props) {
+  const { isModal, transactionId: propsTransactionId, onBack } = props;
+  const navigate = useNavigate();
+  const params = useParams();
+  const transactionId = propsTransactionId || params?.id || null;
+
+  const [showModalConfirm, setShowModalConfirm] = useState<ModalType | null>(null);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  const {
+    data: detail,
+    isFetching: isFetchingDetail,
+    refetch: refetchWithdrawDetail,
+  } = useGetWithdrawDetailQuery(
+    {
+      transactionId: transactionId,
+    },
+    {
+      skip: !transactionId,
+    },
+  );
+
+  const { amount, deadLine, createdAt, address, status, createdBy, payoutId } = detail || {};
+
+  const { data: earnData, isFetching: isFetchingEarn } = useGetWithdrawEarnQuery(
+    {
+      transactionId: transactionId,
+      pageIndex: pageIndex,
+      pageSize: 10,
+    },
+    {
+      skip: !transactionId,
+    },
+  );
+
+  const { data: payoutDetail } = useGetPayoutDetailQuery(
+    {
+      id: payoutId,
+    },
+    {
+      skip: !payoutId,
+    },
+  );
+
+  const [rejectPayment, { isLoading: isRejectPayment }] = useRejectPaymentsMutation();
+  const [removePayoutTransaction, { isLoading: isRemovingPayoutTransaction }] = useRemovePayoutTransactionMutation();
+  const [rejectPayoutTransaction, { isLoading: isRejectPayoutTransaction }] = useRejectPayoutTransactionMutation();
+
+  const handleChangePage = (page: number) => {
+    setPageIndex(page);
+  };
+
+  const onCloseModal = () => {
+    setShowModalConfirm(null);
+  };
+
+  const onShowModalType = (type: ModalType) => () => {
+    setShowModalConfirm(type);
+  };
+
+  const handleRejectPayment = async () => {
+    const api = {
+      [ModalType.PaymentReject]: rejectPayment,
+      [ModalType.PayoutTransactionRemove]: removePayoutTransaction,
+      [ModalType.PayoutTransactionReject]: rejectPayoutTransaction,
+    } as {
+      [key in ModalType]: any;
+    };
+    if (showModalConfirm && api?.[showModalConfirm]) {
+      try {
+        const res = await api[showModalConfirm]({
+          payoutId: payoutId,
+          transactionIds: [transactionId],
+        }).unwrap();
+        refetchWithdrawDetail();
+        onCloseModal();
+        if (onBack) {
+          onBack();
+        }
+        toast.success(window.T(res?.message || 'Reject payment successfully'));
+      } catch (error) {
+        // toast.error(window.T('Reject payment failed'));
+      }
+    }
+  };
+
+  const EarnDataTable = useMemo(
     () =>
-      rowsRegionCell().map((item: any) => ({
-        ...item,
-        checkbox: !['approved', 'rejected'].includes(item.status.toLowerCase()),
-        email: (
-          <Link
-            component="a"
-            href={`mailto:${item?.email}`}
-            sx={{
-              color: '#0066F4',
-            }}
-          >
-            {item.email}
-          </Link>
-        ),
+      (earnData?.items || []).map((item: EarnItem) => ({
+        id: item?.id,
+        earnedAt: item?.earnedAt ? dayjs(item.earnedAt).format('MM/DD/YYYY HH:mm') : '',
+        amount: item?.amount,
         status: <StatusLabel status={item.status} />,
       })),
-    [],
+    [earnData?.pageIndex],
   );
 
   return (
     <Container
-      maxWidth={false}
+      loading={isFetchingDetail || isFetchingEarn}
       sx={{
-        py: 3,
-        position: 'relative',
+        ...(isModal && {
+          marginTop: -6,
+          padding: '8px !important',
+        }),
       }}
     >
       <Stack
@@ -79,6 +201,7 @@ function WithdrawRequestsContainer() {
         alignItems="center"
         spacing={0.5}
         sx={{
+          display: isModal ? 'none' : 'flex',
           '& svg': {
             width: '20px',
             height: '20px',
@@ -112,90 +235,125 @@ function WithdrawRequestsContainer() {
               },
             }}
           >
-            <Stack direction="row" justifyContent="space-between">
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{
-                  '& .status-label': {
-                    fontSize: 18,
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                  },
-                }}
-              >
-                <CardHeader label={window.T('Withdraw Transactions Details')} icon="receive" />
-                <StatusLabel status={StatusEnum.PENDING} />
-              </Stack>
-              <CancelButton
-                type="button"
-                label={window.T('Reject')}
-                sx={{
-                  minWidth: '120px !important',
-                }}
-                onClick={() => setShowModalReject(true)}
-              />
-            </Stack>
-            <Grid mt={2} container>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Transaction Id')}:`} secondary={1} />
+            <Grid container>
+              <Grid item xs={12} md={9}>
+                <Stack direction="row" justifyContent="space-between">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={2}
+                    mr={2}
+                    sx={{
+                      '& .status-label': {
+                        fontSize: 18,
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                      },
+                    }}
+                  >
+                    <CardHeader label={window.T('Withdraw Transactions Details')} icon="receive" />
+                    <StatusLabel status={status} />
+                  </Stack>
+                </Stack>
+                <Stack mt={1}>
+                  <MuiListItemText primary={`${window.T('Transaction Id')}:`} secondary={truncateStr(transactionId)} />
+                  <MuiListItemText primary={`${window.T('Amount')}:`} secondary={amount || 0} />
+                  <MuiListItemText primary={`${window.T('Deadline')}:`} secondary={formatDate(deadLine)} />
+                  <MuiListItemText primary={`${window.T('Create At')}:`} secondary={formatDate(createdAt)} />
+                  <MuiListItemText primary={`${window.T('Create By')}:`} secondary={createdBy} />
+                  <MuiListItemText primary={`${window.T('Withdraw wallet address')}:`} secondary={address || ''} />
+                </Stack>
               </Grid>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Amount')}:`} secondary={2} />
-              </Grid>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Deadline')}:`} secondary={3} />
-              </Grid>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Create At')}:`} secondary={4} />
-              </Grid>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Create By')}:`} secondary={4} />
-              </Grid>
-              <Grid item xs={12}>
-                <MuiListItemText primary={`${window.T('Withdraw wallet address')}:`} secondary={4} />
+              <Grid item xs={12} md={3}>
+                <Stack
+                  spacing={2}
+                  mt={{
+                    xs: 2,
+                    md: 0,
+                  }}
+                  direction={{
+                    xs: 'row',
+                    md: 'column',
+                  }}
+                >
+                  {status?.toLowerCase() === 'pending' &&
+                    (payoutId ? (
+                      <>
+                        <CancelButton
+                          type="button"
+                          label={window.T('Remove From Payout')}
+                          sx={{
+                            minWidth: '120px !important',
+                            height: 'auto !important',
+                            width: '100%',
+                          }}
+                          onClick={onShowModalType(ModalType.PayoutTransactionRemove)}
+                        />
+                        <CancelButton
+                          type="button"
+                          label={window.T('Remove From Payout & Reject ')}
+                          sx={{
+                            minWidth: '120px !important',
+                            height: 'auto !important',
+                            width: '100%',
+                          }}
+                          onClick={onShowModalType(ModalType.PayoutTransactionReject)}
+                        />
+                      </>
+                    ) : (
+                      <CancelButton
+                        type="button"
+                        label={window.T('Reject')}
+                        sx={{
+                          minWidth: '120px !important',
+                          height: 'auto !important',
+                        }}
+                        onClick={onShowModalType(ModalType.PaymentReject)}
+                      />
+                    ))}
+                </Stack>
               </Grid>
             </Grid>
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Box
-            sx={{
-              backgroundColor: '#fff',
-              borderRadius: 1,
-              height: '100%',
-              p: {
-                xs: 2,
-                sm: 3,
-                md: 4,
-              },
-            }}
-          >
-            <CardHeader label={window.T('Payout details')} icon="receive" />
-            <Grid mt={2} container>
-              <Grid item xs={12}>
-                <Stack direction="row" spacing={2}>
-                  <MuiListItemText primary={`${window.T('Payout Id')}:`} secondary={1} />
-                  <Typography variant="body1">&#8427;</Typography>
-                  <Typography variant="body1">{window.T('Does not appear in any payout')}</Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack direction="row" spacing={2}>
-                  <MuiListItemText primary={`${window.T('Rejected By')}:`} secondary={2} />
-                  <Typography variant="body1">&#8427;</Typography>
-                  <MuiListItemText primary={`${window.T('Approved By')}:`} secondary={2} />
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack direction="row" spacing={2}>
-                  <MuiListItemText primary={`${window.T('Rejected At')}:`} secondary={3} />
-                  <Typography variant="body1">&#8427;</Typography>
-                  <MuiListItemText primary={`${window.T('Approved At')}:`} secondary={3} />
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
+          {payoutId && (
+            <Box
+              sx={{
+                backgroundColor: '#fff',
+                borderRadius: 1,
+                height: '100%',
+                p: {
+                  xs: 2,
+                  sm: 3,
+                  xl: 4,
+                },
+              }}
+            >
+              <CardHeader label={window.T('Payout details')} icon="receive" />
+              <Stack mt={1}>
+                <MuiListItemText primary={`${window.T('Payout Id')}:`} secondary={payoutId} />
+                {payoutDetail?.action.toLowerCase() === 'complete' && (
+                  <>
+                    <MuiListItemText primary={`${window.T('Approved By')}:`} secondary={payoutDetail?.actor} />
+                    <MuiListItemText
+                      primary={`${window.T('Approved At')}:`}
+                      secondary={formatDate(payoutDetail?.actionAt)}
+                    />
+                  </>
+                )}
+                {payoutDetail?.action?.toLowerCase() === 'failed' && (
+                  <>
+                    <MuiListItemText primary={`${window.T('Rejected By')}:`} secondary={payoutDetail?.actor} />
+                    <MuiListItemText
+                      primary={`${window.T('Rejected At')}:`}
+                      secondary={formatDate(payoutDetail?.actionAt)}
+                    />
+                  </>
+                )}
+              </Stack>
+            </Box>
+          )}
         </Grid>
       </Grid>
       <Box
@@ -205,7 +363,7 @@ function WithdrawRequestsContainer() {
           p: {
             xs: 2,
             sm: 3,
-            md: 4,
+            xl: 4,
           },
         }}
       >
@@ -214,15 +372,21 @@ function WithdrawRequestsContainer() {
             {window.T('Earning Details')}
           </Typography>
           <Typography variant="body1" sx={{ fontSize: 16 }}>
-            1400 items
+            {`${earnData?.totalCount || 0} items`}
           </Typography>
         </Stack>
-        <HerondTable pageIndex={1} totalPages={1} headCells={WithdrawRequestHeadTable} rows={withDrawalData} />
+        <HerondTable
+          pageIndex={pageIndex}
+          totalPages={earnData?.totalPages || 1}
+          headCells={EarningDetailHeader}
+          rows={EarnDataTable}
+          onChangePage={handleChangePage}
+        />
       </Box>
       <Modal
-        open={showModalReject}
-        title={window.T('Do you want to reject this request?')}
-        onClose={() => setShowModalReject(false)}
+        open={!!showModalConfirm}
+        title={showModalConfirm ? MessageContentModal?.[showModalConfirm]?.title : ''}
+        onClose={onCloseModal}
         sxWrapper={{
           '& .MuiDialog-paper': {
             margin: '16px',
@@ -237,23 +401,26 @@ function WithdrawRequestsContainer() {
           }}
           dividers
         >
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {window.T(
-              'There are {{value}} users in this request. Do you want to reject this request? This action can’t be undone',
-              { value: 2 },
-            )}
+          <Typography variant="body1">
+            {showModalConfirm ? MessageContentModal?.[showModalConfirm]?.content : ''}
           </Typography>
+          <Typography variant="body1">{window.T('This action can’t be undone')}</Typography>
         </DialogContent>
         <DialogActions>
           <CancelButton
             type="submit"
             label={window.T('Cancel')}
-            onClick={() => setShowModalReject(false)}
             sx={{
               border: 'none !important',
             }}
+            onClick={onCloseModal}
           />
-          <CancelButton type="submit" label={window.T('Reject')} onClick={() => setShowModalReject(false)} />
+          <ConfirmButton
+            type="submit"
+            label={showModalConfirm ? MessageContentModal?.[showModalConfirm]?.btnConfirmName : ''}
+            onClick={handleRejectPayment}
+            loading={isRejectPayment || isRemovingPayoutTransaction || isRejectPayoutTransaction}
+          />
         </DialogActions>
       </Modal>
     </Container>

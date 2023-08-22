@@ -8,8 +8,10 @@ import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
 
 import { locale, extend } from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
+import updateLocale from 'dayjs/plugin/updateLocale';
 
 extend(weekday);
+extend(updateLocale);
 
 const getLanguage = () => LocalStorage.get(LOCAL_KEYS.LANGUAGE_TOKEN) || 'en';
 

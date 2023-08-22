@@ -6,4 +6,5 @@ export interface SimpleCardProps {
   icon: SvgName;
   content?: string;
   tooltipContent?: string;
+  loading?: boolean;
 }

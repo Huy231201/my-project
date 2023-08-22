@@ -7,13 +7,12 @@ export const RecruitedHeadTable: readonly HeaderCellProps[] = [
     order: 1,
     label: window.T('No.'),
     numeric: true,
-    width: 120,
   },
   {
     id: 'createdDateTime',
     order: 2,
     label: window.T('Wallet Creation Date'),
-    width: 360,
+    width: 200,
   },
   {
     id: 'address',
@@ -36,13 +35,12 @@ export const WithdrawalHistoryHeadTable: readonly HeaderCellProps[] = [
     order: 1,
     label: window.T('No.'),
     numeric: true,
-    width: 120,
   },
   {
     id: 'createdDateTime',
     order: 2,
-    label: window.T('Region'),
-    width: 360,
+    label: window.T('Creation Time'),
+    width: 200,
   },
   {
     id: 'transactionId',
@@ -71,18 +69,17 @@ export const LinkListHeadTable: readonly HeaderCellProps[] = [
     order: 1,
     label: window.T('No.'),
     numeric: true,
-    width: 120,
   },
   {
     id: 'createdDateTime',
     order: 2,
     label: window.T('Creation Time'),
-    width: 360,
+    width: 200,
   },
   {
     id: 'referralCode',
     order: 3,
-    label: window.T('Link'),
+    label: window.T('Referral Code'),
   },
   {
     id: 'clickCount',

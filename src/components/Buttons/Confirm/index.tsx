@@ -6,6 +6,8 @@ import { alpha, SxProps, Theme } from '@mui/material/styles';
 type Props = {
   label?: string;
   type: 'button' | 'submit' | 'reset';
+  loading?: boolean;
+  disabled?: boolean;
   backgroundColor?: string;
   sx?: SxProps<Theme>;
   onClick?: () => void;
@@ -16,7 +18,7 @@ interface PropStyles {
 
 const MuiButton = withStyles(() => ({
   root: {
-    backgroundColor: (props: PropStyles) => props.backgroundColor || '#298CFD',
+    backgroundColor: '#298CFD',
     color: 'white',
     fontWeight: 700,
     border: 'none',
@@ -28,17 +30,20 @@ const MuiButton = withStyles(() => ({
         props.backgroundColor ? alpha(props.backgroundColor, 0.6) : alpha('#298CFD', 0.6),
     },
     '& .MuiLoadingButton-loadingIndicator': {
-      marginRight: 8,
       left: 0,
+      marginRight: 16,
+      position: 'relative',
     },
   },
 }))(LoadingButton);
 
 function ConfirmButton(props: Props) {
-  const { type = 'button', label = 'Approve', sx, backgroundColor, onClick } = props;
+  const { type = 'button', label = 'Approve', sx, loading = false, disabled, backgroundColor, onClick } = props;
   return (
     <MuiButton
       type={type}
+      loading={loading}
+      disabled={disabled}
       variant="contained"
       loadingPosition="start"
       sx={sx}

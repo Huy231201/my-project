@@ -1,34 +1,35 @@
 import queryString from 'query-string';
 import { api } from './api';
+import { removeNullParams } from '@/utils/common';
 
 export const Api = api.injectEndpoints({
   endpoints: builder => ({
     getOverview: builder.query({
       query: query => ({
-        url: `/dashboard/overview?${queryString.stringify(query)}`,
+        url: `/dashboard/overview?${queryString.stringify(removeNullParams(query))}`,
       }),
     }),
     getMetricClick: builder.query({
       query: query => ({
-        url: `/dashboard/click?${queryString.stringify(query)}`,
+        url: `/dashboard/click?${queryString.stringify(removeNullParams(query))}`,
         providesTags: ['MetricClick'],
       }),
     }),
     getMetricDownload: builder.query({
       query: query => ({
-        url: `/dashboard/download?${queryString.stringify(query)}`,
+        url: `/dashboard/download?${queryString.stringify(removeNullParams(query))}`,
         providesTags: ['MetricDownload'],
       }),
     }),
     getMetricValidUser: builder.query({
       query: query => ({
-        url: `/dashboard/valid-user?${queryString.stringify(query)}`,
+        url: `/dashboard/valid-user?${queryString.stringify(removeNullParams(query))}`,
         providesTags: ['MetricValidUser'],
       }),
     }),
     getMetricAffiliate: builder.query({
       query: query => ({
-        url: `/dashboard/affiliate?${queryString.stringify(query)}`,
+        url: `/dashboard/affiliate?${queryString.stringify(removeNullParams(query))}`,
         providesTags: ['MetricAffiliate'],
       }),
     }),

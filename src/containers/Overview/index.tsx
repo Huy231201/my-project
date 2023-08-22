@@ -10,7 +10,7 @@ import {
   useGetMetricAffiliateQuery,
 } from '@/services/overview';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Container from '@/components/Container';
 import Grid from '@mui/material/Grid';
 import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
@@ -148,12 +148,7 @@ function BrowserMetric() {
   };
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        py: 3,
-      }}
-    >
+    <Container>
       <Stack
         direction={{
           xs: 'column',
@@ -177,6 +172,7 @@ function BrowserMetric() {
               label={item.label}
               subLabel={item?.subLabel}
               icon={item.icon}
+              loading={isFetchingOverview}
               content={item.content}
               tooltipContent={item.tooltipContent}
             />

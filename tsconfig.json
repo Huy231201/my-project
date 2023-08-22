@@ -23,5 +23,5 @@
   },
   "include": ["./.eslintrc.js", "src"],
   "exclude": ["node_modules", "**/node_modules/*", "dist", "**/dist/*"],
-  "typeRoots": ["src/types/custom.d.ts"]
+  "typeRoots": ["./src/types/axios.d.ts"]
 }

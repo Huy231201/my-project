@@ -41,3 +41,21 @@ export const renderTotal = (total: number, afterText: string) => {
 export function capitalizeFirstLetter(string = '') {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
+
+export const removeNullParams = (params: { [key: string]: string | number | boolean | undefined }) =>
+  Object.keys(params).reduce((object: any, key: string) => {
+    const newObject = {
+      ...object,
+    };
+    if (params?.[key] !== undefined && params?.[key] !== null && params?.[key] !== '') {
+      newObject[key] = params[key];
+    }
+    return newObject;
+  }, {});
+
+export const truncateStr = (str: string | undefined | null = '', maxLength = 13) => {
+  const strValue = str || '';
+  return strValue.length > maxLength
+    ? `${strValue.slice(0, (maxLength - 3) / 2)}…${strValue.slice(-(maxLength - 3) / 2)}`
+    : strValue;
+};
