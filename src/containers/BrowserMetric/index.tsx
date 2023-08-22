@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, useEffect } from 'react';
-import Container from '@mui/material/Container';
+import Container from '@/components/Container';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -95,12 +95,7 @@ function BrowserMetric() {
   };
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        py: 3,
-      }}
-    >
+    <Container>
       <Stack
         direction={{
           xs: 'column',

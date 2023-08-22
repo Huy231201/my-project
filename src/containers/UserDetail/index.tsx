@@ -1,4 +1,3 @@
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SearchInputField, DateRangePicker } from '@/components/Fields';
@@ -24,6 +23,7 @@ import NotFound from '@/components/NotFound';
 import Loading from '@/components/Loading';
 import UserInfoContent from './UserInfoContent';
 import UserTable from './UserTable';
+import Container from '@/components/Container';
 
 import { RecruitedHeadTable, WithdrawalHistoryHeadTable, LinkListHeadTable } from './config';
 
@@ -31,11 +31,13 @@ const PAGE_SIZE = 10;
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
+  flexFlow: 'wrap',
   alignItems: 'start',
   margin: 4,
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
+    whiteSpace: 'nowrap',
   },
   '& .MuiListItemText-secondary': {
     paddingLeft: 4,
@@ -236,7 +238,7 @@ function UserDetailContainer() {
                 secondary={
                   <UserInfoContent
                     loading={isFetchUserInfo}
-                    content={userInfo?.joinDate ? dayjs(userInfo?.joinDate).format('HH:mm:ss DD/MM/YYYY') : ''}
+                    content={userInfo?.joinDate ? dayjs(userInfo?.joinDate).format('HH:mm:ss MM/DD/YYYY') : ''}
                   />
                 }
               />
@@ -244,7 +246,16 @@ function UserDetailContainer() {
             <Grid item xs={12} md={6}>
               <MuiListItemText
                 primary={`${window.T('Wallet Creation Date')}:`}
-                content={userInfo?.joinDate ? dayjs(userInfo?.walletCreationTime).format('HH:mm:ss DD/MM/YYYY') : ''}
+                secondary={
+                  <UserInfoContent
+                    loading={isFetchUserInfo}
+                    content={
+                      userInfo?.walletCreationTime
+                        ? dayjs(userInfo?.walletCreationTime).format('HH:mm:ss MM/DD/YYYY')
+                        : ''
+                    }
+                  />
+                }
               />
             </Grid>
           </Grid>
@@ -264,6 +275,16 @@ function UserDetailContainer() {
             ))}
           </Grid>
         </Box>
+        {dataGetUserFromEmail?.length > 0 && (
+          <Box
+            sx={{
+              mt: 6,
+              mb: -2,
+            }}
+          >
+            <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+          </Box>
+        )}
         <UserTable
           headCells={RecruitedHeadTable}
           title={window.T('Recruited User History') || ''}
@@ -311,13 +332,7 @@ function UserDetailContainer() {
   };
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        height: '100%',
-        py: 3,
-      }}
-    >
+    <Container>
       <Typography variant="h3">{window.T('Affiliate user details')}</Typography>
       <Box
         mt={2}
@@ -343,18 +358,6 @@ function UserDetailContainer() {
           msgError={window.T('Email is invalid')}
           onSubmit={handleSearchUserEmail}
         />
-        {dataGetUserFromEmail?.length > 0 && (
-          <Box
-            sx={{
-              mt: {
-                xs: 2,
-                md: 0,
-              },
-            }}
-          >
-            <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
-          </Box>
-        )}
       </Box>
       {renderContent()}
     </Container>

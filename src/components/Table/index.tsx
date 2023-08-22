@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import EnhancedTableBody from './EnhancedTableBody';
 import EnhancedTableHead from './EnhancedTableHead';
 import Pagination from '@/components/Pagination';
@@ -14,11 +14,14 @@ interface Props {
   headCells: readonly HeaderCellProps[];
   rows: readonly RowProp[];
   checkbox?: boolean;
+  sortDirection?: Order;
+  sortBy?: keyof RowProp;
   selected?: Array<KeyRow>;
   pageIndex: number;
   totalPages: number;
   onSelectRow?: (data: Array<KeyRow>) => void;
   onChangePage?: (pageIndex: number) => void;
+  onSortChange?: (data: { sortDirection: Order; sortBy: keyof RowProp }) => void;
 }
 
 export default function EnhancedTable(props: Props) {
@@ -27,24 +30,26 @@ export default function EnhancedTable(props: Props) {
     rows,
     headCells,
     checkbox = false,
+    sortDirection = 'asc',
+    sortBy = 'id',
     selected = [],
     pageIndex,
     totalPages,
     onSelectRow,
     onChangePage,
+    onSortChange,
   } = props;
-  const [order, setOrder] = useState<Order>('asc');
-  const [orderBy, setOrderBy] = useState<keyof RowProp>('id');
 
   const orderHeadCells = useMemo(
     () => stableSort(headCells, getComparator('asc', 'order')),
-    [order, orderBy, headCells],
+    [sortDirection, sortBy, headCells],
   );
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof RowProp) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    if (onSortChange) {
+      const isAsc = sortBy === property && sortDirection === 'asc';
+      onSortChange({ sortDirection: isAsc ? 'desc' : 'asc', sortBy: property });
+    }
   };
 
   const handleSelectRow = (event: React.MouseEvent<unknown>, name: KeyRow) => {
@@ -69,25 +74,35 @@ export default function EnhancedTable(props: Props) {
     if (onSelectRow) {
       const { checked } = event.target;
       if (checked) {
-        const newSelected = rows.map((n: RowProp) => n.id);
+        const newSelected = rows.map((n: RowProp) => n.checkbox && n.id).filter(Boolean) as Array<KeyRow>;
         onSelectRow(newSelected);
-        return;
+      } else {
+        onSelectRow([]);
       }
-      onSelectRow([]);
     }
   };
 
+  const isSelectAll = selected?.length > 0 && selected.length === rows.filter(row => row.checkbox).length;
   return (
     <Box sx={{ width: '100%' }}>
       <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="small">
+        <Table
+          sx={{
+            minWidth: {
+              xs: 0,
+              md: 750,
+            },
+          }}
+          aria-labelledby="tableTitle"
+          size="small"
+        >
           <EnhancedTableHead
             checkbox={checkbox}
-            indeterminate={!!selected.length && selected.length < rows.length}
-            isSelectAll={selected.length === rows.length}
+            indeterminate={!!selected.length && !isSelectAll}
+            isSelectAll={isSelectAll}
             headCells={orderHeadCells}
-            order={order}
-            orderBy={orderBy}
+            sortDirection={sortDirection}
+            sortBy={sortBy}
             onRequestSort={handleRequestSort}
             onSelectAllClick={handleSelectAll}
           />
@@ -97,9 +112,6 @@ export default function EnhancedTable(props: Props) {
             selected={selected}
             rows={rows}
             orderHeadCells={orderHeadCells}
-            page={0}
-            order={order}
-            orderBy={orderBy}
             onSelectRow={handleSelectRow}
           />
         </Table>

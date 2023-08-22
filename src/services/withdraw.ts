@@ -1,24 +1,34 @@
 import queryString from 'query-string';
 import { api } from './api';
+import { removeNullParams } from '@/utils/common';
 
 export const Api = api.injectEndpoints({
   endpoints: builder => ({
     getWithdraw: builder.query({
       query: query => ({
-        url: `/payment/withdraw?${queryString.stringify(query)}`,
+        url: `/payment/withdraw?${queryString.stringify(removeNullParams(query))}`,
       }),
     }),
     getWithdrawDetail: builder.query({
-      query: ({ id, ...rest }) => ({
-        url: `/payment/withdraw/${id}/details?${queryString.stringify(rest)}`,
+      query: query => ({
+        url: `/payment/withdraw/${query?.transactionId}/details`,
       }),
     }),
-    getWithdrawCount: builder.query({
-      query: query => ({
-        url: `/payment/withdraw-count?${queryString.stringify(query)}`,
+    getWithdrawEarn: builder.query({
+      query: ({ transactionId, ...rest }) => ({
+        url: `/payment/withdraw/${transactionId}/details/earned?${queryString.stringify(removeNullParams(rest))}`,
+      }),
+    }),
+    rejectPayments: builder.mutation({
+      query: payload => ({
+        url: '/payment/reject',
+        method: 'POST',
+        data: payload,
+        showToast: false,
       }),
     }),
   }),
 });
 
-export const { useGetWithdrawQuery, useGetWithdrawDetailQuery, useGetWithdrawCountQuery } = Api;
+export const { useGetWithdrawQuery, useGetWithdrawDetailQuery, useGetWithdrawEarnQuery, useRejectPaymentsMutation } =
+  Api;

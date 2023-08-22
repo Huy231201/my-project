@@ -16,8 +16,8 @@ interface EnhancedTableProps {
   headCells: HeaderCellProps[];
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof RowProp) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: 'asc' | 'desc';
-  orderBy: string | number | symbol;
+  sortDirection: 'asc' | 'desc';
+  sortBy: string | number | symbol;
 }
 
 const MuiTableSortLabel = withStyles({
@@ -47,7 +47,8 @@ function IconSortCustom() {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { checkbox, indeterminate, isSelectAll, headCells, order, orderBy, onRequestSort, onSelectAllClick } = props;
+  const { checkbox, indeterminate, isSelectAll, headCells, sortDirection, sortBy, onRequestSort, onSelectAllClick } =
+    props;
   const createSortHandler = (property: keyof RowProp) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
@@ -75,30 +76,31 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             key={headCell.id}
             align={headCell?.align || 'left'}
             padding="normal"
-            width={headCell?.width}
-            sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={sortBy === headCell.id ? sortDirection : false}
             sx={{
               padding: 1.5,
               fontSize: 14,
+              minWidth: headCell?.width || 120,
+              width: headCell?.width || 120,
             }}
           >
             {headCell.sortable ? (
               <MuiTableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
+                active={sortBy === headCell.id}
+                direction={sortBy === headCell.id ? sortDirection : 'asc'}
                 onClick={createSortHandler(headCell.id)}
                 IconComponent={IconSortCustom}
               >
                 {headCell.label}
 
-                {orderBy === headCell.id ? (
+                {sortBy === headCell.id ? (
                   <Box
                     component="span"
                     sx={{
                       display: 'none',
                     }}
                   >
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {sortDirection === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </MuiTableSortLabel>

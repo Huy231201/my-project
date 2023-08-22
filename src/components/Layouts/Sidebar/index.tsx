@@ -94,18 +94,18 @@ function MuiSideBar() {
         nameHoverIcon: 'user-group-white',
         href: routePath.USER_DETAIL,
       },
-      // {
-      //   label: window.T('Withdrawal Requests'),
-      //   nameIcon: 'wallet',
-      //   nameHoverIcon: 'wallet-white',
-      //   href: routePath.WITHDRAWAL_REQUESTS,
-      // },
-      // {
-      //   label: window.T('Payouts'),
-      //   nameIcon: 'payouts',
-      //   nameHoverIcon: 'payouts-white',
-      //   href: routePath.PAYOUTS,
-      // },
+      {
+        label: window.T('Withdrawal Requests'),
+        nameIcon: 'wallet',
+        nameHoverIcon: 'wallet-white',
+        href: routePath.WITHDRAWAL_REQUESTS,
+      },
+      {
+        label: window.T('Payouts'),
+        nameIcon: 'payouts',
+        nameHoverIcon: 'payouts-white',
+        href: routePath.PAYOUTS,
+      },
     ],
     [],
   );

@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
 import { getAccessToken, setCredential } from '@/utils/common';
 
-interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   showToast?: boolean;
 }
 
@@ -59,7 +59,6 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
   // Attach auth header using token from local storage
   const accessToken = getAccessToken();
   const languageCode = LocalStorage.get(LOCAL_KEYS.LANGUAGE_TOKEN, 'en');
-
   return {
     ...config,
     headers: {
@@ -72,7 +71,17 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
 });
 
 instance.interceptors.response.use(
-  resp => resp,
+  resp => {
+    if (resp?.data?.success === false) {
+      const showToast = resp.config.headers['show-toast'];
+      const errorMessage = resp?.data?.message || 'Something went wrong!';
+      if (showToast) {
+        toast.error(errorMessage);
+      }
+      throw errorMessage;
+    }
+    return resp;
+  },
   async err => {
     const origReqConfig = err.config;
     if (err.response.status >= 500 && retryCount < NUMBER_RETRIES - 1) {

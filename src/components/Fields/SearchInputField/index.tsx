@@ -42,7 +42,7 @@ interface Props {
 }
 
 function SearchInputField(props: Props) {
-  const { sx, label, msgError, placeholder, ariaLabel, validate = () => {}, onChange, onSubmit } = props;
+  const { sx, label, msgError, placeholder, ariaLabel, validate = null, onChange, onSubmit } = props;
 
   const [searchText, setSearchText] = useState('');
   const [isError, setIsError] = useState(false);
@@ -56,17 +56,16 @@ function SearchInputField(props: Props) {
   }, [searchTextDebounce]);
 
   const handleSubmit = () => {
-    if (searchText) {
-      if (validate) {
-        const isValid = validate(searchText);
-        setIsError(!isValid);
-        if (isValid) {
-          onSubmit(searchText);
-        }
-      } else {
-        setIsError(false);
-        onSubmit(searchText);
+    const valueTrim = (searchText || '').trim();
+    if (validate && valueTrim) {
+      const isValid = validate(valueTrim);
+      setIsError(!isValid);
+      if (isValid) {
+        onSubmit(valueTrim);
       }
+    } else {
+      setIsError(false);
+      onSubmit(valueTrim);
     }
   };
 

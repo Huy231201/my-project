@@ -8,17 +8,19 @@ interface Props {
   method?: AxiosRequestConfig['method'];
   data?: AxiosRequestConfig['data'];
   params?: AxiosRequestConfig['params'];
+  showToast?: boolean;
 }
 
 const axiosBaseQuery =
   ({ baseUrl }: { baseUrl: string } = { baseUrl: '' }): BaseQueryFn<Props, unknown, unknown> =>
-  async ({ url, method, data, params }) => {
+  async ({ url, method, data, params, ...rest }) => {
     try {
       const result = await axios({
         url: baseUrl + url,
         method,
         data,
         params,
+        ...rest,
       });
       return {
         data: result.data?.data || result.data || {},

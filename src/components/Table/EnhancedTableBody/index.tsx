@@ -1,14 +1,13 @@
+import { CheckboxField } from '@/components/Fields';
+import HerondIcon from '@/components/Icons';
+import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { useMemo } from 'react';
-import { withStyles } from '@mui/styles';
-import { stableSort, getComparator, Order, HeaderCellProps, RowProp } from '../utils';
-import { CheckboxField } from '@/components/Fields';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import HerondIcon from '@/components/Icons';
-import Skeleton from '@mui/material/Skeleton';
+import { withStyles } from '@mui/styles';
+import { HeaderCellProps, RowProp } from '../utils';
 
 const MuiTableCell = withStyles({
   root: {
@@ -21,18 +20,13 @@ interface Props {
   loading?: boolean;
   checkbox: boolean;
   selected: Array<string | number>;
-  page?: number;
   rows: readonly RowProp[];
-  order: Order;
-  orderBy: keyof RowProp;
   orderHeadCells: readonly HeaderCellProps[];
   onSelectRow?: (event: React.MouseEvent<unknown>, name: string | number) => void;
 }
 
 function EnhancedTableBody(props: Props) {
-  const { loading, orderHeadCells, rows, order, orderBy, checkbox, selected, onSelectRow } = props;
-
-  const visibleRows = useMemo(() => stableSort(rows, getComparator(order, orderBy)), [order, orderBy, rows]);
+  const { loading, orderHeadCells, rows, checkbox, selected, onSelectRow } = props;
 
   const handleSelectRow = (id: string | number, enableCheckbox?: boolean) => (event: React.MouseEvent<unknown>) => {
     if (enableCheckbox && onSelectRow) {
@@ -58,7 +52,7 @@ function EnhancedTableBody(props: Props) {
 
   return (
     <TableBody>
-      {visibleRows.map((row, index) => (
+      {rows.map((row, index) => (
         <TableRow
           hover
           role="checkbox"
@@ -76,13 +70,21 @@ function EnhancedTableBody(props: Props) {
               <MuiTableCell padding="checkbox" />
             ))}
           {orderHeadCells.map(headCell => (
-            <MuiTableCell key={headCell.id} component="th" align={headCell.align || 'left'}>
+            <MuiTableCell
+              key={headCell.id}
+              component="th"
+              align={headCell.align || 'left'}
+              sx={{
+                minWidth: headCell?.width || 120,
+                width: headCell?.width || 120,
+              }}
+            >
               {row[headCell.id]}
             </MuiTableCell>
           ))}
         </TableRow>
       ))}
-      {visibleRows?.length < 1 && (
+      {rows?.length < 1 && (
         <TableRow
           sx={{
             height: '160px',
@@ -92,7 +94,7 @@ function EnhancedTableBody(props: Props) {
             },
           }}
         >
-          <TableCell colSpan={6}>
+          <TableCell colSpan={20}>
             <Box
               sx={{
                 '& svg': {

@@ -4,6 +4,7 @@ import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import { CloseWrapper } from './styles';
 import CloseSvg from '@/assets/icons/close.svg';
+import CloseWhiteSvg from '@/assets/icons/close-white.svg';
 import SearchSvg from '@/assets/icons/search.svg';
 import ArrowDownSvg from '@/assets/icons/arrow-down.svg';
 import ArrowLeftSvg from '@/assets/icons/arrow-left.svg';
@@ -34,6 +35,10 @@ import TrashSvg from '@/assets/icons/trash.svg';
 const SvgData = {
   close: {
     svg: CloseSvg,
+    Wrapper: CloseWrapper,
+  },
+  'close-white': {
+    svg: CloseWhiteSvg,
     Wrapper: CloseWrapper,
   },
   'arrow-down': {

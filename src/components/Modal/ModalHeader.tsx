@@ -3,12 +3,13 @@ import Stack from '@mui/material/Stack';
 import HerondIcon from '@/components/Icons';
 
 interface Props {
+  hiddenCloseIcon?: boolean;
   children: React.ReactNode;
   onClose: () => void;
 }
 
 const DialogTitle = (props: Props) => {
-  const { children, onClose } = props;
+  const { hiddenCloseIcon, children, onClose } = props;
   return (
     <Stack
       sx={{
@@ -29,7 +30,9 @@ const DialogTitle = (props: Props) => {
       >
         {children}
       </Typography>
-      <HerondIcon sx={{ backgroundColor: 'transparent !important' }} name="close" type="button" onClick={onClose} />
+      {!hiddenCloseIcon && (
+        <HerondIcon sx={{ backgroundColor: 'transparent !important' }} name="close" type="button" onClick={onClose} />
+      )}
     </Stack>
   );
 };

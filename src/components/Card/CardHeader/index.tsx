@@ -42,24 +42,28 @@ const CardHeader = ({ label, subLabel, icon, tooltipContent }: Props) => (
         }}
       >
         {label}
+        {subLabel && (
+          <Typography variant="caption" sx={{ color: '#5B636E', display: 'inline', ml: 0.5 }}>
+            {subLabel}
+          </Typography>
+        )}
+        <Tooltip title={tooltipContent}>
+          <Box
+            sx={{
+              flexShrink: 0,
+              width: 16,
+              height: 16,
+              display: 'inline',
+              top: 2,
+              left: 4,
+              position: 'relative',
+            }}
+          >
+            <HerondIcon name="information" />
+          </Box>
+        </Tooltip>
       </Typography>
-      {subLabel && (
-        <Typography variant="caption" sx={{ color: '#5B636E', display: 'inline', ml: 0.5 }}>
-          {subLabel}
-        </Typography>
-      )}
     </Box>
-    <Tooltip title={tooltipContent}>
-      <Box
-        sx={{
-          flexShrink: 0,
-          width: 16,
-          height: 16,
-        }}
-      >
-        <HerondIcon name="information" />
-      </Box>
-    </Tooltip>
   </Stack>
 );
 

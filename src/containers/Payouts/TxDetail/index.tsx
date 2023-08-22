@@ -14,10 +14,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useMemo, useState } from 'react';
-import { RegionHeadCell, rowsRegionCell } from '../dumpData';
+import { PayoutsHeadTable } from '../config';
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
+  flexFlow: 'wrap',
   alignItems: 'center',
   margin: 4,
   flex: 'initial',
@@ -25,6 +26,7 @@ const MuiListItemText = styled(ListItemText)({
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
+    whiteSpace: 'nowrap',
   },
   '& .MuiListItemText-secondary': {
     paddingLeft: 4,
@@ -51,7 +53,7 @@ function TxDetailModal(props: Props) {
 
   const withDrawalData = useMemo(
     () =>
-      rowsRegionCell().map((item: any) => ({
+      [].map((item: any) => ({
         ...item,
         checkbox: !['approved', 'rejected'].includes(item.status.toLowerCase()),
         email: (
@@ -259,7 +261,7 @@ function TxDetailModal(props: Props) {
                 1400 items
               </Typography>
             </Stack>
-            <HerondTable pageIndex={1} totalPages={1} headCells={RegionHeadCell} rows={withDrawalData} />
+            <HerondTable pageIndex={1} totalPages={1} headCells={PayoutsHeadTable} rows={withDrawalData} />
           </Box>
           <Modal
             open={showModalReject}

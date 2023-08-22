@@ -38,8 +38,8 @@ function CustomLineChart(props: Props) {
 
   const { data, isFetching } = useApi(
     {
-      FromDate: dayjs(dateRange[0]).format('YYYY-MM-DD'),
-      ToDate: dayjs(dateRange[1]).format('YYYY-MM-DD'),
+      StartDate: dayjs(dateRange[0]).format('YYYY-MM-DD'),
+      EndDate: dayjs(dateRange[1]).format('YYYY-MM-DD'),
     },
     {
       refetchOnMountOrArgChange: true,

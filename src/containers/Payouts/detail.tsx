@@ -4,7 +4,7 @@ import HerondIcon from '@/components/Icons';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import HerondTable from '@/components/Table';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Container from '@/components/Container';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RegionHeadCell, rowsRegionCell } from './dumpData';
+import { PayoutsHeadTable } from './config';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import BulkAction from '@/components/BulkAction';
 import Button from '@mui/material/Button';
@@ -22,6 +22,7 @@ import ModalTxDetail from './TxDetail';
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
+  flexFlow: 'wrap',
   alignItems: 'center',
   margin: 4,
   flex: 'initial',
@@ -29,6 +30,7 @@ const MuiListItemText = styled(ListItemText)({
   '& .MuiListItemText-primary': {
     fontSize: 16,
     fontWeight: 500,
+    whiteSpace: 'nowrap',
   },
   '& .MuiListItemText-secondary': {
     paddingLeft: 4,
@@ -63,7 +65,7 @@ function PayoutsDetailContainer() {
 
   const withDrawalData = useMemo(
     () =>
-      rowsRegionCell().map((item: any) => ({
+      [].map((item: any) => ({
         ...item,
         checkbox: !['approved', 'rejected'].includes(item.status.toLowerCase()),
         email: (
@@ -114,13 +116,7 @@ function PayoutsDetailContainer() {
   );
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        py: 3,
-        position: 'relative',
-      }}
-    >
+    <Container>
       <Stack
         direction="row"
         alignItems="center"
@@ -285,7 +281,7 @@ function PayoutsDetailContainer() {
             1400 items
           </Typography>
         </Stack>
-        <HerondTable checkbox pageIndex={1} totalPages={1} headCells={RegionHeadCell} rows={withDrawalData} />
+        <HerondTable checkbox pageIndex={1} totalPages={1} headCells={PayoutsHeadTable} rows={[]} />
       </Box>
       <Modal
         open={showModalReject}

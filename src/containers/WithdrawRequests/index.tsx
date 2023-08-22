@@ -1,32 +1,46 @@
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import HerondTable from '@/components/Table';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
-import { WithdrawRequestHeadTable, rowsRegionCell, StatusOptions } from './config';
+import { WithdrawRequestHeadTable, StatusOptions } from './config';
 import { useMemo, useState, MouseEvent } from 'react';
 import { SelectField, SearchInputField, DateRangePicker } from '@/components/Fields';
 import Button from '@mui/material/Button';
 import BulkAction from '@/components/BulkAction';
 import dayjs from 'dayjs';
-import { validateEmail } from '@/utils/common';
+import { validateEmail, truncateStr } from '@/utils/common';
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import { CancelButton } from '@/components/Buttons';
 import { styled } from '@mui/material/styles';
 import HerondIcon from '@/components/Icons';
-import { useGetWithdrawQuery } from '@/services/withdraw';
+import { useGetWithdrawQuery, useRejectPaymentsMutation } from '@/services/withdraw';
+import Container from '@/components/Container';
+import { RowProp } from '@/components/Table/utils';
+import toast from 'react-hot-toast';
 
 interface FilterProps {
   searchEmail: string;
   dateRange: Array<Date | null>;
   status: StatusEnum | string;
   sortBy: string;
-  sortDirection: 0 | 1;
+  sortDirection: 'asc' | 'desc';
   page: number;
   pageSize: number;
+}
+
+interface TableItem {
+  id: string;
+  email: string;
+  amount: number;
+  status: StatusEnum;
+  payoutId: string;
+  createdDate: string;
+  deadline: string;
+  transactionId: string;
+  address: string;
 }
 
 const ButtonAction = styled(Button)({
@@ -49,25 +63,27 @@ function WithdrawRequestsContainer() {
   const [filter, setFilter] = useState<FilterProps>({
     searchEmail: '',
     dateRange: [dayjs().startOf('month').toDate(), new Date()],
-    status: '',
-    sortBy: '',
-    sortDirection: 1,
+    status: 'all',
+    sortBy: 'createdDate',
+    sortDirection: 'asc',
     page: 1,
     pageSize: 10,
   });
 
-  // const { data, isFetching } = useGetWithdrawQuery({
-  //   startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
-  //   endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
-  //   Email: filter.searchEmail,
-  //   status: filter.status,
-  //   SortBy: filter.sortBy,
-  //   sortDirection: filter.sortDirection,
-  //   pageIndex: filter.page,
-  //   pageSize: filter.pageSize,
-  // });
+  const { data, isFetching } = useGetWithdrawQuery({
+    startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
+    endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
+    Email: filter.searchEmail,
+    status: filter.status === 'all' ? undefined : filter.status,
+    SortBy: filter.sortBy,
+    sortDirection: filter.sortDirection === 'asc' ? 0 : 1,
+    pageIndex: filter.page,
+    pageSize: filter.pageSize,
+  });
 
-  const onChangeDateRange = (dateRange: Array<Date | null>) => {
+  const [rejectPayment, { isLoading: isRejecting }] = useRejectPaymentsMutation();
+
+  const handleChangeDateRange = (dateRange: Array<Date | null>) => {
     if (dateRange[0] && dateRange[1]) {
       setFilter(prev => ({
         ...prev,
@@ -76,25 +92,51 @@ function WithdrawRequestsContainer() {
     }
   };
 
-  const handleSearchUserEmail = (searchText: string) => {
-    if (searchText) {
-      setFilter(prev => ({
-        ...prev,
-        searchEmail: searchText,
-      }));
-    }
+  const handleUpdateFilter = (name: string) => (value: string | number | StatusEnum) => {
+    setFilter(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleOpenDrawerDetail = (id: string) => (e: MouseEvent<HTMLElement>) => {
+  const handleSortTable = (sortData: { sortDirection: 'asc' | 'desc'; sortBy: keyof RowProp }) => {
+    setFilter((prev: FilterProps) => ({
+      ...prev,
+      sortDirection: sortData.sortDirection,
+      sortBy: sortData.sortBy as string,
+    }));
+  };
+
+  const handleOpenDrawerDetail = (transactionId: string) => (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    navigate(`/withdrawal-requests/${id}`);
+    navigate(`/withdrawal-requests/${transactionId}`);
+  };
+
+  const handleRejectPayment = async () => {
+    const transactionIds = data?.items
+      .filter((item: TableItem) => selected.includes(item.id))
+      .map((item: TableItem) => item.transactionId);
+    try {
+      const res = await rejectPayment({
+        transactionIds,
+      }).unwrap();
+      setShowModalReject(false);
+      toast.success(window.T(res?.message || 'Reject payment successfully'));
+    } catch (error) {
+      toast.error(window.T('Reject payment failed'));
+    }
   };
 
   const withDrawalData = useMemo(
     () =>
-      rowsRegionCell().map((item: any) => ({
-        ...item,
-        checkbox: !['approved', 'rejected'].includes(item.status.toLowerCase()),
+      (data?.items || []).map((item: TableItem) => ({
+        id: item?.id,
+        tx_id: truncateStr(item?.transactionId),
+        wallet_address: item?.address,
+        createdDate: item?.createdDate ? dayjs(item.createdDate).format('MM/DD/YYYY HH:mm:ss') : '',
+        deadline: item?.deadline ? dayjs(item.deadline).format('MM/DD/YYYY HH:mm:ss') : '',
+        amount: item?.amount || 0,
+        checkbox: (item?.status || '').toLowerCase() === 'pending' && !item.payoutId,
         email: (
           <Link
             component="a"
@@ -108,12 +150,12 @@ function WithdrawRequestsContainer() {
         ),
         status: <StatusLabel status={item.status} />,
         action: (
-          <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.id)}>
+          <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.transactionId)}>
             <HerondIcon name="eye" />
           </ButtonAction>
         ),
       })),
-    [],
+    [data?.pageIndex, data?.items, isFetching],
   );
 
   const BulkActionOptions = useMemo(
@@ -127,13 +169,7 @@ function WithdrawRequestsContainer() {
   );
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        py: 3,
-        position: 'relative',
-      }}
-    >
+    <Container>
       <Box
         sx={{
           background: '#fff',
@@ -173,20 +209,20 @@ function WithdrawRequestsContainer() {
             justifyContent="center"
             spacing={1.5}
           >
-            <Typography variant="body1">43 items</Typography>
+            <Typography variant="body1">{`${data?.totalCount || 0} items`}</Typography>
             <Box>
-              <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+              <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
             </Box>
             <Box>
               <SearchInputField
                 placeholder={window.T('Enter user email')}
                 validate={validateEmail}
                 msgError={window.T('Email is invalid')}
-                onSubmit={handleSearchUserEmail}
+                onSubmit={handleUpdateFilter('searchEmail')}
               />
             </Box>
             <Box>
-              <SelectField value={StatusOptions[0].value} options={StatusOptions} />
+              <SelectField value={filter.status} options={StatusOptions} onChange={handleUpdateFilter('status')} />
             </Box>
           </Stack>
         </Stack>
@@ -198,13 +234,17 @@ function WithdrawRequestsContainer() {
         >
           <HerondTable
             checkbox
-            pageIndex={1}
-            totalPages={2}
+            sortDirection={filter.sortDirection}
+            sortBy={filter.sortBy}
+            loading={isFetching}
+            pageIndex={data?.pageIndex || 1}
+            totalPages={data?.totalPages || 1}
             headCells={WithdrawRequestHeadTable}
             rows={withDrawalData}
             selected={selected}
             onSelectRow={setSelected}
-            onChangePage={() => {}}
+            onChangePage={handleUpdateFilter('page')}
+            onSortChange={handleSortTable}
           />
         </Box>
       </Box>
@@ -242,7 +282,7 @@ function WithdrawRequestsContainer() {
               border: 'none !important',
             }}
           />
-          <CancelButton type="submit" label={window.T('Reject')} onClick={() => setShowModalReject(false)} />
+          <CancelButton type="submit" label={window.T('Reject')} loading={isRejecting} onClick={handleRejectPayment} />
         </DialogActions>
       </Modal>
     </Container>

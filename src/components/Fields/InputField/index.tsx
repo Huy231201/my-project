@@ -28,6 +28,7 @@ const MuiInputBase = styled(InputBase)({
 });
 
 interface Props {
+  defaultValue?: string;
   label?: string | undefined;
   placeholder?: string;
   msgError?: string;
@@ -37,23 +38,24 @@ interface Props {
   onSubmit: (value: string) => void;
 }
 
-function SearchInputField(props: Props) {
-  const { sx, label, msgError, placeholder, ariaLabel, validate = () => {}, onSubmit } = props;
+function InputField(props: Props) {
+  const { sx, label, defaultValue, msgError, placeholder, ariaLabel, validate = null, onSubmit } = props;
 
-  const [searchText, setSearchText] = useState('Payout for {{month}} Request');
+  const [value, setValue] = useState(defaultValue);
   const [isError, setIsError] = useState(false);
 
   const handleSubmit = () => {
-    if (searchText) {
+    const valueTrim = (value || '').trim();
+    if (valueTrim) {
       if (validate) {
-        const isValid = validate(searchText);
+        const isValid = validate(valueTrim);
         setIsError(!isValid);
         if (isValid) {
-          onSubmit(searchText);
+          onSubmit(valueTrim);
         }
       } else {
         setIsError(false);
-        onSubmit(searchText);
+        onSubmit(valueTrim);
       }
     }
   };
@@ -69,8 +71,8 @@ function SearchInputField(props: Props) {
         sx={sx}
         placeholder={placeholder}
         inputProps={{ 'aria-label': ariaLabel }}
-        value={searchText}
-        onChange={e => setSearchText(e.target.value)}
+        value={value}
+        onChange={e => setValue(e.target.value)}
         onBlur={handleSubmit}
       />
       {isError && msgError && (
@@ -82,4 +84,4 @@ function SearchInputField(props: Props) {
   );
 }
 
-export default SearchInputField;
+export default InputField;

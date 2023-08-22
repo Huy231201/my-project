@@ -7,6 +7,7 @@ import { withStyles } from '@mui/styles';
 import { SxProps, Theme } from '@mui/material/styles';
 
 interface Props {
+  hiddenCloseIcon?: boolean;
   title: string | React.ReactNode;
   onClose: () => void;
   open: boolean;
@@ -32,7 +33,7 @@ export const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-export default function Modal({ title, onClose, open, children, sxWrapper }: Props) {
+export default function Modal({ hiddenCloseIcon, title, onClose, open, children, sxWrapper }: Props) {
   return (
     <MuiDialog
       fullWidth
@@ -48,7 +49,9 @@ export default function Modal({ title, onClose, open, children, sxWrapper }: Pro
         ...sxWrapper,
       }}
     >
-      <DialogTitle onClose={onClose}>{title}</DialogTitle>
+      <DialogTitle hiddenCloseIcon={hiddenCloseIcon} onClose={onClose}>
+        {title}
+      </DialogTitle>
       {children}
     </MuiDialog>
   );

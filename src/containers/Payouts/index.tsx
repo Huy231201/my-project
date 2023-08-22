@@ -1,21 +1,21 @@
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import HerondTable from '@/components/Table';
-import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
-import { RegionHeadCell, rowsRegionCell, StatusOptions } from './dumpData';
-import { useMemo, useState, MouseEvent } from 'react';
-import { SelectField, SearchInputField, DateRangePicker, InputField } from '@/components/Fields';
-import Button from '@mui/material/Button';
-import dayjs from 'dayjs';
-import { validateEmail } from '@/utils/common';
-import Link from '@mui/material/Link';
-import { useNavigate } from 'react-router-dom';
-import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import { CancelButton, ConfirmButton } from '@/components/Buttons';
+import Container from '@/components/Container';
+import { DateRangePicker, InputField, SearchInputField, SelectField } from '@/components/Fields';
 import HerondIcon from '@/components/Icons';
+import Modal, { DialogActions, DialogContent } from '@/components/Modal';
+import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
+import HerondTable from '@/components/Table';
+import { useGetPayoutListQuery, usePreviewPayoutQuery, useCreatePayoutMutation } from '@/services/payout';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
+import dayjs from 'dayjs';
+import { MouseEvent, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PayoutsHeadTable, StatusOptions } from './config';
+import { RowProp } from '@/components/Table/utils';
 
 const ButtonAction = styled(Button)({
   border: 'none',
@@ -30,21 +30,49 @@ const ButtonAction = styled(Button)({
 });
 
 interface FilterProps {
-  searchEmail: string;
+  name: string;
   dateRange: Array<Date | null>;
   status: StatusEnum | string;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
+  page: number;
+  pageSize: number;
 }
+
+const DEFAULT_NEW_PAYOUT_VALUE = window.T('Payout for {{month}} Request', {
+  month: dayjs().format('MMMM'),
+});
 
 function WithdrawRequestsContainer() {
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [newPayoutValue, setNewPayoutValue] = useState<string>(DEFAULT_NEW_PAYOUT_VALUE);
+
   const [filter, setFilter] = useState<FilterProps>({
-    searchEmail: '',
+    name: '',
     dateRange: [dayjs().startOf('month').toDate(), new Date()],
-    status: '',
+    status: 'all',
+    sortBy: 'createdAt',
+    sortDirection: 'asc',
+    page: 1,
+    pageSize: 10,
   });
 
-  const onChangeDateRange = (dateRange: Array<Date | null>) => {
+  const { data, isFetching } = useGetPayoutListQuery({
+    startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
+    endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
+    name: filter.name,
+    status: filter.status === 'all' ? undefined : filter.status,
+    SortBy: filter.sortBy,
+    sortDirection: filter.sortDirection === 'asc' ? 0 : 1,
+    pageIndex: filter.page,
+    pageSize: filter.pageSize,
+  });
+
+  const { data: payoutPreview, isFetching: isFetchingPreview } = usePreviewPayoutQuery({});
+  const [createPayout, { isLoading: isCreatingPayout }] = useCreatePayoutMutation({});
+
+  const handleChangeDateRange = (dateRange: Array<Date | null>) => {
     if (dateRange[0] && dateRange[1]) {
       setFilter(prev => ({
         ...prev,
@@ -53,54 +81,57 @@ function WithdrawRequestsContainer() {
     }
   };
 
-  const handleSearchUserEmail = (searchText: string) => {
-    if (searchText) {
-      setFilter(prev => ({
-        ...prev,
-        searchEmail: searchText,
-      }));
-    }
+  const handleUpdateFilter = (name: string) => (value: string | number | StatusEnum) => {
+    setFilter(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleOpenDrawerDetail = (id: string) => (e: MouseEvent<HTMLElement>) => {
+  const handleSortTable = (sortData: { sortDirection: 'asc' | 'desc'; sortBy: keyof RowProp }) => {
+    setFilter((prev: FilterProps) => ({
+      ...prev,
+      sortDirection: sortData.sortDirection,
+      sortBy: sortData.sortBy as string,
+    }));
+  };
+
+  const handleOpenDrawerDetail = (payoutId: string) => (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    navigate(`/payouts/${id}`);
+    navigate(`/payouts/${payoutId}`);
+  };
+
+  const handleCreatePayout = async () => {
+    if (newPayoutValue) {
+      try {
+        await createPayout({
+          name: newPayoutValue,
+        }).unwrap();
+        setShowCreateModal(false);
+        setNewPayoutValue(DEFAULT_NEW_PAYOUT_VALUE);
+      } catch (error) {
+        // console.log(error);
+      }
+    }
   };
 
   const withDrawalData = useMemo(
     () =>
-      rowsRegionCell().map((item: any) => ({
+      (data?.items || []).map((item: any) => ({
         ...item,
-        checkbox: !['approved', 'rejected'].includes(item.status.toLowerCase()),
-        email: (
-          <Link
-            component="a"
-            href={`mailto:${item?.email}`}
-            sx={{
-              color: '#0066F4',
-            }}
-          >
-            {item.email}
-          </Link>
-        ),
+        createdAt: item?.createdAt ? dayjs(item.createdAt).format('MM/DD/YYYY HH:mm:ss') : '',
         status: <StatusLabel status={item.status} />,
         action: (
-          <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.id)}>
+          <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.payoutId)}>
             <HerondIcon name="eye" />
           </ButtonAction>
         ),
       })),
-    [],
+    [data?.pageIndex, data?.items?.length],
   );
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        py: 3,
-        position: 'relative',
-      }}
-    >
+    <Container loading={isFetching || isFetchingPreview}>
       <Box
         sx={{
           background: '#fff',
@@ -152,20 +183,19 @@ function WithdrawRequestsContainer() {
             justifyContent="center"
             spacing={1.5}
           >
-            <Typography variant="body1">43 items</Typography>
+            <Typography variant="body1">{`${data?.totalCount || 0} items`}</Typography>
             <Box>
-              <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+              <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
             </Box>
             <Box>
-              <SearchInputField
-                placeholder={window.T('Enter user email')}
-                validate={validateEmail}
-                msgError={window.T('Email is invalid')}
-                onSubmit={handleSearchUserEmail}
+              <SearchInputField placeholder={window.T('Name')} onSubmit={handleUpdateFilter('name')} />
+            </Box>
+            <Box>
+              <SelectField
+                value={StatusOptions[0].value}
+                options={StatusOptions}
+                onChange={handleUpdateFilter('status')}
               />
-            </Box>
-            <Box>
-              <SelectField value={StatusOptions[0].value} options={StatusOptions} />
             </Box>
           </Stack>
         </Stack>
@@ -175,7 +205,17 @@ function WithdrawRequestsContainer() {
             py: 2,
           }}
         >
-          <HerondTable pageIndex={1} totalPages={1} headCells={RegionHeadCell} rows={withDrawalData} />
+          <HerondTable
+            loading={isFetching}
+            sortDirection={filter.sortDirection}
+            sortBy={filter.sortBy}
+            pageIndex={data?.pageIndex || 1}
+            totalPages={data?.totalPages || 1}
+            headCells={PayoutsHeadTable}
+            rows={withDrawalData}
+            onChangePage={handleUpdateFilter('page')}
+            onSortChange={handleSortTable}
+          />
         </Box>
       </Box>
       <Modal
@@ -204,15 +244,19 @@ function WithdrawRequestsContainer() {
           dividers
         >
           <Stack mb={2}>
-            <InputField placeholder={window.T('Enter username')} onSubmit={() => {}} />
+            <InputField
+              placeholder={window.T('Enter username')}
+              defaultValue={newPayoutValue}
+              onSubmit={setNewPayoutValue}
+            />
           </Stack>
           <Stack mt={1} spacing={1} direction="row" alignItems="center">
             <Typography variant="body1" fontWeight={700}>{`${window.T('Total Amount')}:`}</Typography>
-            <Typography variant="body1">USDT 6000</Typography>
+            <Typography variant="body1">{`USDT ${payoutPreview?.totalAmount}`}</Typography>
           </Stack>
           <Stack mt={1} spacing={1} direction="row" alignItems="center">
             <Typography variant="body1" fontWeight={700}>{`${window.T('Withdraw request')}:`}</Typography>
-            <Typography variant="body1">255 transactions</Typography>
+            <Typography variant="body1">{`${payoutPreview?.totalRequest} transactions`}</Typography>
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -226,8 +270,10 @@ function WithdrawRequestsContainer() {
           />
           <ConfirmButton
             type="submit"
+            disabled={!newPayoutValue}
             label={window.T('Create')}
-            onClick={() => setShowCreateModal(false)}
+            loading={isCreatingPayout}
+            onClick={handleCreatePayout}
             sx={{
               minWidth: '120px !important',
             }}
