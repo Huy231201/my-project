@@ -14,6 +14,7 @@ interface Props {
   headCells: readonly HeaderCellProps[];
   rows: readonly RowProp[];
   checkbox?: boolean;
+  enableSelect?: boolean;
   sortDirection?: Order;
   sortBy?: keyof RowProp;
   selected?: Array<KeyRow>;
@@ -30,6 +31,7 @@ export default function EnhancedTable(props: Props) {
     rows,
     headCells,
     checkbox = false,
+    enableSelect = false,
     sortDirection = 'asc',
     sortBy = 'id',
     selected = [],
@@ -109,6 +111,7 @@ export default function EnhancedTable(props: Props) {
           <EnhancedTableBody
             loading={loading}
             checkbox={checkbox}
+            enableSelect={enableSelect}
             selected={selected}
             rows={rows}
             orderHeadCells={orderHeadCells}

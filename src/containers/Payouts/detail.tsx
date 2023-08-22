@@ -155,6 +155,10 @@ function PayoutsDetailContainer() {
     },
   );
 
+  const isCompletedPayout = [StatusEnum.COMPLETED, StatusEnum.REJECTED, StatusEnum.APPROVED].includes(
+    payoutDetail?.status,
+  );
+
   const {
     data: payoutTransactions,
     isFetching: isFetchingPayoutTransactions,
@@ -218,13 +222,15 @@ function PayoutsDetailContainer() {
             <ButtonAction variant="text" onClick={handleShowModalTransactionDetail(item?.transactionId)}>
               <HerondIcon name="eye" />
             </ButtonAction>
-            <ButtonAction variant="text" onClick={handleShowRemovePayoutTransactionModal(item?.id)}>
-              <HerondIcon name="trash" />
-            </ButtonAction>
+            {!isCompletedPayout && (
+              <ButtonAction variant="text" onClick={handleShowRemovePayoutTransactionModal(item?.id)}>
+                <HerondIcon name="trash" />
+              </ButtonAction>
+            )}
           </Stack>
         ),
       })),
-    [payoutTransactions?.pageIndex, payoutTransactions?.items, isFetchingPayoutTransactions],
+    [payoutTransactions?.pageIndex, payoutTransactions?.items, isFetchingPayoutTransactions, isCompletedPayout],
   );
 
   useEffect(() => {
@@ -259,6 +265,11 @@ function PayoutsDetailContainer() {
     }
   };
 
+  const handleRefreshPayoutAndTransaction = () => {
+    refetchDetail();
+    refetchPayoutTransaction();
+  };
+
   const handleRefreshPayTransaction = () => {
     refetchPayoutTransaction();
     setSelected([]);
@@ -272,14 +283,14 @@ function PayoutsDetailContainer() {
     const configApi = {
       [ModalType.PayoutApprove]: {
         api: approvedPayout,
-        refetch: refetchDetail,
+        refetch: handleRefreshPayoutAndTransaction,
         payload: {
           id: payoutId,
         },
       },
       [ModalType.PayoutReject]: {
         api: rejectedPayout,
-        refetch: refetchDetail,
+        refetch: handleRefreshPayoutAndTransaction,
         payload: {
           id: payoutId,
         },
@@ -377,8 +388,6 @@ function PayoutsDetailContainer() {
     ],
     [],
   );
-
-  const isCompletedPayout = [StatusEnum.COMPLETED, StatusEnum.REJECTED].includes(payoutDetail?.status);
 
   return (
     <Container loading={isFetchingDetail}>
@@ -616,7 +625,7 @@ function PayoutsDetailContainer() {
               disabled={isCompletedPayout}
               onClick={() => setShowModalAddTransaction(true)}
             />
-            {selected?.length > 0 && <BulkAction options={BulkActionOptions} />}
+            {!isCompletedPayout && selected?.length > 0 && <BulkAction options={BulkActionOptions} />}
           </Stack>
 
           <Typography variant="body1" sx={{ fontSize: 16 }}>

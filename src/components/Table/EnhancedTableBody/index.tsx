@@ -19,6 +19,7 @@ const MuiTableCell = withStyles({
 interface Props {
   loading?: boolean;
   checkbox: boolean;
+  enableSelect?: boolean;
   selected: Array<string | number>;
   rows: readonly RowProp[];
   orderHeadCells: readonly HeaderCellProps[];
@@ -26,10 +27,10 @@ interface Props {
 }
 
 function EnhancedTableBody(props: Props) {
-  const { loading, orderHeadCells, rows, checkbox, selected, onSelectRow } = props;
+  const { loading, orderHeadCells, rows, checkbox, enableSelect, selected, onSelectRow } = props;
 
   const handleSelectRow = (id: string | number, enableCheckbox?: boolean) => (event: React.MouseEvent<unknown>) => {
-    if (enableCheckbox && onSelectRow) {
+    if ((enableCheckbox || enableSelect) && onSelectRow) {
       onSelectRow(event, id);
     }
   };

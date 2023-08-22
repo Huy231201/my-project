@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { PayoutsHeadTable, StatusOptions } from './config';
 import { RowProp } from '@/components/Table/utils';
 import { formatDate } from '@/utils/date';
+import toast from 'react-hot-toast';
 
 const ButtonAction = styled(Button)({
   border: 'none',
@@ -40,6 +41,16 @@ interface FilterProps {
   pageSize: number;
 }
 
+interface TableItem {
+  id: string;
+  name: string;
+  status: StatusEnum;
+  createdAt: string;
+  amount: number;
+  payoutId: string;
+  createdBy: string;
+}
+
 const DEFAULT_NEW_PAYOUT_VALUE = window.T('Payout for {{month}} Request', {
   month: dayjs().format('MMMM'),
 });
@@ -59,7 +70,11 @@ function WithdrawRequestsContainer() {
     pageSize: 10,
   });
 
-  const { data, isFetching } = useGetPayoutListQuery({
+  const {
+    data,
+    isFetching,
+    refetch: refetchPayoutList,
+  } = useGetPayoutListQuery({
     startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
     endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
     name: filter.name,
@@ -70,7 +85,7 @@ function WithdrawRequestsContainer() {
     pageSize: filter.pageSize,
   });
 
-  const { data: payoutPreview, isFetching: isFetchingPreview } = usePreviewPayoutQuery({});
+  const { data: payoutPreview, isFetching: isFetchingPreview, refetch: refetchPreview } = usePreviewPayoutQuery({});
   const [createPayout, { isLoading: isCreatingPayout }] = useCreatePayoutMutation({});
 
   const handleChangeDateRange = (dateRange: Array<Date | null>) => {
@@ -97,19 +112,35 @@ function WithdrawRequestsContainer() {
     }));
   };
 
+  const handleSelectRow = (rowId: Array<string | number>) => {
+    const row = data?.items?.find((item: TableItem) => item.id === rowId[0]);
+    if (row) {
+      navigate(`/payouts/${row.payoutId}`);
+    }
+  };
+
   const handleOpenDrawerDetail = (payoutId: string) => (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     navigate(`/payouts/${payoutId}`);
   };
 
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+    setNewPayoutValue(DEFAULT_NEW_PAYOUT_VALUE);
+  };
+
   const handleCreatePayout = async () => {
     if (payoutPreview?.totalAmount > 0 && payoutPreview?.totalAmount > 0 && newPayoutValue) {
       try {
-        await createPayout({
+        const res = await createPayout({
           name: newPayoutValue,
         }).unwrap();
-        setShowCreateModal(false);
-        setNewPayoutValue(DEFAULT_NEW_PAYOUT_VALUE);
+        if (res.success) {
+          handleCloseCreateModal();
+          toast.success(res.message || window.T('Create payout successfully'));
+          refetchPayoutList();
+          refetchPreview();
+        }
       } catch (error) {
         // console.log(error);
       }
@@ -118,7 +149,7 @@ function WithdrawRequestsContainer() {
 
   const withDrawalData = useMemo(
     () =>
-      (data?.items || []).map((item: any) => ({
+      (data?.items || []).map((item: TableItem) => ({
         ...item,
         createdAt: formatDate(item?.createdAt),
         status: <StatusLabel status={item.status} />,
@@ -203,6 +234,7 @@ function WithdrawRequestsContainer() {
           }}
         >
           <HerondTable
+            enableSelect
             loading={isFetching}
             sortDirection={filter.sortDirection}
             sortBy={filter.sortBy}
@@ -210,6 +242,7 @@ function WithdrawRequestsContainer() {
             totalPages={data?.totalPages || 1}
             headCells={PayoutsHeadTable}
             rows={withDrawalData}
+            onSelectRow={handleSelectRow}
             onChangePage={handleUpdateFilter('page')}
             onSortChange={handleSortTable}
           />
@@ -223,7 +256,7 @@ function WithdrawRequestsContainer() {
             <Typography variant="h4">{window.T('Create new payout')}</Typography>
           </Stack>
         }
-        onClose={() => setShowCreateModal(false)}
+        onClose={handleCloseCreateModal}
         sxWrapper={{
           '& .MuiDialog-paper': {
             margin: '16px',
@@ -252,9 +285,11 @@ function WithdrawRequestsContainer() {
                 variant="body1"
                 sx={{
                   fontSize: 18,
+                  fontStyle: 'italic',
+                  marginBottom: 2,
                 }}
               >
-                {window.T('No payout request')}
+                {window.T('No transaction available')}
               </Typography>
             )}
           </Stack>
@@ -271,7 +306,7 @@ function WithdrawRequestsContainer() {
           <CancelButton
             type="submit"
             label={window.T('Cancel')}
-            onClick={() => setShowCreateModal(false)}
+            onClick={handleCloseCreateModal}
             sx={{
               minWidth: '120px !important',
             }}
