@@ -23,10 +23,7 @@ jobs:
     - name: Install node modules
       run: yarn
     - name: Build
-      env:
-        VITE_API_URL: ${{ vars.VITE_API_URL }}
-        VITE_DOMAIN_URL: ${{ vars.VITE_DOMAIN_URL }}
-      run: yarn build
+      run: yarn build:{{inputs.target_env}}
     - name: copy folder to remote     
       uses: garygrossgarten/github-action-scp@release
       with:

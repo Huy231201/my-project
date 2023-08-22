@@ -25,9 +25,10 @@
   "homepage": "https://github.com/herondlabs/herond-portal-fe#readme",
   "scripts": {
     "dev": "vite --open",
-    "start": "vite --open",
+    "start": "vite --open --mode dev",
     "host": "vite --open --host",
-    "build": "tsc && vite build",
+    "build:dev": "tsc && vite build --mode dev",
+    "build:prod": "tsc && vite build --mode prod",
     "preview": "vite preview",
     "check-types": "tsc --noEmit",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
