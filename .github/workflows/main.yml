@@ -23,7 +23,7 @@ jobs:
     - name: Install node modules
       run: yarn
     - name: Build
-      run: yarn build:{{inputs.target_env}}
+      run: yarn build:${{inputs.target_env}}
     - name: copy folder to remote     
       uses: garygrossgarten/github-action-scp@release
       with:
