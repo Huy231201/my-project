@@ -27,8 +27,18 @@ export const Api = api.injectEndpoints({
         showToast: false,
       }),
     }),
+    getWithdrawAvailable: builder.query({
+      query: query => ({
+        url: `/payment/withdraw/available?${queryString.stringify(removeNullParams(query))}`,
+      }),
+    }),
   }),
 });
 
-export const { useGetWithdrawQuery, useGetWithdrawDetailQuery, useGetWithdrawEarnQuery, useRejectPaymentsMutation } =
-  Api;
+export const {
+  useGetWithdrawQuery,
+  useGetWithdrawDetailQuery,
+  useGetWithdrawEarnQuery,
+  useRejectPaymentsMutation,
+  useGetWithdrawAvailableQuery,
+} = Api;

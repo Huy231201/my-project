@@ -172,6 +172,7 @@ function BrowserMetric() {
               label={item.label}
               subLabel={item?.subLabel}
               icon={item.icon}
+              loading={isFetchingOverview}
               content={item.content}
               tooltipContent={item.tooltipContent}
             />

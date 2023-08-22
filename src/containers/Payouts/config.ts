@@ -1,12 +1,5 @@
-/* eslint-disable quotes */
-interface UserHeadCell {
-  id: string;
-  order: number;
-  label: string;
-  numeric?: boolean;
-  width?: number;
-  sortable?: boolean;
-}
+import { HeaderCellProps } from '@/components/Table/utils';
+
 // ---------------------------
 export const StatusOptions = [
   {
@@ -29,7 +22,7 @@ export const StatusOptions = [
 
 // ---------------------------
 
-export const PayoutsHeadTable: readonly UserHeadCell[] = [
+export const PayoutsHeadTable: readonly HeaderCellProps[] = [
   {
     id: 'payoutId',
     order: 1,
@@ -64,6 +57,64 @@ export const PayoutsHeadTable: readonly UserHeadCell[] = [
     order: 6,
     numeric: true,
     label: window.T('Action'),
+  },
+];
+
+export const PayoutTransactionHeadTable: readonly HeaderCellProps[] = [
+  {
+    id: 'tx_id',
+    order: 1,
+    label: window.T('TxId'),
+    numeric: true,
+  },
+  {
+    id: 'email',
+    order: 2,
+    label: window.T('Email'),
+  },
+  {
+    id: 'wallet_address',
+    order: 3,
+    label: window.T('Wallet Address'),
+  },
+  {
+    id: 'createdDate',
+    order: 4,
+    numeric: true,
+    sortable: true,
+    label: window.T('Created At'),
+    width: 180,
+  },
+  {
+    id: 'deadline',
+    order: 5,
+    numeric: true,
+    sortable: true,
+    label: window.T('Deadline'),
+    width: 180,
+  },
+  {
+    id: 'amount',
+    order: 5,
+    numeric: true,
+    sortable: true,
+    label: window.T('Amount (USDT)'),
+    width: 150,
+  },
+  {
+    id: 'status',
+    order: 5,
+    numeric: true,
+    label: window.T('Status'),
+    width: 80,
+  },
+  {
+    id: 'action',
+    order: 5,
+    numeric: true,
+    label: window.T('Action'),
+    align: 'center',
+    width: 80,
   },
 ];
 

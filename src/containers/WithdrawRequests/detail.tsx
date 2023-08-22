@@ -1,4 +1,4 @@
-import { CancelButton } from '@/components/Buttons';
+import { CancelButton, ConfirmButton } from '@/components/Buttons';
 import { CardHeader } from '@/components/Card';
 import HerondIcon from '@/components/Icons';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
@@ -24,6 +24,8 @@ import {
 import { truncateStr } from '@/utils/common';
 import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
+import { formatDate } from '@/utils/date';
+
 interface EarnItem {
   id: string;
   earnedAt: string;
@@ -36,6 +38,24 @@ enum ModalType {
   PayoutTransactionRemove = 'payout-transaction-remove',
   PayoutTransactionReject = 'payout-transaction-reject',
 }
+
+const MessageContentModal = {
+  [ModalType.PaymentReject]: {
+    title: window.T('Reject Payment'),
+    content: window.T('Are you sure you want to reject this payment?'),
+    btnConfirmName: window.T('Reject'),
+  },
+  [ModalType.PayoutTransactionRemove]: {
+    title: window.T('Remove Payout Transaction'),
+    content: window.T('Are you sure you want to remove this payout transaction?'),
+    btnConfirmName: window.T('Remove From Payout'),
+  },
+  [ModalType.PayoutTransactionReject]: {
+    title: window.T('Reject Payout Transaction'),
+    content: window.T('Are you sure you want to reject this payout transaction?'),
+    btnConfirmName: window.T('Reject From Payout & Reject'),
+  },
+};
 
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
@@ -63,32 +83,44 @@ const MuiListItemText = styled(ListItemText)({
   },
 });
 
-function WithdrawRequestsContainer() {
+interface Props {
+  isModal?: boolean;
+  transactionId?: string;
+  onBack?: () => void;
+}
+
+function WithdrawRequestsContainer(props: Props) {
+  const { isModal, transactionId: propsTransactionId, onBack } = props;
   const navigate = useNavigate();
   const params = useParams();
+  const transactionId = propsTransactionId || params?.id || null;
 
-  const [showModalReject, setShowModalReject] = useState<ModalType | null>(null);
+  const [showModalConfirm, setShowModalConfirm] = useState<ModalType | null>(null);
   const [pageIndex, setPageIndex] = useState(1);
 
-  const { data: detail, isFetching: isFetchingDetail } = useGetWithdrawDetailQuery(
+  const {
+    data: detail,
+    isFetching: isFetchingDetail,
+    refetch: refetchWithdrawDetail,
+  } = useGetWithdrawDetailQuery(
     {
-      transactionId: params?.id,
+      transactionId: transactionId,
     },
     {
-      skip: !params?.id,
+      skip: !transactionId,
     },
   );
 
-  const { transactionId, amount, deadLine, createdAt, address, status, createdBy, payoutId } = detail || {};
+  const { amount, deadLine, createdAt, address, status, createdBy, payoutId } = detail || {};
 
   const { data: earnData, isFetching: isFetchingEarn } = useGetWithdrawEarnQuery(
     {
-      transactionId: params?.id,
+      transactionId: transactionId,
       pageIndex: pageIndex,
       pageSize: 10,
     },
     {
-      skip: !params?.id,
+      skip: !transactionId,
     },
   );
 
@@ -110,11 +142,11 @@ function WithdrawRequestsContainer() {
   };
 
   const onCloseModal = () => {
-    setShowModalReject(null);
+    setShowModalConfirm(null);
   };
 
   const onShowModalType = (type: ModalType) => () => {
-    setShowModalReject(type);
+    setShowModalConfirm(type);
   };
 
   const handleRejectPayment = async () => {
@@ -125,12 +157,17 @@ function WithdrawRequestsContainer() {
     } as {
       [key in ModalType]: any;
     };
-    if (showModalReject && api?.[showModalReject]) {
+    if (showModalConfirm && api?.[showModalConfirm]) {
       try {
-        const res = await api[showModalReject]({
-          transactionIds: [params?.id],
+        const res = await api[showModalConfirm]({
+          payoutId: payoutId,
+          transactionIds: [transactionId],
         }).unwrap();
+        refetchWithdrawDetail();
         onCloseModal();
+        if (onBack) {
+          onBack();
+        }
         toast.success(window.T(res?.message || 'Reject payment successfully'));
       } catch (error) {
         // toast.error(window.T('Reject payment failed'));
@@ -150,12 +187,21 @@ function WithdrawRequestsContainer() {
   );
 
   return (
-    <Container loading={isFetchingDetail || isFetchingEarn}>
+    <Container
+      loading={isFetchingDetail || isFetchingEarn}
+      sx={{
+        ...(isModal && {
+          marginTop: -6,
+          padding: '8px !important',
+        }),
+      }}
+    >
       <Stack
         direction="row"
         alignItems="center"
         spacing={0.5}
         sx={{
+          display: isModal ? 'none' : 'flex',
           '& svg': {
             width: '20px',
             height: '20px',
@@ -190,7 +236,7 @@ function WithdrawRequestsContainer() {
             }}
           >
             <Grid container>
-              <Grid item xs={8}>
+              <Grid item xs={12} md={9}>
                 <Stack direction="row" justifyContent="space-between">
                   <Stack
                     direction="row"
@@ -209,61 +255,69 @@ function WithdrawRequestsContainer() {
                     <StatusLabel status={status} />
                   </Stack>
                 </Stack>
-                <Stack spacing={1} mt={1}>
+                <Stack mt={1}>
                   <MuiListItemText primary={`${window.T('Transaction Id')}:`} secondary={truncateStr(transactionId)} />
                   <MuiListItemText primary={`${window.T('Amount')}:`} secondary={amount || 0} />
-                  <MuiListItemText
-                    primary={`${window.T('Deadline')}:`}
-                    secondary={deadLine ? dayjs(deadLine).format('MM/DD/YYYY HH:mm:ss') : ''}
-                  />
-                  <MuiListItemText
-                    primary={`${window.T('Create At')}:`}
-                    secondary={createdAt ? dayjs(createdAt).format('MM/DD/YYYY HH:mm:ss') : ''}
-                  />
+                  <MuiListItemText primary={`${window.T('Deadline')}:`} secondary={formatDate(deadLine)} />
+                  <MuiListItemText primary={`${window.T('Create At')}:`} secondary={formatDate(createdAt)} />
                   <MuiListItemText primary={`${window.T('Create By')}:`} secondary={createdBy} />
                   <MuiListItemText primary={`${window.T('Withdraw wallet address')}:`} secondary={address || ''} />
                 </Stack>
               </Grid>
-              <Grid item xs={4}>
-                {status?.toLowerCase() === 'pending' &&
-                  (payoutId ? (
-                    <Stack spacing={2}>
+              <Grid item xs={12} md={3}>
+                <Stack
+                  spacing={2}
+                  mt={{
+                    xs: 2,
+                    md: 0,
+                  }}
+                  direction={{
+                    xs: 'row',
+                    md: 'column',
+                  }}
+                >
+                  {status?.toLowerCase() === 'pending' &&
+                    (payoutId ? (
+                      <>
+                        <CancelButton
+                          type="button"
+                          label={window.T('Remove From Payout')}
+                          sx={{
+                            minWidth: '120px !important',
+                            height: 'auto !important',
+                            width: '100%',
+                          }}
+                          onClick={onShowModalType(ModalType.PayoutTransactionRemove)}
+                        />
+                        <CancelButton
+                          type="button"
+                          label={window.T('Remove From Payout & Reject ')}
+                          sx={{
+                            minWidth: '120px !important',
+                            height: 'auto !important',
+                            width: '100%',
+                          }}
+                          onClick={onShowModalType(ModalType.PayoutTransactionReject)}
+                        />
+                      </>
+                    ) : (
                       <CancelButton
                         type="button"
-                        label={window.T('Remove From Payout')}
+                        label={window.T('Reject')}
                         sx={{
                           minWidth: '120px !important',
                           height: 'auto !important',
                         }}
-                        onClick={onShowModalType(ModalType.PayoutTransactionRemove)}
+                        onClick={onShowModalType(ModalType.PaymentReject)}
                       />
-                      <CancelButton
-                        type="button"
-                        label={window.T('Remove From Payout & Reject ')}
-                        sx={{
-                          minWidth: '120px !important',
-                          height: 'auto !important',
-                        }}
-                        onClick={onShowModalType(ModalType.PayoutTransactionReject)}
-                      />
-                    </Stack>
-                  ) : (
-                    <CancelButton
-                      type="button"
-                      label={window.T('Reject')}
-                      sx={{
-                        minWidth: '120px !important',
-                        height: 'auto !important',
-                      }}
-                      onClick={onShowModalType(ModalType.PaymentReject)}
-                    />
-                  ))}
+                    ))}
+                </Stack>
               </Grid>
             </Grid>
           </Box>
         </Grid>
-        {payoutId && (
-          <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}>
+          {payoutId && (
             <Box
               sx={{
                 backgroundColor: '#fff',
@@ -272,49 +326,35 @@ function WithdrawRequestsContainer() {
                 p: {
                   xs: 2,
                   sm: 3,
-                  md: 4,
+                  xl: 4,
                 },
               }}
             >
               <CardHeader label={window.T('Payout details')} icon="receive" />
-              <Grid mt={2} container>
-                <Grid item xs={12}>
-                  <MuiListItemText primary={`${window.T('Payout Id')}:`} secondary={payoutId} />
-                </Grid>
+              <Stack mt={1}>
+                <MuiListItemText primary={`${window.T('Payout Id')}:`} secondary={payoutId} />
                 {payoutDetail?.action.toLowerCase() === 'complete' && (
                   <>
-                    <Grid item xs={12}>
-                      <MuiListItemText primary={`${window.T('Approved By')}:`} secondary={payoutDetail?.actor} />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <MuiListItemText
-                        primary={`${window.T('Approved At')}:`}
-                        secondary={
-                          payoutDetail?.actionAt ? dayjs(payoutDetail.actionAt).format('MM/DD/YYYY HH:mm:ss') : ''
-                        }
-                      />
-                    </Grid>
+                    <MuiListItemText primary={`${window.T('Approved By')}:`} secondary={payoutDetail?.actor} />
+                    <MuiListItemText
+                      primary={`${window.T('Approved At')}:`}
+                      secondary={formatDate(payoutDetail?.actionAt)}
+                    />
                   </>
                 )}
                 {payoutDetail?.action?.toLowerCase() === 'failed' && (
                   <>
-                    <Grid item xs={12}>
-                      <MuiListItemText primary={`${window.T('Rejected By')}:`} secondary={payoutDetail?.actor} />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <MuiListItemText
-                        primary={`${window.T('Rejected At')}:`}
-                        secondary={
-                          payoutDetail?.actionAt ? dayjs(payoutDetail.actionAt).format('MM/DD/YYYY HH:mm:ss') : ''
-                        }
-                      />
-                    </Grid>
+                    <MuiListItemText primary={`${window.T('Rejected By')}:`} secondary={payoutDetail?.actor} />
+                    <MuiListItemText
+                      primary={`${window.T('Rejected At')}:`}
+                      secondary={formatDate(payoutDetail?.actionAt)}
+                    />
                   </>
                 )}
-              </Grid>
+              </Stack>
             </Box>
-          </Grid>
-        )}
+          )}
+        </Grid>
       </Grid>
       <Box
         mt={4}
@@ -323,7 +363,7 @@ function WithdrawRequestsContainer() {
           p: {
             xs: 2,
             sm: 3,
-            md: 4,
+            xl: 4,
           },
         }}
       >
@@ -344,8 +384,8 @@ function WithdrawRequestsContainer() {
         />
       </Box>
       <Modal
-        open={!!showModalReject}
-        title={window.T('Do you want to reject this request?')}
+        open={!!showModalConfirm}
+        title={showModalConfirm ? MessageContentModal?.[showModalConfirm]?.title : ''}
         onClose={onCloseModal}
         sxWrapper={{
           '& .MuiDialog-paper': {
@@ -361,9 +401,10 @@ function WithdrawRequestsContainer() {
           }}
           dividers
         >
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {window.T('Do you want to reject this request? This action can’t be undone')}
+          <Typography variant="body1">
+            {showModalConfirm ? MessageContentModal?.[showModalConfirm]?.content : ''}
           </Typography>
+          <Typography variant="body1">{window.T('This action can’t be undone')}</Typography>
         </DialogContent>
         <DialogActions>
           <CancelButton
@@ -374,9 +415,9 @@ function WithdrawRequestsContainer() {
             }}
             onClick={onCloseModal}
           />
-          <CancelButton
+          <ConfirmButton
             type="submit"
-            label={window.T('Reject')}
+            label={showModalConfirm ? MessageContentModal?.[showModalConfirm]?.btnConfirmName : ''}
             onClick={handleRejectPayment}
             loading={isRejectPayment || isRemovingPayoutTransaction || isRejectPayoutTransaction}
           />

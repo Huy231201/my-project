@@ -15,6 +15,9 @@ const MuiButton = withStyles(() => ({
       backgroundColor: alpha('#FFF', 0.6),
     },
     fontWeight: 700,
+    '&:disabled': {
+      borderColor: 'rgb(238 238 238)',
+    },
     '& .MuiLoadingButton-loadingIndicator': {
       marginRight: 16,
       position: 'relative',
@@ -25,15 +28,16 @@ const MuiButton = withStyles(() => ({
 type Props = {
   label?: string;
   loading?: boolean;
+  disabled?: boolean;
   type: 'button' | 'submit' | 'reset';
   sx?: SxProps<Theme>;
   onClick?: () => void;
 };
 
 function CancelButton(props: Props) {
-  const { type = 'button', label = 'Reject', loading, sx = {}, onClick } = props;
+  const { type = 'button', label = 'Reject', loading, disabled, sx = {}, onClick } = props;
   return (
-    <MuiButton type={type} loadingPosition="start" sx={sx} loading={loading} onClick={onClick}>
+    <MuiButton type={type} loadingPosition="start" sx={sx} loading={loading} disabled={disabled} onClick={onClick}>
       {label}
     </MuiButton>
   );

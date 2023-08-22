@@ -47,6 +47,13 @@ export const Api = api.injectEndpoints({
         data,
       }),
     }),
+    addPayoutTransactions: builder.mutation({
+      query: data => ({
+        url: '/payout/transactions/add',
+        method: 'PUT',
+        data,
+      }),
+    }),
     getPayoutTransactions: builder.query({
       query: ({ id, ...rest }) => ({
         url: `/payout/${id}/transactions?${queryString.stringify(removeNullParams(rest))}`,
@@ -78,6 +85,7 @@ export const {
   useApprovePayoutMutation,
   useRejectPayoutMutation,
   useGetPayoutTransactionsQuery,
+  useAddPayoutTransactionsMutation,
   useRemovePayoutTransactionMutation,
   useRejectPayoutTransactionMutation,
 } = Api;

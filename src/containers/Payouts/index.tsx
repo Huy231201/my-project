@@ -16,6 +16,7 @@ import { MouseEvent, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PayoutsHeadTable, StatusOptions } from './config';
 import { RowProp } from '@/components/Table/utils';
+import { formatDate } from '@/utils/date';
 
 const ButtonAction = styled(Button)({
   border: 'none',
@@ -102,7 +103,7 @@ function WithdrawRequestsContainer() {
   };
 
   const handleCreatePayout = async () => {
-    if (newPayoutValue) {
+    if (payoutPreview?.totalAmount > 0 && payoutPreview?.totalAmount > 0 && newPayoutValue) {
       try {
         await createPayout({
           name: newPayoutValue,
@@ -119,7 +120,7 @@ function WithdrawRequestsContainer() {
     () =>
       (data?.items || []).map((item: any) => ({
         ...item,
-        createdAt: item?.createdAt ? dayjs(item.createdAt).format('MM/DD/YYYY HH:mm:ss') : '',
+        createdAt: formatDate(item?.createdAt),
         status: <StatusLabel status={item.status} />,
         action: (
           <ButtonAction variant="text" onClick={handleOpenDrawerDetail(item.payoutId)}>
@@ -191,11 +192,7 @@ function WithdrawRequestsContainer() {
               <SearchInputField placeholder={window.T('Name')} onSubmit={handleUpdateFilter('name')} />
             </Box>
             <Box>
-              <SelectField
-                value={StatusOptions[0].value}
-                options={StatusOptions}
-                onChange={handleUpdateFilter('status')}
-              />
+              <SelectField value={filter.status} options={StatusOptions} onChange={handleUpdateFilter('status')} />
             </Box>
           </Stack>
         </Stack>
@@ -244,11 +241,22 @@ function WithdrawRequestsContainer() {
           dividers
         >
           <Stack mb={2}>
-            <InputField
-              placeholder={window.T('Enter username')}
-              defaultValue={newPayoutValue}
-              onSubmit={setNewPayoutValue}
-            />
+            {payoutPreview?.totalRequest > 0 && payoutPreview?.totalRequest > 0 ? (
+              <InputField
+                placeholder={window.T('Enter username')}
+                defaultValue={newPayoutValue}
+                onSubmit={setNewPayoutValue}
+              />
+            ) : (
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: 18,
+                }}
+              >
+                {window.T('No payout request')}
+              </Typography>
+            )}
           </Stack>
           <Stack mt={1} spacing={1} direction="row" alignItems="center">
             <Typography variant="body1" fontWeight={700}>{`${window.T('Total Amount')}:`}</Typography>
@@ -270,7 +278,7 @@ function WithdrawRequestsContainer() {
           />
           <ConfirmButton
             type="submit"
-            disabled={!newPayoutValue}
+            disabled={!newPayoutValue || (payoutPreview?.totalRequest === 0 && payoutPreview?.totalAmount === 0)}
             label={window.T('Create')}
             loading={isCreatingPayout}
             onClick={handleCreatePayout}

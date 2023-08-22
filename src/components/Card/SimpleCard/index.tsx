@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 
 function SimpleCard(props: SimpleCardProps) {
-  const { label, subLabel, icon, content, tooltipContent } = props;
+  const { loading, label, subLabel, icon, content, tooltipContent } = props;
 
   return (
     <Box
@@ -24,7 +24,7 @@ function SimpleCard(props: SimpleCardProps) {
     >
       <CardHeader label={label} subLabel={subLabel} icon={icon} tooltipContent={tooltipContent} />
       <Box my={2}>
-        {content === undefined ? (
+        {loading ? (
           <Skeleton variant="text" width={180} height={62} />
         ) : (
           <Typography

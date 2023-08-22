@@ -7,6 +7,7 @@ import { HeaderCellProps, RowProp } from '@/components/Table/utils';
 import { useState, useEffect } from 'react';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import dayjs from 'dayjs';
+import { formatDate } from '@/utils/date';
 
 interface Params {
   id: string;
@@ -48,7 +49,7 @@ const UserTable = (props: Props) => {
       const list = Array.isArray(data) ? data : data?.items;
       const newData = (list || []).map((item: RowData, index: number) => ({
         ...item,
-        createdDateTime: item?.createdDateTime ? dayjs(item.createdDateTime).format('MM/DD/YYYY HH:mm:ss') : '',
+        createdDateTime: formatDate(item?.createdDateTime),
         transactionId: truncateStr(item?.transactionId),
         order: index + 1,
         ...(item.status && {
@@ -57,7 +58,7 @@ const UserTable = (props: Props) => {
       }));
       setRows(newData);
     }
-  }, [data?.length]);
+  }, [data?.pageIndex, isFetching]);
 
   return (
     <Box

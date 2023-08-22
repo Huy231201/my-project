@@ -91,7 +91,7 @@ function UserDetailContainer() {
     },
   );
 
-  const { data: overviewData } = useGetUserOverviewQuery(
+  const { data: overviewData, isFetching: isFetchingOverview } = useGetUserOverviewQuery(
     {
       id: userId,
     },
@@ -100,7 +100,7 @@ function UserDetailContainer() {
     },
   );
 
-  const { data: balanceData } = useGetUserBalanceQuery(
+  const { data: balanceData, isFetching: isFetchingBalance } = useGetUserBalanceQuery(
     {
       id: userId,
     },
@@ -125,12 +125,14 @@ function UserDetailContainer() {
         id: 1,
         label: window.T('Recruited User'),
         icon: 'user-group-orange',
+        loading: isFetchingOverview,
         content: overviewData?.totalRecruited || 0,
       },
       {
         id: 2,
         label: window.T('Valid User'),
         icon: 'user',
+        loading: isFetchingOverview,
         content: overviewData?.toTalValid || 0,
       },
       {
@@ -138,6 +140,7 @@ function UserDetailContainer() {
         label: window.T('Earned Money'),
         subLabel: window.T('(USDT)'),
         icon: 'dollar',
+        loading: isFetchingOverview,
         content: overviewData?.totalEarned || 0,
       },
       {
@@ -145,10 +148,11 @@ function UserDetailContainer() {
         label: window.T('Balance'),
         subLabel: window.T('(USDT)'),
         icon: 'receive',
-        content: balanceData?.data,
+        loading: isFetchingBalance,
+        content: balanceData || 0,
       },
     ],
-    [overviewData, balanceData],
+    [overviewData, balanceData, isFetchingOverview, isFetchingBalance],
   );
 
   const onChangeDateRange = (dateRange: Array<Date | null>) => {
@@ -270,7 +274,13 @@ function UserDetailContainer() {
           >
             {CardData.map(item => (
               <Grid key={item.id} item xs={12} md={6} lg={3}>
-                <SimpleCard label={item.label} subLabel={item?.subLabel} icon={item.icon} content={item.content} />
+                <SimpleCard
+                  label={item.label}
+                  subLabel={item?.subLabel}
+                  icon={item.icon}
+                  loading={item.loading}
+                  content={item.content}
+                />
               </Grid>
             ))}
           </Grid>

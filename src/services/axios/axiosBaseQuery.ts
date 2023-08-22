@@ -23,7 +23,7 @@ const axiosBaseQuery =
         ...rest,
       });
       return {
-        data: result.data?.data || result.data || {},
+        data: result.data?.data === undefined ? result.data ?? {} : result.data.data,
       };
     } catch (axiosError) {
       const err = axiosError as AxiosError;

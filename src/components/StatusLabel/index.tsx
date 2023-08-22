@@ -53,17 +53,16 @@ const statusColor = {
   [key: string]: string;
 };
 
-const statusLabel = {
-  completed: 'Approved',
-  failed: 'Rejected',
-  cancelled: 'Rejected',
-} as {
-  [key: string]: string;
-};
+// const statusLabel = {
+//   completed: 'Approved',
+//   cancelled: 'Rejected',
+// } as {
+//   [key: string]: string;
+// };
 
 const StatusLabel = (props: StatusLabelProps) => {
-  const { status = StatusEnum.PENDING } = props;
-  const label = statusLabel[status.toLocaleLowerCase()] || status;
+  const { status = '' } = props;
+  // const label = statusLabel[status.toLocaleLowerCase()] || status;
 
   return (
     <Typography
@@ -74,7 +73,7 @@ const StatusLabel = (props: StatusLabelProps) => {
       }}
       className="status-label"
     >
-      {capitalizeFirstLetter(label)}
+      {capitalizeFirstLetter(status)}
     </Typography>
   );
 };

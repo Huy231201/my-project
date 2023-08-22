@@ -53,5 +53,9 @@ export const removeNullParams = (params: { [key: string]: string | number | bool
     return newObject;
   }, {});
 
-export const truncateStr = (str = '', maxLength = 13) =>
-  str.length > maxLength ? `${str.slice(0, (maxLength - 3) / 2)}…${str.slice(-(maxLength - 3) / 2)}` : str;
+export const truncateStr = (str: string | undefined | null = '', maxLength = 13) => {
+  const strValue = str || '';
+  return strValue.length > maxLength
+    ? `${strValue.slice(0, (maxLength - 3) / 2)}…${strValue.slice(-(maxLength - 3) / 2)}`
+    : strValue;
+};

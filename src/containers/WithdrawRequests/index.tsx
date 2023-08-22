@@ -13,13 +13,14 @@ import { validateEmail, truncateStr } from '@/utils/common';
 import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
-import { CancelButton } from '@/components/Buttons';
+import { CancelButton, ConfirmButton } from '@/components/Buttons';
 import { styled } from '@mui/material/styles';
 import HerondIcon from '@/components/Icons';
 import { useGetWithdrawQuery, useRejectPaymentsMutation } from '@/services/withdraw';
 import Container from '@/components/Container';
 import { RowProp } from '@/components/Table/utils';
 import toast from 'react-hot-toast';
+import { formatDate } from '@/utils/date';
 
 interface FilterProps {
   searchEmail: string;
@@ -70,7 +71,11 @@ function WithdrawRequestsContainer() {
     pageSize: 10,
   });
 
-  const { data, isFetching } = useGetWithdrawQuery({
+  const {
+    data,
+    isFetching,
+    refetch: refetchWithdrawList,
+  } = useGetWithdrawQuery({
     startDate: dayjs(filter.dateRange[0]).format('YYYY-MM-DD'),
     endDate: dayjs(filter.dateRange[1]).format('YYYY-MM-DD'),
     Email: filter.searchEmail,
@@ -120,8 +125,10 @@ function WithdrawRequestsContainer() {
       const res = await rejectPayment({
         transactionIds,
       }).unwrap();
+      setSelected([]);
       setShowModalReject(false);
       toast.success(window.T(res?.message || 'Reject payment successfully'));
+      refetchWithdrawList();
     } catch (error) {
       toast.error(window.T('Reject payment failed'));
     }
@@ -133,8 +140,8 @@ function WithdrawRequestsContainer() {
         id: item?.id,
         tx_id: truncateStr(item?.transactionId),
         wallet_address: item?.address,
-        createdDate: item?.createdDate ? dayjs(item.createdDate).format('MM/DD/YYYY HH:mm:ss') : '',
-        deadline: item?.deadline ? dayjs(item.deadline).format('MM/DD/YYYY HH:mm:ss') : '',
+        createdDate: formatDate(item?.createdDate),
+        deadline: formatDate(item?.deadline),
         amount: item?.amount || 0,
         checkbox: (item?.status || '').toLowerCase() === 'pending' && !item.payoutId,
         email: (
@@ -282,7 +289,7 @@ function WithdrawRequestsContainer() {
               border: 'none !important',
             }}
           />
-          <CancelButton type="submit" label={window.T('Reject')} loading={isRejecting} onClick={handleRejectPayment} />
+          <ConfirmButton type="submit" label={window.T('Reject')} loading={isRejecting} onClick={handleRejectPayment} />
         </DialogActions>
       </Modal>
     </Container>
