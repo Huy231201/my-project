@@ -342,7 +342,12 @@ function UserDetailContainer() {
   };
 
   return (
-    <Container>
+    <Container
+      sx={{
+        height: '100%',
+        py: 3,
+      }}
+    >
       <Typography variant="h3">{window.T('Affiliate user details')}</Typography>
       <Box
         mt={2}

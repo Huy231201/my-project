@@ -78,7 +78,6 @@ instance.interceptors.response.use(
       if (showToast) {
         toast.error(errorMessage);
       }
-      throw errorMessage;
     }
     return resp;
   },
