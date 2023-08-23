@@ -199,7 +199,7 @@ function WithdrawRequestsContainer() {
           </Typography>
         </Box>
         <Stack
-          mt={4}
+          mt={2}
           mb={1}
           direction={{
             xs: 'column',
@@ -216,7 +216,15 @@ function WithdrawRequestsContainer() {
             justifyContent="center"
             spacing={1.5}
           >
-            <Typography variant="body1">{`${data?.totalCount || 0} items`}</Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'flex',
+                },
+              }}
+            >{`${data?.totalCount || 0} items`}</Typography>
             <Box>
               <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
             </Box>
@@ -239,6 +247,16 @@ function WithdrawRequestsContainer() {
             py: 2,
           }}
         >
+          <Typography
+            variant="body1"
+            sx={{
+              display: {
+                xs: 'flex',
+                md: 'none',
+              },
+              mb: 1,
+            }}
+          >{`${data?.totalCount || 0} items`}</Typography>
           <HerondTable
             checkbox
             sortDirection={filter.sortDirection}
