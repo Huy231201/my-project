@@ -254,13 +254,13 @@ function PayoutsDetailContainer() {
             payoutName: payoutName,
           },
         }).unwrap();
-        if (res?.data && res?.data?.success) {
+        if (res?.success) {
           setIsEditMode(false);
           refetchDetail();
-          toast.success(res?.data?.message || window.T('Update payout name successfully!'));
+          toast.success(res?.message || window.T('Update payout name successfully!'));
         }
       } catch (error) {
-        // console.log(error);
+        // setIsEditMode(false);
       }
     }
   };
