@@ -31,13 +31,13 @@ interface FilterProps {
 }
 
 const CardDataDefault = [
-  {
-    id: 1,
-    label: window.T('Daily Active User'),
-    icon: 'user-group-orange',
-    contentKey: 'dau',
-    tooltipContent: 'Trung bình cộng của số User sử dụng browser mỗi ngày',
-  },
+  // {
+  //   id: 1,
+  //   label: window.T('Daily Active User'),
+  //   icon: 'user-group-orange',
+  //   contentKey: 'dau',
+  //   tooltipContent: 'Trung bình cộng của số User sử dụng browser mỗi ngày',
+  // },
   {
     id: 2,
     label: window.T('Downloads'),
