@@ -110,6 +110,12 @@ div.react-datepicker-popper > :first-child {
   border-bottom-right-radius: 200px !important;
 }
 
+.react-datepicker__day.react-datepicker__day--selected.react-datepicker__day--range-start.react-datepicker__day--range-end.react-datepicker__day--in-range {
+  background-color: #1d1e5e !important;
+  color: white !important;
+  border-radius: 200px !important;
+}
+
 .react-datepicker__week .react-datepicker__day.react-datepicker__day--in-selecting-range,
 .react-datepicker__week .react-datepicker__day.react-datepicker__day--in-range {
   background-color: #e8f0fc;

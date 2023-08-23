@@ -8,8 +8,8 @@ import { useState, useEffect, KeyboardEvent } from 'react';
 import useDebounce from '@/hooks/useDebounce';
 
 const MuiInputBase = styled(InputBase)({
-  height: 40,
   maxWidth: 400,
+  height: 40,
   backgroundColor: 'white',
   borderRadius: 8,
   margin: '0px !important',
