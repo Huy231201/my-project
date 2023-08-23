@@ -4,8 +4,6 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import FormGroup from '@mui/material/FormGroup';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { CheckboxField, DateRangePicker } from '@/components/Fields';
@@ -17,6 +15,7 @@ import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
 import Skeleton from '@mui/material/Skeleton';
 import Popper from '@mui/material/Popper';
 import dayjs from 'dayjs';
+import Button from '@mui/material/Button';
 
 interface MetricItem {
   title: string;
@@ -106,62 +105,25 @@ function BrowserMetric() {
           sm: 0,
         }}
         justifyContent="space-between"
+        mb={3}
       >
         <Typography variant="h3">{window.T('Browser Metric')}</Typography>
-        <Box
-          display="flex"
-          justifyContent={{
-            xs: 'space-between',
-            sm: 'flex-end',
-          }}
-        >
+        <Stack direction="row" justifyContent="flex-end" spacing={1}>
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
-          <Stack
-            direction="row"
-            justifyContent="flex-end"
-            display={{
-              xs: 'flex',
-              sm: 'none',
-            }}
-            mb={2}
-          >
-            <Tooltip title="Filter list">
-              <IconButton
-                size="large"
-                sx={{
-                  '& svg': {
-                    fontSize: 24,
-                  },
-                }}
-                onClick={handleOpenFilterMetric}
-              >
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Box>
-      </Stack>
-      <Stack
-        direction="row"
-        justifyContent="flex-end"
-        display={{
-          xs: 'none',
-          sm: 'flex',
-        }}
-      >
-        <Tooltip title="Filter list">
-          <IconButton
-            size="large"
+          <Button
+            type="button"
             sx={{
-              '& svg': {
-                fontSize: 24,
-              },
+              backgroundColor: 'white',
+              color: '#333840',
+              fontWeight: 400,
+              borderColor: '#A1A9B5',
             }}
+            startIcon={<FilterListIcon />}
             onClick={handleOpenFilterMetric}
           >
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+            {window.T('Filter Metric')}
+          </Button>
+        </Stack>
       </Stack>
       {isGetMetricSuccess ? (
         <Grid

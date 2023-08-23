@@ -40,7 +40,7 @@ import dayjs from 'dayjs';
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
   flexFlow: 'nowrap row',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   margin: 4,
   flex: 'initial',
   minWidth: '150px',
@@ -430,7 +430,7 @@ function PayoutsDetailContainer() {
             }}
           >
             <Grid container>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} lg={8}>
                 <Stack direction="row" justifyContent="space-between">
                   <Stack
                     direction="row"
@@ -471,12 +471,12 @@ function PayoutsDetailContainer() {
                   />
                 </Stack>
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} lg={4}>
                 <Stack
                   spacing={1}
                   mt={{
                     xs: 2,
-                    md: 0,
+                    lg: 0,
                   }}
                   direction="row"
                 >
@@ -522,8 +522,13 @@ function PayoutsDetailContainer() {
               },
             }}
           >
-            <Grid container>
-              <Grid item xs={12} md={8}>
+            <Grid
+              container
+              sx={{
+                height: '100%',
+              }}
+            >
+              <Grid item xs={12} lg={8}>
                 <Stack direction="row" justifyContent="space-between">
                   <Stack
                     direction="row"
@@ -561,16 +566,27 @@ function PayoutsDetailContainer() {
                   </Stack>
                 )}
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid
+                item
+                xs={12}
+                lg={4}
+                sx={{
+                  alignSelf: {
+                    xs: 'flex-end',
+                    lg: 'flex-start',
+                  },
+                }}
+              >
                 {payoutDetail?.status?.toLowerCase() === 'pending' && (
                   <Stack
                     spacing={1}
                     mt={{
                       xs: 2,
-                      md: 0,
+                      lg: 0,
                     }}
                     direction="row"
                     justifyContent="flex-end"
+                    alignItems="flex-end"
                   >
                     <CancelButton
                       type="button"
@@ -578,6 +594,7 @@ function PayoutsDetailContainer() {
                       sx={{
                         px: 4,
                         height: 'auto !important',
+                        width: '100%',
                       }}
                       onClick={() => setShowModalConfirm(ModalType.PayoutReject)}
                     />

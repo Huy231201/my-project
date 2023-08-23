@@ -60,7 +60,7 @@ const MessageContentModal = {
 const MuiListItemText = styled(ListItemText)({
   display: 'flex',
   flexFlow: 'wrap',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   margin: 4,
   flex: 'initial',
   minWidth: '150px',
