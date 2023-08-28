@@ -55,6 +55,7 @@ function DetailTransaction(props: Props) {
         '& .MuiDialog-paper': {
           margin: '16px',
           maxWidth: '100% !important',
+          width: '100%',
           backgroundColor: '#EEF1F5',
         },
       }}

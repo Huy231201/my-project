@@ -628,7 +628,15 @@ function PayoutsDetailContainer() {
           },
         }}
       >
-        <Stack direction="row" justifyContent="space-between" mt={1} mb={3}>
+        <Stack
+          direction={{
+            sx: 'column',
+            sm: 'row',
+          }}
+          justifyContent="space-between"
+          mt={1}
+          mb={3}
+        >
           <Stack spacing={2} direction="row" alignItems="center">
             <Typography variant="h3" sx={{ fontSize: 20 }}>
               {window.T('Withdraw Requests')}
@@ -642,12 +650,42 @@ function PayoutsDetailContainer() {
               disabled={isCompletedPayout}
               onClick={() => setShowModalAddTransaction(true)}
             />
-            {!isCompletedPayout && selected?.length > 0 && <BulkAction options={BulkActionOptions} />}
+            {!isCompletedPayout && selected?.length > 0 && (
+              <BulkAction
+                sx={{
+                  display: {
+                    xs: 'none',
+                    sm: 'flex',
+                  },
+                }}
+                options={BulkActionOptions}
+              />
+            )}
           </Stack>
 
-          <Typography variant="body1" sx={{ fontSize: 16 }}>
-            {`${payoutTransactions?.totalCount || 0} items`}
-          </Typography>
+          <Stack
+            mt={{
+              xs: 2,
+              sm: 0,
+            }}
+            direction="row"
+            spacing={2}
+          >
+            {!isCompletedPayout && selected?.length > 0 && (
+              <BulkAction
+                sx={{
+                  display: {
+                    xs: 'flex',
+                    sm: 'none',
+                  },
+                }}
+                options={BulkActionOptions}
+              />
+            )}
+            <Typography variant="body1" sx={{ fontSize: 16 }}>
+              {`${payoutTransactions?.totalCount || 0} items`}
+            </Typography>
+          </Stack>
         </Stack>
         <HerondTable
           checkbox
@@ -672,6 +710,7 @@ function PayoutsDetailContainer() {
           '& .MuiDialog-paper': {
             margin: '16px',
             maxWidth: 480,
+            width: '100%',
           },
         }}
       >
