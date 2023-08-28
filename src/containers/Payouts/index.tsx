@@ -194,7 +194,13 @@ function WithdrawRequestsContainer() {
           }}
           justifyContent="space-between"
         >
-          <Stack direction="row">
+          <Stack
+            direction={{
+              xs: 'column',
+              sm: 'row',
+            }}
+            spacing={1.5}
+          >
             <Button
               variant="outlined"
               sx={{
@@ -206,6 +212,17 @@ function WithdrawRequestsContainer() {
             >
               {window.T('Create new payout')}
             </Button>
+            <DateRangePicker
+              sx={{
+                display: {
+                  xs: 'flex',
+                  md: 'none',
+                },
+              }}
+              value={filter.dateRange}
+              onChange={handleChangeDateRange}
+              maxDate={new Date()}
+            />
           </Stack>
           <Stack
             direction={{
@@ -224,15 +241,34 @@ function WithdrawRequestsContainer() {
                 },
               }}
             >{`${data?.totalCount || 0} items`}</Typography>
-            <Box>
-              <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
-            </Box>
-            <Box>
-              <SearchInputField placeholder={window.T('Name')} onSubmit={handleUpdateFilter('name')} />
-            </Box>
-            <Box>
+            <DateRangePicker
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'flex',
+                },
+              }}
+              value={filter.dateRange}
+              onChange={handleChangeDateRange}
+              maxDate={new Date()}
+            />
+            <Stack
+              direction={{
+                xs: 'column',
+                sm: 'row',
+              }}
+              mt={2}
+              spacing={1.5}
+            >
+              <SearchInputField
+                sx={{
+                  width: '100%',
+                }}
+                placeholder={window.T('Name')}
+                onSubmit={handleUpdateFilter('name')}
+              />
               <SelectField value={filter.status} options={StatusOptions} onChange={handleUpdateFilter('status')} />
-            </Box>
+            </Stack>
           </Stack>
         </Stack>
         <Box
@@ -277,6 +313,7 @@ function WithdrawRequestsContainer() {
         onClose={handleCloseCreateModal}
         sxWrapper={{
           '& .MuiDialog-paper': {
+            width: '100%',
             margin: '16px',
             px: 2,
             py: 1,

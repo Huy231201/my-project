@@ -6,6 +6,7 @@ const MuiSelect = styled(Select)({
   cursor: 'pointer',
   borderColor: '#A1A9B5',
   color: '#202226',
+  height: 40,
   '& .MuiSelect-select': {
     color: '#202226',
   },

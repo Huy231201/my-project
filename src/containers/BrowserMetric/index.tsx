@@ -16,6 +16,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Popper from '@mui/material/Popper';
 import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
+import useWindowResize from '@/hooks/useWindowResize';
 
 interface MetricItem {
   title: string;
@@ -29,6 +30,7 @@ interface FilterProps {
 }
 
 function BrowserMetric() {
+  const { isMobileSm } = useWindowResize();
   const { data: metrics, isSuccess: isGetMetricSuccess } = useGetMetricQuery({});
   const [metricData, setMetricData] = useState<MetricItem[]>([]);
   const [showFilterMetric, setShowFilterMetric] = useState<boolean>(false);
@@ -108,21 +110,47 @@ function BrowserMetric() {
         mb={3}
       >
         <Typography variant="h3">{window.T('Browser Metric')}</Typography>
-        <Stack direction="row" justifyContent="flex-end" spacing={1}>
+        <Stack direction="row" justifyContent="flex-start" spacing={1}>
           <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
-          <Button
-            type="button"
-            sx={{
-              backgroundColor: 'white',
-              color: '#333840',
-              fontWeight: 400,
-              borderColor: '#A1A9B5',
-            }}
-            startIcon={<FilterListIcon />}
-            onClick={handleOpenFilterMetric}
-          >
-            {window.T('Filter Metric')}
-          </Button>
+          {isMobileSm ? (
+            <Button
+              type="button"
+              sx={{
+                backgroundColor: 'white',
+                color: '#333840',
+                fontWeight: 400,
+                borderColor: '#A1A9B5',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                height: 40,
+                minWidth: 40,
+                '& .MuiButton-startIcon': {
+                  margin: 0,
+                  padding: 0,
+                },
+              }}
+              startIcon={<FilterListIcon />}
+              onClick={handleOpenFilterMetric}
+            />
+          ) : (
+            <Button
+              type="button"
+              sx={{
+                backgroundColor: 'white',
+                color: '#333840',
+                fontWeight: 400,
+                borderColor: '#A1A9B5',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                height: 40,
+              }}
+              startIcon={<FilterListIcon />}
+              onClick={handleOpenFilterMetric}
+            >
+              {window.T('Filter Metric')}
+            </Button>
+          )}
         </Stack>
       </Stack>
       {isGetMetricSuccess ? (

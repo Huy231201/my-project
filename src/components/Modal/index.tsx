@@ -45,6 +45,7 @@ export default function Modal({ hiddenCloseIcon, title, onClose, open, children,
         '& .MuiDialog-paper': {
           overflow: 'unset',
           maxWidth: 380,
+          width: '100%',
         },
         ...sxWrapper,
       }}

@@ -4,17 +4,19 @@ import Button from '@mui/material/Button';
 import HerondIcon from '@/components/Icons';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { SxProps, Theme } from '@mui/material/styles';
 
 interface Option {
   label: string;
   onClick: () => void;
 }
 interface Props {
+  sx?: SxProps<Theme>;
   options: Array<Option>;
 }
 
 const BulkAction = (props: Props) => {
-  const { options } = props;
+  const { sx, options } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -33,14 +35,17 @@ const BulkAction = (props: Props) => {
   };
 
   return (
-    <Box>
+    <Box sx={sx}>
       <Button
         variant="outlined"
         sx={{
           borderColor: '#A1A9B5',
           color: '#202226',
-          minWidth: 140,
+          minWidth: 120,
+          height: 40,
           fontWeight: 500,
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
           px: 2,
           ...(open && {
             '& svg': {

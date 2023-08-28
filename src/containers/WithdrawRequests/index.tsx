@@ -207,7 +207,17 @@ function WithdrawRequestsContainer() {
           }}
           justifyContent="space-between"
         >
-          <Stack direction="row">{selected.length > 0 && <BulkAction options={BulkActionOptions} />}</Stack>
+          <Stack
+            direction="row"
+            sx={{
+              display: {
+                xs: 'none',
+                md: 'flex',
+              },
+            }}
+          >
+            {selected.length > 0 && <BulkAction options={BulkActionOptions} />}
+          </Stack>
           <Stack
             direction={{
               xs: 'column',
@@ -225,20 +235,29 @@ function WithdrawRequestsContainer() {
                 },
               }}
             >{`${data?.totalCount || 0} items`}</Typography>
-            <Box>
-              <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
-            </Box>
-            <Box>
+            <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
+
+            <Stack
+              direction={{
+                xs: 'column',
+                sm: 'row',
+              }}
+              mt={2}
+              spacing={1.5}
+            >
               <SearchInputField
+                sx={{
+                  width: '100%',
+                }}
                 placeholder={window.T('Enter user email')}
                 validate={validateEmail}
                 msgError={window.T('Email is invalid')}
                 onSubmit={handleUpdateFilter('searchEmail')}
               />
-            </Box>
-            <Box>
               <SelectField value={filter.status} options={StatusOptions} onChange={handleUpdateFilter('status')} />
-            </Box>
+            </Stack>
+
+            <Box></Box>
           </Stack>
         </Stack>
         <Box
@@ -247,8 +266,9 @@ function WithdrawRequestsContainer() {
             py: 2,
           }}
         >
-          <Typography
-            variant="body1"
+          <Stack
+            direction="row"
+            spacing={2}
             sx={{
               display: {
                 xs: 'flex',
@@ -256,7 +276,10 @@ function WithdrawRequestsContainer() {
               },
               mb: 1,
             }}
-          >{`${data?.totalCount || 0} items`}</Typography>
+          >
+            {selected.length > 0 && <BulkAction options={BulkActionOptions} />}
+            <Typography variant="body1">{`${data?.totalCount || 0} items`}</Typography>
+          </Stack>
           <HerondTable
             checkbox
             sortDirection={filter.sortDirection}
@@ -281,6 +304,7 @@ function WithdrawRequestsContainer() {
           '& .MuiDialog-paper': {
             margin: '16px',
             maxWidth: 480,
+            width: '100%',
           },
         }}
       >
@@ -294,7 +318,7 @@ function WithdrawRequestsContainer() {
           <Typography variant="body1" sx={{ mb: 2 }}>
             {window.T(
               'There are {{value}} users in this request. Do you want to reject this request? This action can’t be undone',
-              { value: 2 },
+              { value: selected?.length },
             )}
           </Typography>
         </DialogContent>

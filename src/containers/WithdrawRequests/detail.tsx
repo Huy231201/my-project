@@ -391,6 +391,7 @@ function WithdrawRequestsContainer(props: Props) {
           '& .MuiDialog-paper': {
             margin: '16px',
             maxWidth: 480,
+            width: '100%',
           },
         }}
       >

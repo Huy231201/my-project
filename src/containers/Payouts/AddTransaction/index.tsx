@@ -175,6 +175,7 @@ function AddTransactionModal(props: Props) {
         '& .MuiDialog-paper': {
           margin: '16px',
           maxWidth: '1200px',
+          width: '100%',
           backgroundColor: '#EEF1F5',
         },
       }}
