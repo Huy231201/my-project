@@ -1,7 +1,7 @@
 import { SimpleCard } from '@/components/Card';
 import { SimpleCardProps } from '@/components/Card/types';
 import IntersectionChart from './CustomLineChart';
-import { DateRangePicker } from '@/components/Fields';
+import { DateRangeTwoPickerField } from '@/components/Fields';
 import {
   useGetOverviewQuery,
   useGetMetricClickQuery,
@@ -114,7 +114,7 @@ const MetricConfigDump = [
 function BrowserMetric() {
   const [cardData, setCardData] = useState<CardDataProps[]>(CardDataDefault);
   const [filter, setFilter] = useState<FilterProps>({
-    dateRange: [dayjs().startOf('month').toDate(), new Date()],
+    dateRange: [new Date('2023/07/01'), new Date()],
     dataUpdate: new Date().getTime(),
   });
 
@@ -160,9 +160,14 @@ function BrowserMetric() {
           sm: 0,
         }}
       >
-        <Typography variant="h3">{window.T('Overview')}</Typography>
+        <Typography variant="h3">{window.T('Affiliate Overview')}</Typography>
         <Box>
-          <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+          <DateRangeTwoPickerField
+            dateRange={filter.dateRange}
+            onChange={onChangeDateRange}
+            maxDate={new Date()}
+            minDate={new Date('2023/07/01')}
+          />
         </Box>
       </Stack>
       <Grid container spacing={2} mb={4}>

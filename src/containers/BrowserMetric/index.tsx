@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import FormGroup from '@mui/material/FormGroup';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { CheckboxField, DateRangePicker } from '@/components/Fields';
+import { CheckboxField, DateRangeTwoPickerField } from '@/components/Fields';
 import CustomLineChart from './CustomLineChart';
 import { useGetMetricQuery } from '@/services/metric';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
@@ -37,7 +37,7 @@ function BrowserMetric() {
   const [formMetricData, setFormMetricData] = useState<MetricItem[]>([]);
 
   const [filter, setFilter] = useState<FilterProps>({
-    dateRange: [dayjs().startOf('month').toDate(), new Date()],
+    dateRange: [dayjs().subtract(3, 'month').toDate(), new Date()],
     dataUpdate: new Date().getTime(),
   });
 
@@ -110,8 +110,15 @@ function BrowserMetric() {
         mb={3}
       >
         <Typography variant="h3">{window.T('Browser Metric')}</Typography>
-        <Stack direction="row" justifyContent="flex-start" spacing={1}>
-          <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+        <Stack
+          direction={{
+            xs: 'column',
+            sm: 'row',
+          }}
+          justifyContent="flex-start"
+          spacing={1}
+        >
+          <DateRangeTwoPickerField dateRange={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
           {isMobileSm ? (
             <Button
               type="button"
@@ -124,6 +131,8 @@ function BrowserMetric() {
                 textOverflow: 'ellipsis',
                 height: 40,
                 minWidth: 40,
+                width: 'fit-content',
+                marginTop: '16px !important',
                 '& .MuiButton-startIcon': {
                   margin: 0,
                   padding: 0,
