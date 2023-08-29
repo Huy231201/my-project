@@ -17,10 +17,7 @@ const MuiOutlinedInput = styled(OutlinedInput)(({ theme }) => ({
   },
   '& .MuiInputBase-input': {
     cursor: 'pointer',
-    padding: '4px',
-    [theme.breakpoints.down('md')]: {
-      padding: '0px',
-    },
+    padding: '0px',
   },
   '& fieldset': {
     borderColor: '#A1A9B5',
