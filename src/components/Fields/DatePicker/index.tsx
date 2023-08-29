@@ -29,7 +29,7 @@ function DatePickerField(props: Props) {
             sx={{
               width: {
                 xs: 120,
-                md: 135,
+                md: 128,
               },
             }}
           />

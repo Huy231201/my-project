@@ -89,6 +89,10 @@ instance.interceptors.response.use(
     }
 
     if (err.response.status === 401) {
+      const url = err?.config?.url || '';
+      if (url.includes('refresh_token')) {
+        window.open(`${import.meta.env.VITE_API_URL}/auth/login`, '_self');
+      }
       const accessToken = getAccessToken();
       const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN) || '';
       if (refreshToken && retryCount < NUMBER_RETRIES - 1) {
