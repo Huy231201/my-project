@@ -5,7 +5,7 @@ import HerondTable from '@/components/Table';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
 import { WithdrawRequestHeadTable, StatusOptions } from './config';
 import { useMemo, useState, MouseEvent } from 'react';
-import { SelectField, SearchInputField, DateRangePicker } from '@/components/Fields';
+import { SelectField, SearchInputField, DateRangeTwoPickerField } from '@/components/Fields';
 import Button from '@mui/material/Button';
 import BulkAction from '@/components/BulkAction';
 import dayjs from 'dayjs';
@@ -235,7 +235,11 @@ function WithdrawRequestsContainer() {
                 },
               }}
             >{`${data?.totalCount || 0} items`}</Typography>
-            <DateRangePicker value={filter.dateRange} onChange={handleChangeDateRange} maxDate={new Date()} />
+            <DateRangeTwoPickerField
+              dateRange={filter.dateRange}
+              onChange={handleChangeDateRange}
+              maxDate={new Date()}
+            />
 
             <Stack
               direction={{

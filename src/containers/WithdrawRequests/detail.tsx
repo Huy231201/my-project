@@ -74,6 +74,8 @@ const MuiListItemText = styled(ListItemText)({
     fontSize: 16,
     fontWeight: 400,
     color: '#202226',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     '& a': {
       color: '#202226',
       '&:hover': {

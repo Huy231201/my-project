@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { SearchInputField, DateRangePicker } from '@/components/Fields';
+import { SearchInputField, DateRangeTwoPickerField } from '@/components/Fields';
 import Grid from '@mui/material/Grid';
 import { SimpleCard, CardHeader } from '@/components/Card';
 import { SimpleCardProps } from '@/components/Card/types';
@@ -45,6 +45,8 @@ const MuiListItemText = styled(ListItemText)({
     fontWeight: 400,
     color: '#202226',
     lineBreak: 'anywhere',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
     '& a': {
       color: '#202226',
       '&:hover': {
@@ -66,7 +68,7 @@ interface FilterProps {
 function UserDetailContainer() {
   const [filter, setFilter] = useState<FilterProps>({
     searchEmail: '',
-    dateRange: [dayjs().startOf('month').toDate(), new Date()],
+    dateRange: [new Date('2023/07/01'), new Date()],
   });
   const [userId, setUserId] = useState<string>('');
   const [pageIndex, setPageIndex] = useState({
@@ -292,7 +294,12 @@ function UserDetailContainer() {
               mb: -2,
             }}
           >
-            <DateRangePicker value={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
+            <DateRangeTwoPickerField
+              dateRange={filter.dateRange}
+              onChange={onChangeDateRange}
+              maxDate={new Date()}
+              minDate={new Date('2023/07/01')}
+            />
           </Box>
         )}
         <UserTable

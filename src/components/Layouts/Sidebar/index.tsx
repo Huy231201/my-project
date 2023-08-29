@@ -82,7 +82,7 @@ function MuiSideBar() {
         routes: [routePath.BROWSER_METRIC, routePath.HOME],
       },
       {
-        label: window.T('Overview'),
+        label: window.T('Affiliate Overview'),
         nameIcon: 'dashboard',
         nameHoverIcon: 'dashboard-white',
         href: routePath.OVERVIEW,

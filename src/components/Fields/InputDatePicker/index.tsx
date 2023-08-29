@@ -3,26 +3,32 @@ import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 import HerondIcon from '@/components/Icons';
 
-const MuiOutlinedInput = styled(OutlinedInput)({
+const MuiOutlinedInput = styled(OutlinedInput)(({ theme }) => ({
   cursor: 'pointer',
   height: 40,
   backgroundColor: 'white',
   margin: '0px !important',
   padding: '12px',
-  minWidth: 220,
+  [theme.breakpoints.down('md')]: {
+    padding: '8px',
+  },
   '& .MuiInputBase-input': {
     cursor: 'pointer',
     padding: '4px',
+    [theme.breakpoints.down('md')]: {
+      padding: '0px',
+    },
   },
   '& fieldset': {
     borderColor: '#A1A9B5',
   },
-});
+}));
 
 interface Props {
+  sx?: SxProps<Theme>;
   value?: string;
   onClick?: () => void;
 }
@@ -30,18 +36,9 @@ interface Props {
 export type Ref = HTMLButtonElement;
 
 const InputDatePicker = forwardRef<Ref, Props>((props, ref) => {
-  const { value, onClick } = props;
+  const { sx, value, onClick } = props;
   return (
-    <Box
-      component="form"
-      sx={{
-        '& > :not(style)': { m: 1, width: '100%' },
-      }}
-      noValidate
-      autoComplete="off"
-      ref={ref}
-      onClick={onClick}
-    >
+    <Box component="form" sx={sx} noValidate autoComplete="off" ref={ref} onClick={onClick}>
       <MuiOutlinedInput
         label=""
         value={value}

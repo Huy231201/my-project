@@ -1,6 +1,6 @@
 import { CancelButton, ConfirmButton } from '@/components/Buttons';
 import Container from '@/components/Container';
-import { DateRangePicker, InputField, SearchInputField, SelectField } from '@/components/Fields';
+import { DateRangeTwoPickerField, InputField, SearchInputField, SelectField } from '@/components/Fields';
 import HerondIcon from '@/components/Icons';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
@@ -212,14 +212,14 @@ function WithdrawRequestsContainer() {
             >
               {window.T('Create new payout')}
             </Button>
-            <DateRangePicker
+            <DateRangeTwoPickerField
               sx={{
                 display: {
                   xs: 'flex',
                   md: 'none',
                 },
               }}
-              value={filter.dateRange}
+              dateRange={filter.dateRange}
               onChange={handleChangeDateRange}
               maxDate={new Date()}
             />
@@ -241,14 +241,14 @@ function WithdrawRequestsContainer() {
                 },
               }}
             >{`${data?.totalCount || 0} items`}</Typography>
-            <DateRangePicker
+            <DateRangeTwoPickerField
               sx={{
                 display: {
                   xs: 'none',
                   md: 'flex',
                 },
               }}
-              value={filter.dateRange}
+              dateRange={filter.dateRange}
               onChange={handleChangeDateRange}
               maxDate={new Date()}
             />
