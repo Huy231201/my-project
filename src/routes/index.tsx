@@ -9,13 +9,13 @@ const LayoutDefault: FC<{ children: ReactNode }> = ({ children }) => <>{children
 function Routing() {
   return (
     <Routes>
-      {routeConfig.map(({ route = '', page: Component, Layout = LayoutDefault, isPrivate = false }) => (
+      {routeConfig.map(({ route = '', page: Component, Layout = LayoutDefault, isPrivate = false, layoutProps }) => (
         <Route
           key={route}
           path={route}
           element={
             <AuthLayout isPrivate={isPrivate}>
-              <Layout>
+              <Layout {...layoutProps}>
                 <Toaster
                   position="bottom-right"
                   reverseOrder={false}
