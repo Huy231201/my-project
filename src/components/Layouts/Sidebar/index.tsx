@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DRAWER_SIDEBAR_WIDTH, DRAWER_SIDEBAR_WIDTH_CLOSE, APP_BAR_HEIGHT } from '../constants';
 import SidebarItem from './SidebarItem';
-import { getAccessToken } from '@/utils/common';
 import { Theme, CSSObject, styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
@@ -68,7 +67,6 @@ const MuiDrawer = styled(Drawer, { shouldForwardProp: prop => prop !== 'open' })
 }));
 
 function MuiSideBar() {
-  const isLogin = !!getAccessToken();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
@@ -112,7 +110,6 @@ function MuiSideBar() {
     [],
   );
 
-  if (!isLogin) return null;
   return (
     <MuiDrawer open={openDrawer} variant="permanent">
       <List>

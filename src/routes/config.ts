@@ -7,6 +7,9 @@ export const routeConfig = [
     route: routePath.LOGIN,
     page: lazy(() => import('@/pages/Auth/Login')),
     Layout: MainLayout,
+    layoutProps: {
+      hiddenSidebar: true,
+    },
     isPrivate: false,
   },
   {

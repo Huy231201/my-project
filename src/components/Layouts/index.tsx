@@ -16,23 +16,19 @@ const Main = styled('main', { shouldForwardProp: prop => prop !== 'open' })<{
   backgroundColor: '#EEF1F5',
 }));
 
-const MainLayout: FC<{ children: ReactNode }> = ({ children }) => {
+const MainLayout: FC<{ hiddenSidebar?: boolean; children: ReactNode }> = ({ hiddenSidebar, children }) => {
   const openDrawer = useTypedSelector(selectOpenDrawer);
 
   return (
     <div>
       <AppBar />
       <Main>
-        <MuiSideBar />
+        {!hiddenSidebar && <MuiSideBar />}
         <MuiContainer
           maxWidth={false}
           sx={theme => ({
             padding: '0px !important',
             minHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
-            width: {
-              xs: `calc(100vw - ${DRAWER_SIDEBAR_WIDTH_CLOSE}px)`,
-              md: `calc(100vw - ${openDrawer ? DRAWER_SIDEBAR_WIDTH : DRAWER_SIDEBAR_WIDTH_CLOSE}px)`,
-            },
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
@@ -40,6 +36,15 @@ const MainLayout: FC<{ children: ReactNode }> = ({ children }) => {
             position: 'absolute',
             right: '0px',
             backgroundColor: '#EEF1F5',
+            ...(hiddenSidebar && {
+              width: '100vw',
+            }),
+            ...(!hiddenSidebar && {
+              width: {
+                xs: `calc(100vw - ${DRAWER_SIDEBAR_WIDTH_CLOSE}px)`,
+                md: `calc(100vw - ${openDrawer ? DRAWER_SIDEBAR_WIDTH : DRAWER_SIDEBAR_WIDTH_CLOSE}px)`,
+              },
+            }),
           })}
         >
           {children}
