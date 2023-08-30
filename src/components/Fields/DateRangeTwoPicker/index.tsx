@@ -64,9 +64,29 @@ const DateRangeTwoPickerField = (props: DateRangeTwoPickerProps) => {
       }}
       sx={sx}
     >
-      <DatePickerField value={currentDateRange.from} onChange={handleChangeDate('from')} {...rest} />
+      <DatePickerField
+        sx={{
+          width: {
+            xs: '100%',
+            sm: 'auto',
+          },
+        }}
+        value={currentDateRange.from}
+        onChange={handleChangeDate('from')}
+        {...rest}
+      />
       <Typography variant="body1">{window.T('to')}</Typography>
-      <DatePickerField value={currentDateRange.to} onChange={handleChangeDate('to')} {...rest} />
+      <DatePickerField
+        sx={{
+          width: {
+            xs: '100%',
+            sm: 'auto',
+          },
+        }}
+        value={currentDateRange.to}
+        onChange={handleChangeDate('to')}
+        {...rest}
+      />
     </Stack>
   );
 };

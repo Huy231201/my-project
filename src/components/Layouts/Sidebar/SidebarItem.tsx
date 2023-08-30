@@ -24,6 +24,7 @@ const MuiListItem = styled(ListItem)(() => ({
     '& .MuiListItemText-primary': {
       color: 'white !important',
       fontWeight: 'bold',
+      paddingTop: '2px',
     },
   },
 }));
@@ -67,6 +68,7 @@ function SidebarItem(props: Props) {
         '& .MuiListItemText-primary': {
           color: active ? 'white' : '#7A818C',
           fontWeight: active ? 'bold' : 'normal',
+          paddingTop: '2px',
         },
         ...(openDrawer && {
           ...openedMixin(theme),
