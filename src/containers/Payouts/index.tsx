@@ -350,11 +350,11 @@ function WithdrawRequestsContainer() {
           </Stack>
           <Stack mt={1} spacing={1} direction="row" alignItems="center">
             <Typography variant="body1" fontWeight={700}>{`${window.T('Total Amount')}:`}</Typography>
-            <Typography variant="body1">{`USDT ${payoutPreview?.totalAmount}`}</Typography>
+            <Typography variant="body1">{`USDT ${payoutPreview?.totalAmount || 0}`}</Typography>
           </Stack>
           <Stack mt={1} spacing={1} direction="row" alignItems="center">
             <Typography variant="body1" fontWeight={700}>{`${window.T('Withdraw request')}:`}</Typography>
-            <Typography variant="body1">{`${payoutPreview?.totalRequest} transactions`}</Typography>
+            <Typography variant="body1">{`${payoutPreview?.totalRequest || 0} transactions`}</Typography>
           </Stack>
         </DialogContent>
         <DialogActions>

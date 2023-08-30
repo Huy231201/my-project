@@ -1,7 +1,7 @@
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DRAWER_SIDEBAR_WIDTH, DRAWER_SIDEBAR_WIDTH_CLOSE, APP_BAR_HEIGHT } from '../constants';
 import SidebarItem from './SidebarItem';
@@ -13,6 +13,8 @@ import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrow
 import Divider from '@mui/material/Divider';
 import { SvgName } from '@/components/Icons';
 import { routePath } from '@/routes/routePath';
+import { toggleOpenDrawer, selectOpenDrawer } from '@/stores/appSlice';
+import { useAppDispatch, useTypedSelector } from '@/hooks/useStore';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: DRAWER_SIDEBAR_WIDTH,
@@ -69,8 +71,8 @@ function MuiSideBar() {
   const isLogin = !!getAccessToken();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const dispatch = useAppDispatch();
+  const openDrawer = useTypedSelector(selectOpenDrawer);
 
   const SidebarConfig = useMemo<Array<SidebarConfigItem>>(
     () => [
@@ -109,10 +111,6 @@ function MuiSideBar() {
     ],
     [],
   );
-
-  const handleDrawerToggle = () => {
-    setOpenDrawer(prev => !prev);
-  };
 
   if (!isLogin) return null;
   return (
@@ -171,7 +169,7 @@ function MuiSideBar() {
         }}
       >
         <Divider />
-        <IconButton onClick={handleDrawerToggle}>
+        <IconButton onClick={() => dispatch(toggleOpenDrawer())}>
           {openDrawer ? <KeyboardDoubleArrowLeftIcon /> : <KeyboardDoubleArrowRightIcon />}
         </IconButton>
       </Box>

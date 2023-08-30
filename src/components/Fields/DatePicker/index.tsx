@@ -15,7 +15,7 @@ interface Props {
 }
 
 function DatePickerField(props: Props) {
-  const { sx, value, onChange, minDate, maxDate, dateFormat = 'dd/MM/yyyy' } = props;
+  const { sx, value, onChange, minDate, maxDate, dateFormat = 'dd/MM/yyyy', ...rest } = props;
 
   return (
     <Box sx={sx}>
@@ -28,7 +28,8 @@ function DatePickerField(props: Props) {
           <InputDatePicker
             sx={{
               width: {
-                xs: 120,
+                xs: '100%',
+                sm: 120,
                 md: 128,
               },
             }}
@@ -37,6 +38,8 @@ function DatePickerField(props: Props) {
         minDate={minDate}
         maxDate={maxDate}
         calendarStartDay={1}
+        popperPlacement="bottom-end"
+        {...rest}
       />
     </Box>
   );
