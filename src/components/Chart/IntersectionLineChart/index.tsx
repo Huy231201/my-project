@@ -8,8 +8,9 @@ import { forwardRef } from 'react';
 import { MetricDetail } from '../types';
 
 interface Props {
+  title?: string;
+  description?: string;
   isLoading: boolean;
-  title: string;
   idTooltip?: string;
   metricDetail: MetricDetail;
 }
@@ -32,6 +33,7 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
             borderRadius: 1,
             minHeight: 500,
             position: 'relative',
+            height: '100%',
             p: {
               xs: 2,
               sm: 3,
@@ -50,7 +52,7 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
               position: 'relative',
             }}
           >
-            <Skeleton variant="rounded" width="100%" height={380} />
+            <Skeleton variant="rounded" width="100%" height={400} />
             <Box
               sx={{
                 backdropFilter: 'blur(1px)',
@@ -97,7 +99,13 @@ const IntersectionChart = forwardRef<Ref, Props>((props, ref) => {
           >
             {metricDetail?.axisYLabel}
           </Typography>
-          <LineChart idTooltip={idTooltip} labels={metricDetail?.labels} datasets={metricDetail?.datasets} />
+          <LineChart
+            idTooltip={idTooltip}
+            title={metricDetail.title}
+            description={metricDetail.description}
+            labels={metricDetail?.labels}
+            datasets={metricDetail?.datasets}
+          />
           <Typography textAlign="center" variant="body1" mt={0.5}>
             {metricDetail?.axisXLabel}
           </Typography>

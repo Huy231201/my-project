@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 import type { AxiosRequestConfig, AxiosError } from 'axios';
-import axios from '.';
+import AxiosCustom from '.';
 
 interface Props {
   url?: string;
@@ -15,7 +15,7 @@ const axiosBaseQuery =
   ({ baseUrl }: { baseUrl: string } = { baseUrl: '' }): BaseQueryFn<Props, unknown, unknown> =>
   async ({ url, method, data, params, ...rest }) => {
     try {
-      const result = await axios({
+      const result = await AxiosCustom({
         url: baseUrl + url,
         method,
         data,

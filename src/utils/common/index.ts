@@ -10,7 +10,11 @@ export const getAccessToken = () =>
   LocalStorage.get(LOCAL_KEYS.ACCESS_TOKEN) || SessionStorage.get(LOCAL_KEYS.ACCESS_TOKEN);
 
 export const setCredential = (credentials: CredentialsType) => {
-  const { accessToken, refreshToken, expiration } = credentials;
+  const { accessToken, refreshToken, expiration } = credentials || {
+    accessToken: '',
+    refreshToken: '',
+    expiration: '',
+  };
   if (!accessToken || !refreshToken) {
     throw new Error('Missing data');
   }

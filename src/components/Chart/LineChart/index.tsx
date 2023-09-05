@@ -27,7 +27,7 @@ interface Chart extends ChartJS {
 }
 
 function LineChart(props: LineChartProps) {
-  const { idTooltip = '', labels, datasets } = props;
+  const { idTooltip = '', title, description, labels, datasets } = props;
   const chartRef = useRef();
   const options = useMemo(
     () =>
@@ -55,18 +55,21 @@ function LineChart(props: LineChartProps) {
             yAlign: 'bottom',
             displayColors: false,
             callbacks: {
-              label: (tooltipItem: ScriptableContext<'line'>) => {
-                const { dataIndex, dataset } = tooltipItem;
-                const total = datasets.reduce((acc, item) => acc + item.data[dataIndex], 0);
-                return `${dataset?.label}: ${((Number(dataset.data[dataIndex]) / total) * 100).toFixed(2)}%`;
-              },
+              label: () =>
+                // const { dataIndex, dataset } = tooltipItem;
+                // const total = datasets.reduce((acc, item) => acc + item.data[dataIndex], 0);
+                // return `${dataset?.label}: ${((Number(dataset.data[dataIndex]) / total) * 100).toFixed(2)}%`;
+                null,
               footer: (tooltipItems: ScriptableContext<'line'>[]) => {
                 const { dataIndex } = tooltipItems[0];
                 const total = datasets.reduce((acc, item) => acc + item.data[dataIndex], 0);
                 return `Total: ${total}`;
               },
             },
-            external: externalTooltipHandler(idTooltip),
+            external: externalTooltipHandler(idTooltip, {
+              title,
+              description,
+            }),
           },
         },
         scales: {
@@ -108,6 +111,7 @@ function LineChart(props: LineChartProps) {
         },
         hover: {
           mode: 'nearest',
+          axis: 'x',
           intersect: false,
         },
       }) as any,
