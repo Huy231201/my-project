@@ -66,6 +66,8 @@ function CustomLineChart(props: Props) {
         };
       });
       setMetricDetail({
+        title,
+        description: config.name,
         labels: data?.labels,
         axisXLabel: window.T('Time'),
         axisYLabel: config.name,

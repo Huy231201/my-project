@@ -7,9 +7,9 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   showToast?: boolean;
 }
 
-const NUMBER_RETRIES = 4;
+const NUMBER_RETRIES = 3;
 let retryCount = 0;
-let retryMethod = null;
+let retryMethod: Promise<string> | null = null;
 
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -23,7 +23,7 @@ function timeDelay(k: number) {
   return retryInterval + randomInt(0, max);
 }
 
-function wait(delay: number) {
+function sleep(delay = 2000): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
@@ -43,8 +43,9 @@ const refresh = async (accessToken: string, refreshToken: string) => {
     },
   };
   const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, params, headers);
-  setCredential(res?.data);
-  return Promise.resolve(accessToken);
+  const results = res?.data?.data || res?.data || {};
+  setCredential(results);
+  return Promise.resolve(results?.accessToken);
 };
 
 const instance = axios.create({
@@ -59,7 +60,10 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
   // Attach auth header using token from local storage
   const accessToken = getAccessToken();
   const languageCode = LocalStorage.get(LOCAL_KEYS.LANGUAGE_TOKEN, 'en');
-  return {
+  const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN);
+  const expiration = LocalStorage.get(LOCAL_KEYS.EXPIRATION_TOKEN);
+
+  const newConfig = {
     ...config,
     headers: {
       ...config.headers,
@@ -68,6 +72,35 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
       'show-toast': config?.showToast !== undefined ? config.showToast : true,
     },
   };
+
+  const isExpired = Date.now() >= new Date(expiration).getTime();
+  if (isExpired) {
+    if (refreshToken && accessToken && !retryMethod) {
+      retryCount += 1;
+      retryMethod = refresh(accessToken, refreshToken)
+        .finally(() => {
+          retryMethod = null;
+        })
+        .catch(error => Promise.reject(error));
+      const token = await retryMethod;
+      resetRetry();
+      newConfig.headers.Authorization = `Bearer ${token}`;
+      return newConfig;
+    }
+
+    await sleep();
+    const newAccessToken = getAccessToken();
+    return {
+      ...config,
+      headers: {
+        ...config.headers,
+        ...(newAccessToken && { Authorization: `Bearer ${newAccessToken}` }),
+        'accept-language': languageCode,
+        'show-toast': config?.showToast !== undefined ? config.showToast : true,
+      },
+    };
+  }
+  return newConfig;
 });
 
 instance.interceptors.response.use(
@@ -83,49 +116,42 @@ instance.interceptors.response.use(
   },
   async err => {
     const origReqConfig = err.config;
-    if (err.response.status >= 500 && retryCount < NUMBER_RETRIES - 1) {
+    if (err?.response?.status >= 500 && retryCount < NUMBER_RETRIES) {
       retryCount += 1;
-      return wait(timeDelay(retryCount)).then(() => instance.request(origReqConfig));
+      return sleep(timeDelay(retryCount)).then(() => instance.request(origReqConfig));
     }
 
-    if (err.response.status === 401) {
+    if (err?.response?.status === 401) {
       const url = err?.config?.url || '';
-      if (url.includes('refresh_token')) {
-        window.open(`${import.meta.env.VITE_API_URL}/auth/login`, '_self');
+      if (url && url.includes('refresh-token')) {
+        LocalStorage.clearAll();
+        window.location.href = '/login';
       }
       const accessToken = getAccessToken();
       const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN) || '';
-      if (refreshToken && retryCount < NUMBER_RETRIES - 1) {
+      if (refreshToken && !retryMethod && retryCount < NUMBER_RETRIES) {
         retryCount += 1;
-        // delete origReqConfig.headers['Authorization']
+        delete origReqConfig.headers.Authorization;
 
         retryMethod = refresh(accessToken, refreshToken)
           .finally(() => {
             retryMethod = null;
           })
-          .catch(error =>
-            // setTimeout(() => {
-            //   window.location.href = '/login';
-            // }, 1000);
-            Promise.reject(error),
-          );
-
-        return retryMethod.then(token => {
-          origReqConfig.headers.Authorization = `Bearer ${token}`;
-          return instance.request(origReqConfig);
-        });
+          .catch(error => Promise.reject(error));
+        const token = await retryMethod;
+        resetRetry();
+        origReqConfig.headers.Authorization = `Bearer ${token}`;
+        return instance(origReqConfig);
       }
-      resetRetry();
-    } else {
-      const showToast = err.config.headers['show-toast'];
-      const errorMessage = err?.response?.data || {};
-      if (showToast) {
-        toast.error(errorMessage.detail || errorMessage.message || errorMessage.error || 'Something went wrong!');
-      }
-      throw errorMessage;
+      await sleep();
+      return instance(origReqConfig);
     }
-
-    return Promise.reject(err);
+    const showToast = err?.config?.headers?.['show-toast'];
+    const errorMessage = err?.response?.data || {};
+    if (err?.response && showToast) {
+      toast.error(errorMessage.detail || errorMessage.message || errorMessage.error || 'Something went wrong!');
+    }
+    throw errorMessage;
   },
 );
 

@@ -6,7 +6,6 @@ import { renderTotal, truncateStr } from '@/utils/common';
 import { HeaderCellProps, RowProp } from '@/components/Table/utils';
 import { useState, useEffect } from 'react';
 import StatusLabel, { StatusEnum } from '@/components/StatusLabel';
-import dayjs from 'dayjs';
 import { formatDate } from '@/utils/date';
 
 interface Params {

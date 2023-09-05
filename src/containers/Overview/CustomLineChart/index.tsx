@@ -69,6 +69,8 @@ function CustomLineChart(props: Props) {
 
       setMetricDetail({
         labels: (data?.charts?.[0]?.values || []).map((item: ValueChartItem) => item.key),
+        title: title,
+        description: data?.unit,
         axisXLabel: window.T('Time'),
         axisYLabel: data?.unit,
         datasets: parseDataset,
