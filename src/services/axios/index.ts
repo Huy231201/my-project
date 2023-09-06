@@ -29,13 +29,13 @@ function sleep(delay = 2000): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
-function sleepRefreshToken(delay = 50, firstResolve?: (value: string) => void) {
+function sleepRefreshToken(delay = 50, firstResolve?: (value: string | null) => void) {
   setTimeout(() => new Promise(resolve => resolve(null)), 10000);
   return new Promise(resolve =>
     setTimeout(async () => {
       const currentResolve = firstResolve || resolve;
       if (tmpNewAccessToken) {
-        currentResolve(tmpNewAccessToken);
+        setTimeout(() => currentResolve(tmpNewAccessToken), 0);
       } else {
         await sleepRefreshToken(delay, currentResolve);
       }
@@ -46,11 +46,11 @@ function sleepRefreshToken(delay = 50, firstResolve?: (value: string) => void) {
 export function resetRetry() {
   retryCount = 0;
   retryMethod = null;
-  tmpNewAccessToken = null;
 }
 
 const refresh = async (accessToken: string, refreshToken: string) => {
   try {
+    tmpNewAccessToken = null;
     const params = {
       accessToken,
       refreshToken,
@@ -81,7 +81,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
   // Attach auth header using token from local storage
-  const accessToken = getAccessToken();
+  const accessToken = tmpNewAccessToken || getAccessToken();
   const languageCode = LocalStorage.get(LOCAL_KEYS.LANGUAGE_TOKEN, 'en');
   const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN);
   const expiration = LocalStorage.get(LOCAL_KEYS.EXPIRATION_TOKEN);
@@ -111,14 +111,13 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
       return newConfig;
     }
     const res = await sleepRefreshToken();
-    const newAccessTokenToken = res;
     resetRetry();
-    if (newAccessTokenToken) {
+    if (res) {
       return {
         ...config,
         headers: {
           ...config.headers,
-          ...(newAccessTokenToken && { Authorization: `Bearer ${newAccessTokenToken}` }),
+          ...(res && { Authorization: `Bearer ${res}` }),
           'accept-language': languageCode,
           'show-toast': config?.showToast !== undefined ? config.showToast : true,
         },
@@ -148,7 +147,7 @@ instance.interceptors.response.use(
     }
 
     if (err?.response?.status === 401) {
-      const accessToken = getAccessToken();
+      const accessToken = tmpNewAccessToken || getAccessToken();
       const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN) || '';
       if (refreshToken && !retryMethod && retryCount < NUMBER_RETRIES) {
         retryCount += 1;
@@ -165,10 +164,9 @@ instance.interceptors.response.use(
         return instance(origReqConfig);
       }
       const res = await sleepRefreshToken();
-      const newAccessTokenToken = res;
       resetRetry();
-      if (newAccessTokenToken) {
-        origReqConfig.headers.Authorization = `Bearer ${newAccessTokenToken}`;
+      if (res) {
+        origReqConfig.headers.Authorization = `Bearer ${res}`;
         return instance(origReqConfig);
       }
       abortController.abort();
