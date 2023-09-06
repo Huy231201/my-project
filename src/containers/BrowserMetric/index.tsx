@@ -194,8 +194,7 @@ function BrowserMetric() {
         <Box>
           {Object.entries(metricData).map(
             ([key, item], index) =>
-              item.indeterminate ||
-              (item.checkedAll && (
+              (item.indeterminate || item.checkedAll) && (
                 <Box my={2} mb={index + 1 === Object.entries(metricData)?.length ? 0 : 4}>
                   <Typography
                     variant="body1"
@@ -227,7 +226,7 @@ function BrowserMetric() {
                     )}
                   </Grid>
                 </Box>
-              )),
+              ),
           )}
         </Box>
       ) : (
