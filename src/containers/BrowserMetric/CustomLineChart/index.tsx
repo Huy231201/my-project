@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 interface Props {
   show: boolean;
   title: string;
+  cadence: string;
   metricKey: string;
   idTooltip?: string;
   dateRange: Array<Date | null>;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 function CustomLineChart(props: Props) {
-  const { show, title, metricKey, idTooltip, dateRange, dataUpdate } = props;
+  const { show, title, metricKey, cadence, idTooltip, dateRange, dataUpdate } = props;
   const { ref, inView } = useInView({
     threshold: 0,
   });
@@ -34,6 +35,7 @@ function CustomLineChart(props: Props) {
 
   const { data, isFetching } = useGetMetricDetailQuery(
     {
+      cadence: cadence,
       MetricName: metricKey,
       FromDate: dayjs(dateRange[0]).format('YYYY-MM-DD'),
       ToDate: dayjs(dateRange[1]).format('YYYY-MM-DD'),

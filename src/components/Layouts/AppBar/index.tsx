@@ -10,9 +10,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import LogoPng from '@/assets/images/logo.png';
-import HerondIcon from '@/components/Icons';
+// import HerondIcon from '@/components/Icons';
 import { ConfirmButton } from '@/components/Buttons';
 import { getAccessToken } from '@/utils/common';
 import { LocalStorage, SessionStorage } from '@/utils/storages';
@@ -23,14 +23,14 @@ function ResponsiveAppBar() {
   const isLogin = !!getAccessToken();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [anchorElLanguage, setAnchorElLanguage] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorElLanguage);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElLanguage(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorElLanguage(null);
-  };
+  // const [anchorElLanguage, setAnchorElLanguage] = React.useState<null | HTMLElement>(null);
+  // const open = Boolean(anchorElLanguage);
+  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   setAnchorElLanguage(event.currentTarget);
+  // };
+  // const handleClose = () => {
+  //   setAnchorElLanguage(null);
+  // };
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);

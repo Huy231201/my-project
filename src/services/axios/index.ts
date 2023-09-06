@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
 import { getAccessToken, setCredential } from '@/utils/common';
 
+const abortController = new AbortController();
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   showToast?: boolean;
 }
@@ -10,6 +11,7 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 const NUMBER_RETRIES = 3;
 let retryCount = 0;
 let retryMethod: Promise<string> | null = null;
+let tmpNewAccessToken: string | null = null;
 
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -27,25 +29,46 @@ function sleep(delay = 2000): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
+function sleepRefreshToken(delay = 50, firstResolve?: (value: string) => void) {
+  setTimeout(() => new Promise(resolve => resolve(null)), 10000);
+  return new Promise(resolve =>
+    setTimeout(async () => {
+      const currentResolve = firstResolve || resolve;
+      if (tmpNewAccessToken) {
+        currentResolve(tmpNewAccessToken);
+      } else {
+        await sleepRefreshToken(delay, currentResolve);
+      }
+    }, delay),
+  );
+}
+
 export function resetRetry() {
   retryCount = 0;
   retryMethod = null;
+  tmpNewAccessToken = null;
 }
 
 const refresh = async (accessToken: string, refreshToken: string) => {
-  const params = {
-    accessToken,
-    refreshToken,
-  };
-  const headers = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, params, headers);
-  const results = res?.data?.data || res?.data || {};
-  setCredential(results);
-  return Promise.resolve(results?.accessToken);
+  try {
+    const params = {
+      accessToken,
+      refreshToken,
+    };
+    const headers = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, params, headers);
+    const results = res?.data?.data || res?.data || {};
+    setCredential(results);
+    return Promise.resolve(results?.accessToken);
+  } catch (error) {
+    LocalStorage.clearAll();
+    window.location.href = '/login';
+    return Promise.reject(error);
+  }
 };
 
 const instance = axios.create({
@@ -83,22 +106,25 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
         })
         .catch(error => Promise.reject(error));
       const token = await retryMethod;
-      resetRetry();
+      tmpNewAccessToken = token;
       newConfig.headers.Authorization = `Bearer ${token}`;
       return newConfig;
     }
-
-    await sleep();
-    const newAccessToken = getAccessToken();
-    return {
-      ...config,
-      headers: {
-        ...config.headers,
-        ...(newAccessToken && { Authorization: `Bearer ${newAccessToken}` }),
-        'accept-language': languageCode,
-        'show-toast': config?.showToast !== undefined ? config.showToast : true,
-      },
-    };
+    const res = await sleepRefreshToken();
+    const newAccessTokenToken = res;
+    resetRetry();
+    if (newAccessTokenToken) {
+      return {
+        ...config,
+        headers: {
+          ...config.headers,
+          ...(newAccessTokenToken && { Authorization: `Bearer ${newAccessTokenToken}` }),
+          'accept-language': languageCode,
+          'show-toast': config?.showToast !== undefined ? config.showToast : true,
+        },
+      };
+    }
+    abortController.abort();
   }
   return newConfig;
 });
@@ -122,11 +148,6 @@ instance.interceptors.response.use(
     }
 
     if (err?.response?.status === 401) {
-      const url = err?.config?.url || '';
-      if (url && url.includes('refresh-token')) {
-        LocalStorage.clearAll();
-        window.location.href = '/login';
-      }
       const accessToken = getAccessToken();
       const refreshToken = LocalStorage.get(LOCAL_KEYS.REFRESH_TOKEN) || '';
       if (refreshToken && !retryMethod && retryCount < NUMBER_RETRIES) {
@@ -139,12 +160,18 @@ instance.interceptors.response.use(
           })
           .catch(error => Promise.reject(error));
         const token = await retryMethod;
-        resetRetry();
+        tmpNewAccessToken = token;
         origReqConfig.headers.Authorization = `Bearer ${token}`;
         return instance(origReqConfig);
       }
-      await sleep();
-      return instance(origReqConfig);
+      const res = await sleepRefreshToken();
+      const newAccessTokenToken = res;
+      resetRetry();
+      if (newAccessTokenToken) {
+        origReqConfig.headers.Authorization = `Bearer ${newAccessTokenToken}`;
+        return instance(origReqConfig);
+      }
+      abortController.abort();
     }
     const showToast = err?.config?.headers?.['show-toast'];
     const errorMessage = err?.response?.data || {};

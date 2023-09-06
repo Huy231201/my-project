@@ -1,9 +1,10 @@
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { ReactElement } from 'react';
 
 interface Props {
   color?: 'primary' | 'secondary' | 'default';
-  label?: string;
+  label?: string | ReactElement;
   indeterminate?: boolean;
   checked?: boolean;
   name?: string | undefined;
