@@ -16,13 +16,26 @@ import Skeleton from '@mui/material/Skeleton';
 import Popper from '@mui/material/Popper';
 import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
-import useWindowResize from '@/hooks/useWindowResize';
 
+enum EnumMetricCadence {
+  EXPRESS = 'express',
+  SLOW = 'slow',
+  TYPICAL = 'typical',
+}
 interface MetricItem {
   title: string;
   key: string;
   show: boolean;
 }
+
+type MetricData = {
+  [key in EnumMetricCadence]?: {
+    cadence: string;
+    checkedAll?: boolean;
+    indeterminate?: boolean;
+    metrics: MetricItem[];
+  };
+};
 
 interface FilterProps {
   dateRange: Array<Date | null>;
@@ -30,11 +43,10 @@ interface FilterProps {
 }
 
 function BrowserMetric() {
-  const { isMobileSm } = useWindowResize();
   const { data: metrics, isSuccess: isGetMetricSuccess } = useGetMetricQuery({});
-  const [metricData, setMetricData] = useState<MetricItem[]>([]);
+  const [metricData, setMetricData] = useState<MetricData>({});
   const [showFilterMetric, setShowFilterMetric] = useState<boolean>(false);
-  const [formMetricData, setFormMetricData] = useState<MetricItem[]>([]);
+  const [formMetricData, setFormMetricData] = useState<MetricData>({});
 
   const [filter, setFilter] = useState<FilterProps>({
     dateRange: [dayjs().subtract(3, 'month').toDate(), new Date()],
@@ -42,57 +54,97 @@ function BrowserMetric() {
   });
 
   useEffect(() => {
-    if (isGetMetricSuccess && metrics?.length > 0) {
-      const metricsStorage = LocalStorage.get(LOCAL_KEYS.METRICS_CONFIG, {});
-      const convertMetricsStorage: { [key: string]: MetricItem } = {}; // add index signature
-      const convertMetrics = metrics.map((item: string) => {
-        const metric = {
-          title: item.split('.').slice(1).join(' '),
-          key: item,
-          show: metricsStorage?.[item] ? metricsStorage?.[item]?.show : true,
+    if (isGetMetricSuccess && Object.entries(metrics)?.length > 0) {
+      const storagesMetricsData = LocalStorage.get(LOCAL_KEYS.METRICS_CONFIG, {});
+
+      const newMetricsData: MetricData = {};
+
+      Object.entries(metrics).forEach(data => {
+        const [cadence, metricsName] = data as [EnumMetricCadence, string[]];
+        const storageMetrics = storagesMetricsData?.[cadence]?.metrics || [];
+        const newMetricsName = metricsName.map((item: string) => {
+          const storageData = storageMetrics.find((stgMetric: MetricItem) => stgMetric?.key === item);
+          const metricItem = {
+            title: item.split('.').slice(1).join(' '),
+            key: item,
+            show: storageData ? storageData.show : true,
+          };
+          return metricItem;
+        });
+        const total = metricsName.length;
+        const numberSelected = newMetricsName.filter(item => item.show).length;
+        newMetricsData[cadence] = {
+          cadence: cadence,
+          checkedAll: numberSelected === total,
+          indeterminate: numberSelected > 0 && numberSelected < total,
+          metrics: newMetricsName,
         };
-        convertMetricsStorage[item] = metric;
-        return metric;
       });
-      setMetricData(convertMetrics);
-      setFormMetricData(convertMetrics);
-      LocalStorage.set(LOCAL_KEYS.METRICS_CONFIG, convertMetricsStorage);
+      setMetricData(newMetricsData);
+      setFormMetricData(newMetricsData);
+      LocalStorage.set(LOCAL_KEYS.METRICS_CONFIG, newMetricsData);
     }
   }, [isGetMetricSuccess]);
-
-  const handleOpenFilterMetric = () => {
-    setShowFilterMetric(true);
-  };
-
-  const handleCheckedMetric = (event: ChangeEvent<HTMLInputElement>, name: string) => {
-    const { checked } = event.target;
-    const newMetricData = formMetricData.map(metric => {
-      if (metric.key === name) {
-        return {
-          ...metric,
-          show: checked,
-        };
-      }
-      return metric;
-    });
-    setFormMetricData(newMetricData);
-  };
-
-  const onSubmitShowMetric = () => {
-    setMetricData(formMetricData);
-    const convertMetricsStorage: { [key: string]: MetricItem } = {}; // add index signature
-    formMetricData.forEach(item => {
-      convertMetricsStorage[item.key] = item;
-    });
-    LocalStorage.set(LOCAL_KEYS.METRICS_CONFIG, convertMetricsStorage);
-    setShowFilterMetric(false);
-  };
 
   const onChangeDateRange = (dateRange: Array<Date | null>) => {
     setFilter({
       dateRange,
       dataUpdate: new Date().getTime(),
     });
+  };
+
+  const handleOpenFilterMetric = () => {
+    setShowFilterMetric(true);
+  };
+
+  const handleCheckedMetric =
+    (parentCadence: EnumMetricCadence) => (event: ChangeEvent<HTMLInputElement>, name: string) => {
+      const { checked } = event.target;
+      const metricsCadence = formMetricData[parentCadence]?.metrics || [];
+      const newMetricData = metricsCadence.map(metric => {
+        if (metric.key === name) {
+          return {
+            ...metric,
+            show: checked,
+          };
+        }
+        return metric;
+      });
+      const total = newMetricData.length;
+      const numberSelected = newMetricData.filter((item: MetricItem) => item.show).length;
+      setFormMetricData(prev => ({
+        ...prev,
+        [parentCadence]: {
+          ...prev[parentCadence],
+          checkedAll: numberSelected === total,
+          indeterminate: numberSelected > 0 && numberSelected < total,
+          metrics: newMetricData,
+        },
+      }));
+    };
+
+  const handleCheckedAll = (parentCadence: EnumMetricCadence) => (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    const metricsCadence = formMetricData[parentCadence]?.metrics || [];
+    const newMetricData = metricsCadence?.map((metric: MetricItem) => ({
+      ...metric,
+      show: checked,
+    }));
+    setFormMetricData((prev: MetricData) => ({
+      ...prev,
+      [parentCadence]: {
+        ...prev[parentCadence],
+        checkedAll: checked,
+        indeterminate: false,
+        metrics: newMetricData,
+      },
+    }));
+  };
+
+  const onSubmitShowMetric = () => {
+    setMetricData(formMetricData);
+    LocalStorage.set(LOCAL_KEYS.METRICS_CONFIG, formMetricData);
+    setShowFilterMetric(false);
   };
 
   return (
@@ -119,73 +171,65 @@ function BrowserMetric() {
           spacing={1}
         >
           <DateRangeTwoPickerField dateRange={filter.dateRange} onChange={onChangeDateRange} maxDate={new Date()} />
-          {isMobileSm ? (
-            <Button
-              type="button"
-              sx={{
-                backgroundColor: 'white',
-                color: '#333840',
-                fontWeight: 400,
-                borderColor: '#A1A9B5',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                height: 40,
-                minWidth: 40,
-                width: 'fit-content',
-                marginTop: '16px !important',
-                '& .MuiButton-startIcon': {
-                  margin: 0,
-                  padding: 0,
-                },
-              }}
-              startIcon={<FilterListIcon />}
-              onClick={handleOpenFilterMetric}
-            />
-          ) : (
-            <Button
-              type="button"
-              sx={{
-                backgroundColor: 'white',
-                color: '#333840',
-                fontWeight: 400,
-                borderColor: '#A1A9B5',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                height: 40,
-              }}
-              startIcon={<FilterListIcon />}
-              onClick={handleOpenFilterMetric}
-            >
-              {window.T('Filter Metric')}
-            </Button>
-          )}
+          <Button
+            type="button"
+            sx={{
+              backgroundColor: 'white',
+              color: '#333840',
+              fontWeight: 400,
+              borderColor: '#A1A9B5',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              height: 40,
+            }}
+            startIcon={<FilterListIcon />}
+            onClick={handleOpenFilterMetric}
+          >
+            {window.T('Filter Metric')}
+          </Button>
         </Stack>
       </Stack>
       {isGetMetricSuccess ? (
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            mt: -2.5,
-          }}
-        >
-          {metricData.map(
-            item =>
-              item.show && (
-                <Grid item xs={12} md={6} xl={4}>
-                  <CustomLineChart
-                    show={item.show}
-                    title={item.title}
-                    metricKey={item.key}
-                    idTooltip="line-chart-modal-browser"
-                    dateRange={filter.dateRange}
-                    dataUpdate={filter.dataUpdate}
-                  />
-                </Grid>
-              ),
+        <Box>
+          {Object.entries(metricData).map(
+            ([key, item], index) =>
+              item.indeterminate ||
+              (item.checkedAll && (
+                <Box my={2} mb={index + 1 === Object.entries(metricData)?.length ? 0 : 4}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontSize: 18,
+                      fontWeight: 500,
+                      textTransform: 'capitalize',
+                      marginBottom: -1,
+                    }}
+                  >
+                    {key}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {item.metrics.map(
+                      metric =>
+                        metric.show && (
+                          <Grid item xs={12} md={6} xl={4}>
+                            <CustomLineChart
+                              show={metric.show}
+                              title={metric.title}
+                              metricKey={metric.key}
+                              cadence={item.cadence}
+                              idTooltip="line-chart-modal-browser"
+                              dateRange={filter.dateRange}
+                              dataUpdate={filter.dataUpdate}
+                            />
+                          </Grid>
+                        ),
+                    )}
+                  </Grid>
+                </Box>
+              )),
           )}
-        </Grid>
+        </Box>
       ) : (
         <Grid
           container
@@ -222,30 +266,82 @@ function BrowserMetric() {
           '& .MuiDialog-paper': {
             width: '100%',
             margin: '16px',
+            minWidth: {
+              xs: 'auto',
+              md: '600px',
+            },
           },
         }}
       >
         <DialogContent
           sx={{
-            backgroundColor: '#F4F6F7',
+            backgroundColor: 'white',
             px: 4,
-            py: 6,
+            py: 0,
+            border: 'none',
           }}
           dividers
         >
           <FormGroup>
-            <Grid container spacing={2}>
-              {formMetricData.map(item => (
-                <Grid key={item.key} item xs={12} md={6}>
+            <Box>
+              {Object.entries(formMetricData).map(([key, parent], index) => (
+                <Box mb={index !== Object.entries(formMetricData)?.length - 1 ? 3 : 0}>
                   <CheckboxField
-                    checked={item.show}
-                    label={item.title}
-                    name={item.key}
-                    onChange={handleCheckedMetric}
+                    name={key}
+                    checked={parent.checkedAll}
+                    indeterminate={parent.indeterminate}
+                    onChange={handleCheckedAll(key as EnumMetricCadence)}
+                    label={
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontSize: 16,
+                            fontWeight: 500,
+                            textTransform: 'capitalize',
+                          }}
+                        >
+                          {key}
+                        </Typography>
+                        <Box>-</Box>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontSize: 14,
+                            fontWeight: 400,
+                            textTransform: 'capitalize',
+                            color: '#727781',
+                          }}
+                        >
+                          {window.T('Metrics type of week')}
+                        </Typography>
+                      </Stack>
+                    }
                   />
-                </Grid>
+                  <Box
+                    sx={{
+                      borderTop: '1px solid #DCE0E3',
+                      '& .MuiTypography-root': {
+                        fontSize: 13,
+                      },
+                    }}
+                  >
+                    <Grid container>
+                      {parent.metrics.map(metric => (
+                        <Grid key={metric.key} xs={12} md={6}>
+                          <CheckboxField
+                            checked={metric.show}
+                            label={metric.title}
+                            name={metric.key}
+                            onChange={handleCheckedMetric(parent.cadence as EnumMetricCadence)}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           </FormGroup>
         </DialogContent>
         <DialogActions>
