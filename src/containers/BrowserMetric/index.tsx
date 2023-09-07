@@ -24,9 +24,9 @@ enum EnumMetricCadence {
 }
 
 const CadenceDescription = {
-  [EnumMetricCadence.EXPRESS]: 'Metrics type of day',
-  [EnumMetricCadence.TYPICAL]: 'Metrics type of week',
-  [EnumMetricCadence.SLOW]: 'Metrics type of month',
+  [EnumMetricCadence.EXPRESS]: window.T('Metrics type of day'),
+  [EnumMetricCadence.TYPICAL]: window.T('Metrics type of week'),
+  [EnumMetricCadence.SLOW]: window.T('Metrics type of month'),
 };
 interface MetricItem {
   title: string;
@@ -82,7 +82,7 @@ function BrowserMetric() {
         const numberSelected = newMetricsName.filter(item => item.show).length;
         newMetricsData[cadence] = {
           cadence,
-          cadenceDescription: CadenceDescription[cadence],
+          cadenceDescription: CadenceDescription?.[cadence] || '',
           checkedAll: numberSelected === total,
           indeterminate: numberSelected > 0 && numberSelected < total,
           metrics: newMetricsName,
