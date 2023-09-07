@@ -22,6 +22,12 @@ enum EnumMetricCadence {
   SLOW = 'slow',
   TYPICAL = 'typical',
 }
+
+const CadenceDescription = {
+  [EnumMetricCadence.EXPRESS]: window.T('Metrics type of day'),
+  [EnumMetricCadence.TYPICAL]: window.T('Metrics type of week'),
+  [EnumMetricCadence.SLOW]: window.T('Metrics type of month'),
+};
 interface MetricItem {
   title: string;
   key: string;
@@ -31,6 +37,7 @@ interface MetricItem {
 type MetricData = {
   [key in EnumMetricCadence]?: {
     cadence: string;
+    cadenceDescription: string;
     checkedAll?: boolean;
     indeterminate?: boolean;
     metrics: MetricItem[];
@@ -74,7 +81,8 @@ function BrowserMetric() {
         const total = metricsName.length;
         const numberSelected = newMetricsName.filter(item => item.show).length;
         newMetricsData[cadence] = {
-          cadence: cadence,
+          cadence,
+          cadenceDescription: CadenceDescription?.[cadence] || '',
           checkedAll: numberSelected === total,
           indeterminate: numberSelected > 0 && numberSelected < total,
           metrics: newMetricsName,
@@ -312,7 +320,7 @@ function BrowserMetric() {
                             color: '#727781',
                           }}
                         >
-                          {window.T('Metrics type of week')}
+                          {parent.cadenceDescription}
                         </Typography>
                       </Stack>
                     }
