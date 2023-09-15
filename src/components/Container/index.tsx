@@ -3,6 +3,7 @@ import MuiContainer from '@mui/material/Container';
 import { SxProps, Theme } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { APP_BAR_HEIGHT } from '@/components/Layouts/constants';
 
 type Props = {
   children: React.ReactNode;
@@ -30,6 +31,8 @@ const Container = (props: Props) => {
       sx={{
         py: 3,
         position: 'relative',
+        height: '100%',
+        minHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
         ...sx,
       }}
     >
