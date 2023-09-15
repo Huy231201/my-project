@@ -273,6 +273,7 @@ function PayoutsDetailContainer() {
   };
 
   const handleRefreshPayTransaction = () => {
+    refetchDetail();
     refetchPayoutTransaction();
     setSelected([]);
   };
