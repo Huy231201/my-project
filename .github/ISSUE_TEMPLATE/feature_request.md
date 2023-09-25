@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: priority/P4, type/feature
+labels: priority/P4, type/feature, 'feature/non-triaged'
 assignees: ''
 
 ---
