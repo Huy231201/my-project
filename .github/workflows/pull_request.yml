@@ -1,3 +1,4 @@
+# [[DO NOT UPDATE]] THIS IS DEFAULT TEMPLATE, IT MAY BE OVERRIDE
 on:
   pull_request:
     types: [opened, reopened]
