@@ -16,6 +16,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Popper from '@mui/material/Popper';
 import dayjs from 'dayjs';
 import Button from '@mui/material/Button';
+import { LabelBrowserMetric } from './CustomLineChart/config';
 
 enum EnumMetricCadence {
   EXPRESS = 'express',
@@ -72,7 +73,7 @@ function BrowserMetric() {
         const newMetricsName = metricsName.map((item: string) => {
           const storageData = storageMetrics.find((stgMetric: MetricItem) => stgMetric?.key === item);
           const metricItem = {
-            title: item.split('.').slice(1).join(' '),
+            title: LabelBrowserMetric?.[item]?.title ?? '',
             key: item,
             show: storageData ? storageData.show : true,
           };
@@ -203,7 +204,7 @@ function BrowserMetric() {
           {Object.entries(metricData).map(
             ([key, item], index) =>
               (item.indeterminate || item.checkedAll) && (
-                <Box my={2} mb={index + 1 === Object.entries(metricData)?.length ? 0 : 4}>
+                <Box my={2} mb={index + 1 === Object.entries(metricData)?.length ? 0 : 4} key={key}>
                   <Typography
                     variant="body1"
                     sx={{
@@ -219,7 +220,7 @@ function BrowserMetric() {
                     {item.metrics.map(
                       metric =>
                         metric.show && (
-                          <Grid item xs={12} md={6} xl={4}>
+                          <Grid item xs={12} md={6} xl={4} key={metric.key}>
                             <CustomLineChart
                               show={metric.show}
                               title={metric.title}
@@ -292,7 +293,7 @@ function BrowserMetric() {
           <FormGroup>
             <Box>
               {Object.entries(formMetricData).map(([key, parent], index) => (
-                <Box mb={index !== Object.entries(formMetricData)?.length - 1 ? 3 : 0}>
+                <Box mb={index !== Object.entries(formMetricData)?.length - 1 ? 3 : 0} key={key}>
                   <CheckboxField
                     name={key}
                     checked={parent.checkedAll}
@@ -335,7 +336,7 @@ function BrowserMetric() {
                   >
                     <Grid container>
                       {parent.metrics.map(metric => (
-                        <Grid key={metric.key} xs={12} md={6}>
+                        <Grid item key={metric.key} xs={12} md={6}>
                           <CheckboxField
                             checked={metric.show}
                             label={metric.title}

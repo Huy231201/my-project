@@ -69,10 +69,10 @@ function CustomLineChart(props: Props) {
       });
       setMetricDetail({
         title,
-        description: config.name,
+        description: config.description,
         labels: data?.labels,
         axisXLabel: window.T('Time'),
-        axisYLabel: config.name,
+        axisYLabel: config.description,
         datasets,
       });
       setIsFirstLoad(false);
