@@ -1,7 +1,8 @@
 /* eslint-disable quotes */
 interface MetricConfig {
   [key: string]: {
-    name: string;
+    title: string;
+    description: string;
     values: {
       [key: string]: string;
     };
@@ -9,8 +10,35 @@ interface MetricConfig {
 }
 
 export const LabelBrowserMetric = {
+  'Brave.Core.UsageDaily': {
+    title: 'Daily Active Users',
+    description: 'Số users sử dụng Herond Browser hàng ngày',
+    values: { '1': 'Yes' },
+  },
+  'Brave.Wallet.EthTransactionSent': {
+    title: 'Weekly Active Wallets',
+    description: 'Số lượng Ví Herond sử dụng hàng tuần',
+    values: { '0': 'No', '1': 'Yes' },
+  },
+  'Brave.Core.ProfileCount': {
+    title: 'Total Profile Count',
+    description: 'Tổng lượng hồ sơ (profile) mà user đã tạo',
+    values: { '1': '1', '2': '2', '3': '3', '4': '4-5', '5': '6+' },
+  },
+  'Brave.Core.UsageMonthly': {
+    title: 'Monthly Active Users',
+    description: 'Số lượng user sử dụng Herond Browser hàng tháng',
+    values: { '1': 'Yes' },
+  },
+  'Brave.VerticalTabs.OpenTabs': {
+    title: 'Brave.VerticalTabs.OpenTabs',
+    description: 'Số lượng tab mở tối đa trong tuần khi sử dụng tính năng vertical tab.',
+    values: { '1': '1', '2': '2-5', '3': '6-10', '4': '11-50', '5': '51+' },
+  },
+
   'Brave.Core.BookmarksCountOnProfileLoad.2': {
-    name: 'User Bookmarks',
+    title: 'Profile Bookmark Count',
+    description: 'Số lượt đánh dấu trang (bookmark) trên profile user',
     values: {
       '1': '0-5',
       '2': '6-20',
@@ -23,14 +51,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.CrashReportsEnabled': {
-    name: 'Is Crash Reports Enabled?',
+    title: 'Crash Report No',
+    description: ' Số lượt báo cáo sập trang khi user dùng Herond Browser',
     values: {
       '1': 'No',
       '2': 'Yes',
     },
   },
   'Brave.Core.DomainsLoaded': {
-    name: 'Number of Unique Domains Visited',
+    title: 'Weekly Domain Loaded',
+    description: 'Số lượng Domain mà user đã truy cập hàng tuần',
     values: {
       '0': '0 domains',
       '1': '1-4',
@@ -42,14 +72,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.IsDefault': {
-    name: 'Is Herond Default Browser?',
+    title: 'Default Browser Setting Count',
+    description: 'Tổng số lượt user cài đặt Herond làm trình duyệt mặc định',
     values: {
       '1': 'No',
       '2': 'Yes',
     },
   },
   'Brave.Core.LastTimeIncognitoUsed': {
-    name: 'Last Time Use Incognito',
+    title: 'Incognito Window Count',
+    description: 'Tổng số lượt user mở cửa sổ ẩn danh',
     values: {
       '1': 'Used in last 24h',
       '2': 'Used in last week but not 24h',
@@ -59,7 +91,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.NumberOfExtensions': {
-    name: 'Number of Extensions',
+    title: 'No. of Extensions',
+    description: 'Số lượng phần mở rộng (extension) được cài đặt trên Herond Browser',
     values: {
       '1': '0',
       '2': '1',
@@ -68,7 +101,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.PagesLoaded': {
-    name: 'Page Loaded',
+    title: 'Weekly Pages Loaded',
+    description: 'Số trang user tải hàng tuần',
     values: {
       '0': '0',
       '1': '1-10',
@@ -80,7 +114,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.TabCount': {
-    name: 'Open Tabs',
+    title: 'Open Tab Count',
+    description: 'Số lượng Tabs trên Herond Browser được mở',
     values: {
       '0': '0-1',
       '1': '2-5',
@@ -90,14 +125,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.TorEverUsed': {
-    name: 'Tor Used',
+    title: 'Tor Window Opens',
+    description: 'Tổng số lần user mở cửa sổ ẩn danh Tor',
     values: {
       '1': 'Yes',
       '2': 'No',
     },
   },
   'Brave.Core.WeeklyUsage': {
-    name: 'Weekly Usage',
+    title: 'Weekly Active Users',
+    description: 'Số lượng user sử dụng Herond Browser hàng tuần',
     values: {
       '0': '0 days',
       '1': '1 day',
@@ -110,7 +147,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Core.WindowCount.2': {
-    name: 'Window Count',
+    title: 'Total Window Count',
+    description: 'Tổng số lượt mở cửa sổ trình duyệt (window) của user',
     values: {
       '0': '0',
       '1': '1',
@@ -119,7 +157,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Importer.ImporterSource.2': {
-    name: 'Profile Imported',
+    title: 'Imports / Import Source',
+    description: 'Số lượt user import setting/cookies và nguồn import',
     values: {
       '1': 'Did not import',
       '2': 'Imported from Brave',
@@ -130,7 +169,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.IPFS.DaemonRunTime': {
-    name: 'Daemon Runtime',
+    title: 'Daemon Background Process Runtime',
+    description: 'Thời gian trình nền Daemon được khởi chạy',
     values: {
       '0': '0-5min',
       '1': '5-60min',
@@ -139,7 +179,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.IPFS.DetectionPromptCount': {
-    name: 'Detection Prompt Count',
+    title: 'IPFS Detection Prompt Count',
+    description: 'Số lần phát hiện IPFS hiển thị mà không cài đặt',
     values: {
       '0': '0 times',
       '1': '1 time',
@@ -148,7 +189,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.IPFS.GatewaySetting': {
-    name: 'Gateway Setting',
+    title: 'IPFS Gateway Setting',
+    description: 'IPFS giải quyết các giao thức IPFS/IPNS như thế nào?',
     values: {
       '0': 'Ask',
       '1': 'Gateway',
@@ -157,14 +199,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.IPFS.IPFSCompanionInstalled': {
-    name: 'IPFS Companion Installed',
+    title: 'IPFS Companion Installed',
+    description: 'Số lượng gói tập tin IPFS được thiết lập',
     values: {
       '1': 'No',
       '2': 'Yes',
     },
   },
   'Brave.IPFS.LocalNodeRetention': {
-    name: 'Local Node Retention',
+    title: 'IPFS Local Node Retention',
+    description: 'Số lượng IPFS node được cài đặt và thời gian hoạt động',
     values: {
       '0': 'Never installed',
       '1': 'Installed, in use',
@@ -172,7 +216,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.NTP.CustomizeUsageStatus': {
-    name: 'Customize Usage Status',
+    title: 'Clicked on Setting',
+    description: 'Số lượng user click vào Setting trên trình duyệt tại trang New Tab',
     values: {
       '0': 'No',
       '1': "Yes, but I didn't make any changes",
@@ -180,14 +225,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.NTP.SponsoredImagesEnabled': {
-    name: 'Sponsored Images Enabled',
+    title: 'Sponsored Images Enabled',
+    description: 'Trang New Tab có cho phép hiện hình ảnh sponsor chưa?',
     values: {
       '0': 'Disabled',
       '1': 'Enabled',
     },
   },
   'Brave.Omnibox.SearchCount': {
-    name: 'Omnibox Search Count',
+    title: 'User Search Count',
+    description: 'Số lượt search của user trên Herond Browser',
     values: {
       '0': 'Never',
       '1': '1 to 5 times',
@@ -200,7 +247,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.P3A.SentAnswersCount': {
-    name: 'Sent Answers Count',
+    title: 'Sent Answer Count',
+    description: 'Số câu trả lời cho các câu hỏi của user được gửi từ Browser hàng tuần',
     values: {
       '0': 'None',
       '1': 'Between 1 and 4',
@@ -209,7 +257,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Savings.BandwidthSavingsMB': {
-    name: 'Bandwidth Savings MB',
+    title: 'Weekly Bandwith Savings',
+    description: 'Dung lượng dữ liệu mà Herond tiết kiệm cho user hàng tuần',
     values: {
       '0': '0',
       '1': '>0-50mb',
@@ -222,7 +271,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.AdBlockSetting': {
-    name: 'AdBlock Setting',
+    title: 'Shields AdBlock Setting',
+    description: 'Adblock setting trung bình là gì?',
     values: {
       '0': 'Disabled',
       '1': 'Standard',
@@ -230,14 +280,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.CookieListEnabled': {
-    name: '',
+    title: 'Shields Cookie List Enabled',
+    description: 'Có thông báo lấy ý kiến user trước khi block cookies không?',
     values: {
       '1': 'No',
       '2': 'Yes',
     },
   },
   'Brave.Shields.DomainAdsSettingsAboveGlobal': {
-    name: 'Domain Ads Settings Above Global',
+    title: 'Shields Domain Block Settings Above Average',
+    description: 'Số lượng domain mà user tăng mức độ phòng chống của Shield cao hơn mức bình thường',
     values: {
       '0': '0',
       '1': '1-5',
@@ -248,7 +300,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.DomainAdsSettingsBelowGlobal': {
-    name: 'Domain Ads Settings Below Global',
+    title: 'Shields Domain Ads Settings Below Average',
+    description: 'Số lượng domain được user set cấu hình adblock khác thông số mặc định',
     values: {
       '0': '0',
       '1': '1-5',
@@ -259,7 +312,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.DomainFingerprintSettingsAboveGlobal': {
-    name: 'Domain Fingerprint Settings Above Global',
+    title: 'Shields Domain Fingerprint Settings Above Average',
+    description: ' Số lượng domain được user set cấu hình Fingerprint trên thông số mặc định',
     values: {
       '0': '0',
       '1': '1-5',
@@ -270,7 +324,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.DomainFingerprintSettingsBelowGlobal': {
-    name: 'Domain Fingerprint Settings Below Global',
+    title: 'Shields Domain Fingerprint Settings Below Average',
+    description: 'Số lượng domain được user set cấu hình Fingerprint dưới thông số mặc định',
     values: {
       '0': '0',
       '1': '1-5',
@@ -281,7 +336,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.FingerprintBlockSetting': {
-    name: 'Fingerprint Block Setting',
+    title: 'Shields Fingerprint Block Setting',
+    description: 'Số lượt cài đặt chặn fingerprinting trong Herond Shield',
     values: {
       '0': 'Disabled',
       '1': 'Standard',
@@ -289,7 +345,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Shields.UsageStatus': {
-    name: 'Herond Shield Usage Status',
+    title: 'Shields Usage Status',
+    description: 'Số lượng user tuỳ chỉnh lại menu settings Shield của Herond Browser tại trang New Tab',
     values: {
       '0': 'Never clicked on shields icon',
       '1': 'Clicked on it, but never made a change',
@@ -298,7 +355,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Toolbar.FrequentMenuGroup': {
-    name: 'Frequent Menu Group',
+    title: 'Toolbar Frequent Menu Group',
+    description: 'Thống kê nhóm tính năng được user truy cập',
     values: {
       '0': 'Tab & window actions (new tab/new window)',
       '1': 'Brave features (Wallet, Rewards, Sync)',
@@ -306,7 +364,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Toolbar.MenuDismissRate': {
-    name: 'Menu Dismiss Rate',
+    title: 'Toolbar Menu Dismiss Rate',
+    description: 'Mức độ thường xuyên của việc user mở menu ra rồi đóng lại nhưng không thực hiện hành động nào khác',
     values: {
       '0': 'Menu was not opened in the past week',
       '1': 'Less than 25% (exclusive) of opens',
@@ -316,7 +375,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Toolbar.MenuOpens': {
-    name: 'Menu Opens',
+    title: 'Weekly Menu Opens',
+    description: 'Số lần user mở Menu trong tuần qua',
     values: {
       '0': '0',
       '1': '1-5',
@@ -327,7 +387,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Uptime.BrowserOpenMinutes': {
-    name: 'Browser Open Minutes',
+    title: 'Browser Open Minutes',
+    description: 'Thời lượng (số phút) browser được user mở lên trong tuần qua',
     values: {
       '0': 'N/A -- seven days have not passed since first open',
       '1': '0 - 30min',
@@ -336,7 +397,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.ActiveEthAccounts': {
-    name: 'Active Eth Accounts',
+    title: 'Active ETH accounts',
+    description: 'Số lượng ví ETH có số dư dương đang hoạt động',
     values: {
       '0': '0 accounts',
       '1': '1 account',
@@ -347,7 +409,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.ActiveSolAccounts': {
-    name: 'Active Sol Accounts',
+    title: 'Active SOL accounts',
+    description: 'Số lượng ví SOL có số dư dương đang hoạt động',
     values: {
       '0': '0 accounts',
       '1': '1 account',
@@ -358,15 +421,18 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.DefaultSolanaWalletSetting': {
-    name: 'N/A',
+    title: 'Default Solana Wallet Setting',
+    description: 'Số lượng ví Solana thiết lập mặc định',
     values: {},
   },
   'Brave.Wallet.DefaultWalletSetting': {
-    name: 'N/A',
+    title: 'Default Wallet Setting',
+    description: 'Số lượng Ví Herond để setting mặc định',
     values: {},
   },
   'Brave.Wallet.EthProvider.2': {
-    name: 'Eth Provider',
+    title: 'ETH SOL Wallets',
+    description: 'Số lượng ví SOL/ETH được khởi tạo',
     values: {
       '0': 'None, because no wallet is setup',
       '1': 'None, because the default provider setting is set to "Extensions (no fallback)"',
@@ -377,14 +443,16 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.KeyringCreated': {
-    name: 'Keyring Created',
+    title: 'Wallet Keyring Created',
+    description: 'Tổng số Key Ví Herond được tạo',
     values: {
       '0': 'No',
       '1': 'Yes',
     },
   },
   'Brave.Wallet.LastUsageTime': {
-    name: 'Last Usage Time',
+    title: 'Wallet Last Usage Time',
+    description: 'Thời gian user sử dụng ví lần cuối',
     values: {
       '0': 'Within the last 6 days',
       '1': '7 - 13 days ago',
@@ -395,7 +463,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.NewUserReturning': {
-    name: 'New User Returning',
+    title: 'Wallet New User Returning',
+    description: 'Số lượng new user quay trở lại sử dụng ví trong tuần qua',
     values: {
       '0': 'I have never used Brave News',
       '1': "I have used Brave News, but I'm not a first time Brave News user this week",
@@ -405,7 +474,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.OnboardingConversion.2': {
-    name: 'Onboarding Conversion',
+    title: 'Wallet Onboarding Conversion',
+    description: 'Số lượng user chuyển đổi tạo ví từ quá trình onboarding',
     values: {
       '0': 'Viewed onboarding splash',
       '1': 'Between "Legal stuff" and "Create password"',
@@ -415,7 +485,8 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.UsageDaysInWeek': {
-    name: 'Usage Days In Week',
+    title: 'Weekly Wallet Usage',
+    description: 'Số ngày ví được sử dụng trong tuần',
     values: {
       '0': '1 to 2 days',
       '1': '3 to 4 days',
@@ -424,13 +495,15 @@ export const LabelBrowserMetric = {
     },
   },
   'Brave.Wallet.UsageMonthly.2': {
-    name: 'Usage Monthly',
+    title: 'Monthly Wallet Usage',
+    description: 'Số lượt sử dụng ví Herond hằng tháng',
     values: {
       '1': 'Yes',
     },
   },
   'Brave.Welcome.InteractionStatus': {
-    name: 'Interaction Status',
+    title: 'Welcome Interaction Status',
+    description: 'Thống kê lượt user trải nghiệm onboard screen',
     values: {
       '0': 'Only viewed the welcome screen, performed no action',
       '1': 'Viewed the profile import screen',

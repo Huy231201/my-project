@@ -33,6 +33,7 @@ const CardHeader = ({ label, subLabel, icon, tooltipContent }: Props) => (
     </Box>
     <Box>
       <Typography
+        component="span"
         variant="body1"
         sx={{
           color: '#32373D',

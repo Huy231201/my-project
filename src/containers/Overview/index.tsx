@@ -192,7 +192,7 @@ function BrowserMetric() {
         }}
       >
         {MetricConfigDump.map(item => (
-          <Grid item xs={12} md={6}>
+          <Grid key={item.title} item xs={12} md={6}>
             <IntersectionChart
               title={item.title}
               useApi={item.useApi}
