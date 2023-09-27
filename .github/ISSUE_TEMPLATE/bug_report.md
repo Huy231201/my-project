@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: '[Bug] '
-labels: priority/P2, type/bug, 'feature/non-triaged'
+labels: priority/P2, type/bug, feature/non-triaged
 assignees: ''
 
 ---
