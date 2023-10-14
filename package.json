@@ -28,6 +28,7 @@
     "start": "vite --open --mode dev",
     "host": "vite --open --host",
     "build:dev": "tsc && vite build --mode dev",
+    "build:staging": "tsc && vite build --mode staging",
     "build:prod": "tsc && vite build --mode prod",
     "preview": "vite preview",
     "check-types": "tsc --noEmit",
