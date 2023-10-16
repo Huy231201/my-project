@@ -44,5 +44,5 @@ runs:
       context: .
       file: ./Dockerfile
       push: true
-      build-args: enviroment=${{ inputs.environment }}
+      build-args: environment=${{ inputs.environment }}
       tags: ${{ inputs.registry-name }}/${{ inputs.repository }}:${{ inputs.image-tag }}
