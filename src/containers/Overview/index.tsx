@@ -90,6 +90,20 @@ const CardDataDefault = [
     contentKey: 'cost',
     tooltipContent: '=(Total Cost)/(Affiliate Users)',
   },
+  {
+    id: 9,
+    label: window.T('Total Account'),
+    icon: 'user-group-account',
+    contentKey: 'totalAccount',
+    tooltipContent: 'Tổng số tài khoản mới được tạo ra',
+  },
+  {
+    id: 10,
+    label: window.T('Total Recruited User'),
+    icon: 'user-plus',
+    contentKey: 'totalRecruited',
+    tooltipContent: 'Tổng số User mới đã tạo tài khoản và ví từ chương trình Affiliate',
+  },
 ] as CardDataProps[];
 
 const MetricConfigDump = [

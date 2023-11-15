@@ -31,6 +31,8 @@ import BrowserMetricSvg from '@/assets/icons/browser-metric.svg';
 import BrowserMetricWhiteSvg from '@/assets/icons/browser-metric-white.svg';
 import EyeSvg from '@/assets/icons/eye.svg';
 import TrashSvg from '@/assets/icons/trash.svg';
+import UserGroupAccountSvg from '@/assets/icons/user-group-account.svg';
+import UserPlusSvg from '@/assets/icons/user-plus.svg';
 
 const SvgData = {
   close: {
@@ -118,6 +120,12 @@ const SvgData = {
   },
   trash: {
     svg: TrashSvg,
+  },
+  'user-group-account': {
+    svg: UserGroupAccountSvg,
+  },
+  'user-plus': {
+    svg: UserPlusSvg,
   },
 };
 
