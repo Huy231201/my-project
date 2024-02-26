@@ -11,11 +11,9 @@ import ArrowLeftSvg from '@/assets/icons/arrow-left.svg';
 import CalendarSvg from '@/assets/icons/calendar.svg';
 import CustomerSvg from '@/assets/icons/customer.svg';
 import DashboardSvg from '@/assets/icons/dashboard.svg';
-import DashboardWhiteSvg from '@/assets/icons/dashboard-white.svg';
 import DollarSvg from '@/assets/icons/dollar.svg';
 import DownloadSvg from '@/assets/icons/download.svg';
 import UserGroupSvg from '@/assets/icons/user-group.svg';
-import UserGroupWhiteSvg from '@/assets/icons/user-group-white.svg';
 import UserGroupOrangeSvg from '@/assets/icons/user-group-orange.svg';
 import InformationSvg from '@/assets/icons/information.svg';
 import PercentageSvg from '@/assets/icons/percentage.svg';
@@ -23,16 +21,19 @@ import ReceiveSvg from '@/assets/icons/receive.svg';
 import SharingSvg from '@/assets/icons/sharing.svg';
 import UserSvg from '@/assets/icons/user.svg';
 import WalletSvg from '@/assets/icons/wallet.svg';
-import WalletWhiteSvg from '@/assets/icons/wallet-white.svg';
 import UpDownSvg from '@/assets/icons/up-down.svg';
 import PayoutsSvg from '@/assets/icons/payouts.svg';
-import PayoutsWhiteSvg from '@/assets/icons/payouts-white.svg';
 import BrowserMetricSvg from '@/assets/icons/browser-metric.svg';
-import BrowserMetricWhiteSvg from '@/assets/icons/browser-metric-white.svg';
 import EyeSvg from '@/assets/icons/eye.svg';
 import TrashSvg from '@/assets/icons/trash.svg';
 import UserGroupAccountSvg from '@/assets/icons/user-group-account.svg';
 import UserPlusSvg from '@/assets/icons/user-plus.svg';
+import Adblock from '@/assets/icons/adsblock.svg';
+import userManagement from '@/assets/icons/user-management.svg';
+import pencil from '@/assets/icons/pencil.svg';
+import tokenManagement from '@/assets/icons/token-management.svg';
+import chainManagement from '@/assets/icons/chain-management.svg';
+import WebSvg from '@/assets/icons/web.svg';
 
 const SvgData = {
   close: {
@@ -58,9 +59,6 @@ const SvgData = {
   dashboard: {
     svg: DashboardSvg,
   },
-  'dashboard-white': {
-    svg: DashboardWhiteSvg,
-  },
   dollar: {
     svg: DollarSvg,
   },
@@ -69,9 +67,6 @@ const SvgData = {
   },
   'user-group': {
     svg: UserGroupSvg,
-  },
-  'user-group-white': {
-    svg: UserGroupWhiteSvg,
   },
   'user-group-orange': {
     svg: UserGroupOrangeSvg,
@@ -94,9 +89,6 @@ const SvgData = {
   wallet: {
     svg: WalletSvg,
   },
-  'wallet-white': {
-    svg: WalletWhiteSvg,
-  },
   'up-down': {
     svg: UpDownSvg,
   },
@@ -106,14 +98,8 @@ const SvgData = {
   payouts: {
     svg: PayoutsSvg,
   },
-  'payouts-white': {
-    svg: PayoutsWhiteSvg,
-  },
   'browser-metric': {
     svg: BrowserMetricSvg,
-  },
-  'browser-metric-white': {
-    svg: BrowserMetricWhiteSvg,
   },
   eye: {
     svg: EyeSvg,
@@ -126,6 +112,24 @@ const SvgData = {
   },
   'user-plus': {
     svg: UserPlusSvg,
+  },
+  adblock: {
+    svg: Adblock,
+  },
+  userManagement: {
+    svg: userManagement,
+  },
+  pencil: {
+    svg: pencil,
+  },
+  tokenManagement: {
+    svg: tokenManagement,
+  },
+  chainManagement: {
+    svg: chainManagement,
+  },
+  web: {
+    svg: WebSvg,
   },
 };
 

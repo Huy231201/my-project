@@ -75,7 +75,7 @@ function ResponsiveAppBar() {
         borderBottom: '1px solid #DCE0E3',
         height: APP_BAR_HEIGHT,
         position: 'fixed',
-        zIndex: 1,
+        zIndex: 2,
         top: 0,
       }}
     >

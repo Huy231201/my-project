@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { LocalStorage, SessionStorage, LOCAL_KEYS } from '../storages';
 
 interface CredentialsType {
@@ -6,8 +7,15 @@ interface CredentialsType {
   expiration: string;
 }
 
+interface JWTDecodeType {
+  role: string[];
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string[];
+}
+
 export const getAccessToken = () =>
   LocalStorage.get(LOCAL_KEYS.ACCESS_TOKEN) || SessionStorage.get(LOCAL_KEYS.ACCESS_TOKEN);
+
+export const getRole = () => LocalStorage.get(LOCAL_KEYS.ROLE) || SessionStorage.get(LOCAL_KEYS.ROLE) || [];
 
 export const setCredential = (credentials: CredentialsType) => {
   const { accessToken, refreshToken, expiration } = credentials || {
@@ -18,9 +26,15 @@ export const setCredential = (credentials: CredentialsType) => {
   if (!accessToken || !refreshToken) {
     throw new Error('Missing data');
   }
+
+  const decoded = jwtDecode<JWTDecodeType>(accessToken);
   LocalStorage.set(LOCAL_KEYS.ACCESS_TOKEN, accessToken);
   LocalStorage.set(LOCAL_KEYS.REFRESH_TOKEN, refreshToken);
   LocalStorage.set(LOCAL_KEYS.EXPIRATION_TOKEN, expiration);
+  LocalStorage.set(
+    LOCAL_KEYS.ROLE,
+    decoded?.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || [],
+  );
 };
 
 export function numberWithCommas(x = 0) {
@@ -62,4 +76,13 @@ export const truncateStr = (str: string | undefined | null = '', maxLength = 13)
   return strValue.length > maxLength
     ? `${strValue.slice(0, (maxLength - 3) / 2)}…${strValue.slice(-(maxLength - 3) / 2)}`
     : strValue;
+};
+
+export const transformFormData = (data: any) => {
+  const formData = new FormData();
+  Object.keys(data).forEach(key => {
+    formData.append(key, data[key]);
+  });
+
+  return formData;
 };

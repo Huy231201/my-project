@@ -31,7 +31,7 @@ export default function EnhancedTable(props: Props) {
     rows,
     headCells,
     checkbox = false,
-    enableSelect = false,
+    enableSelect,
     sortDirection = 'asc',
     sortBy = 'id',
     selected = [],

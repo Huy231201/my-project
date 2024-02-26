@@ -4,4 +4,5 @@ export default {
   EXPIRATION_TOKEN: 'expiration_token',
   LANGUAGE_TOKEN: 'i18nextLng',
   METRICS_CONFIG: 'metrics_config',
+  ROLE: 'role',
 };

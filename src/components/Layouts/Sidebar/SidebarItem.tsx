@@ -6,7 +6,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import HerondIcon, { SvgName } from '@/components/Icons';
 import useWindowResize from '@/hooks/useWindowResize';
-
 interface Props {
   active: boolean;
   openDrawer: boolean;
@@ -25,6 +24,9 @@ const MuiListItem = styled(ListItem)(() => ({
       color: 'white !important',
       fontWeight: 'bold',
       paddingTop: '2px',
+    },
+    '& .MuiListItemIcon-root': {
+      color: '#fff',
     },
   },
 }));
@@ -87,6 +89,8 @@ function SidebarItem(props: Props) {
         <ListItemIcon
           sx={{
             '& svg': {
+              color: active ? '#fff' : 'currentcolor',
+              fill: 'currentColor',
               width: 24,
               height: 24,
             },

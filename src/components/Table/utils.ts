@@ -53,3 +53,9 @@ export function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => n
   });
   return stabilizedThis.map(el => el[0]);
 }
+
+export function formatArrToText<T>(array: readonly T[]): string {
+  const stringResult = array.reduce((acc, cur) => `${acc}; ${cur}`, '');
+
+  return stringResult;
+}

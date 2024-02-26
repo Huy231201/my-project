@@ -38,7 +38,13 @@ const SelectField = (props: Props) => {
   };
 
   return (
-    <MuiSelect value={value} onChange={handleChangeData} displayEmpty inputProps={{ 'aria-label': 'select' }}>
+    <MuiSelect
+      value={value}
+      onChange={handleChangeData}
+      displayEmpty
+      inputProps={{ 'aria-label': 'select' }}
+      labelId="select-field-label"
+    >
       {options.map((option: Option) => (
         <MenuItem key={option.value} value={option.value}>
           {option.label}

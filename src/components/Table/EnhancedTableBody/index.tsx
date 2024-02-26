@@ -75,9 +75,13 @@ function EnhancedTableBody(props: Props) {
               key={headCell.id}
               component="th"
               align={headCell.align || 'left'}
+              onClick={headCell.id === 'action' ? event => event.stopPropagation() : () => {}}
               sx={{
                 minWidth: headCell?.width || 120,
                 width: headCell?.width || 120,
+                '& span': {
+                  display: 'block',
+                },
               }}
             >
               {row[headCell.id]}

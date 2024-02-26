@@ -1,9 +1,10 @@
 import { lazy } from 'react';
 import MainLayout from '@/components/Layouts';
-import { routePath } from './routePath';
+import { Role, routePath } from './routePath';
 
 export const routeConfig = [
   {
+    permission: '',
     route: routePath.LOGIN,
     page: lazy(() => import('@/pages/Auth/Login')),
     Layout: MainLayout,
@@ -13,59 +14,118 @@ export const routeConfig = [
     isPrivate: false,
   },
   {
+    permission: Role.METRICADMIN,
     route: routePath.HOME,
     page: lazy(() => import('@/pages/BrowserMetric')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.METRICADMIN,
     route: routePath.BROWSER_METRIC,
     page: lazy(() => import('@/pages/BrowserMetric')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.OVERVIEW,
     page: lazy(() => import('@/pages/Overview')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.USER_DETAIL,
     page: lazy(() => import('@/pages/UserDetail')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.WITHDRAWAL_REQUESTS,
     page: lazy(() => import('@/pages/WithdrawRequests')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.WITHDRAWAL_REQUESTS_DETAIL,
     page: lazy(() => import('@/pages/WithdrawRequests/detail')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.PAYOUTS,
     page: lazy(() => import('@/pages/Payouts')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.AFFILIATEADMIN,
     route: routePath.PAYOUTS_DETAIL,
     page: lazy(() => import('@/pages/Payouts/detail')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
+    permission: Role.ADBLOCKADMIN,
+    route: routePath.ADBLOCK,
+    page: lazy(() => import('@/pages/Adblock')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    permission: Role.ADBLOCKADMIN,
+    route: routePath.THREAT_MANAGEMENT,
+    page: lazy(() => import('@/pages/ThreatManagement')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    permission: Role.ADMIN,
+    route: routePath.USER_MANAGEMENT,
+    page: lazy(() => import('@/pages/UserManagement')),
+    Layout: MainLayout,
+    isPrivate: true,
+  },
+  {
+    permission: Role.WALLETADMIN,
+    route: routePath.TOKEN_MANAGEMENT,
+    page: lazy(() => import('@/pages/TokenManagement')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    permission: Role.WALLETADMIN,
+    route: routePath.CHAIN_MANAGEMENT,
+    page: lazy(() => import('@/pages/ChainManagement')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    permission: Role.WALLETADMIN,
+    route: routePath.NEW_CHAIN_MANAGEMENT,
+    page: lazy(() => import('@/pages/ChainManagement/NewChainManagement')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    permission: Role.WALLETADMIN,
+    route: routePath.DETAILS_CHAIN_MANAGEMENT,
+    page: lazy(() => import('@/pages/ChainManagement/ChainDetaislManagement')),
+    Layout: MainLayout,
+    isPrivate: false,
+  },
+  {
+    permission: '',
     route: routePath.NOT_FOUND,
     page: lazy(() => import('@/pages/NotFound')),
     isPrivate: false,
   },
   {
+    permission: '',
     route: '*',
     page: lazy(() => import('@/pages/NotFound')),
     isPrivate: false,

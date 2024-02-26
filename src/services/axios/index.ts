@@ -6,6 +6,7 @@ import { getAccessToken, setCredential } from '@/utils/common';
 const abortController = new AbortController();
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   showToast?: boolean;
+  contentType?: string;
 }
 
 const NUMBER_RETRIES = 3;
@@ -93,6 +94,7 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       'accept-language': languageCode,
       'show-toast': config?.showToast !== undefined ? config.showToast : true,
+      'Content-Type': config?.contentType || 'application/json',
     },
   };
 
@@ -120,6 +122,7 @@ instance.interceptors.request.use(async (config: CustomAxiosRequestConfig) => {
           ...(res && { Authorization: `Bearer ${res}` }),
           'accept-language': languageCode,
           'show-toast': config?.showToast !== undefined ? config.showToast : true,
+          'Content-Type': config?.contentType || 'application/json',
         },
       };
     }
