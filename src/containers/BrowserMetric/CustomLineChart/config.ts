@@ -16,6 +16,11 @@ export const LabelBrowserMetric = {
     description: 'Số users sử dụng Herond Browser hàng ngày',
     values: { '0': 'No', '1': 'Yes' },
   },
+  'Herond.Accounts.CreatedUsers': {
+    title: 'Daily Register Users',
+    description: 'Số users đăng ký mới Herond Account hàng ngày',
+    values: { '0': 'No', '1': 'Yes' },
+  },
   //  [0,1]
   'Brave.Wallet.EthTransactionSent': {
     title: 'Weekly Active Wallets',
