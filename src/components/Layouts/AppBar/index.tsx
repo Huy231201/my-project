@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 // import Button from '@mui/material/Button';
-import LogoPng from '@/assets/images/logo.png';
+
 // import HerondIcon from '@/components/Icons';
 import { ConfirmButton } from '@/components/Buttons';
 import { getAccessToken } from '@/utils/common';
@@ -101,7 +101,7 @@ function ResponsiveAppBar() {
             }}
           >
             <CardMedia
-              image={LogoPng}
+              src="/icons/logo-herond.svg"
               component="img"
               height={44}
               sx={{
