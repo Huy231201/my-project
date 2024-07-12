@@ -50,11 +50,16 @@ const ButtonAction = styled(Button)`
 const GroupArrayField = styled(Box)`
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  margin: 16px -8px 16px 8px;
+  width: 100%;
+  margin: 16px -8px 16px 0px;
   padding: 15px;
 
   .delete-btn {
   }
+`;
+
+const CustomTextField = styled(TextField)`
+  margin: 8px 0px !important;
 `;
 
 function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
@@ -62,7 +67,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
     handleSubmit,
     control,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<ChainProps>({
     mode: 'onBlur',
     defaultValues: {
@@ -135,7 +140,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!' }}
           render={({ field }) => (
-            <TextField
+            <CustomTextField
               error={!!errors.name}
               label="Name"
               variant="outlined"
@@ -152,8 +157,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           name="title"
           control={control}
           render={({ field }) => (
-            <TextField
-              label="Title"
+            <CustomTextField
+              label="Title (optional)"
               variant="outlined"
               fullWidth
               InputLabelProps={{
@@ -168,7 +173,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!' }}
           render={({ field }) => (
-            <TextField
+            <CustomTextField
               error={!!errors.chain}
               label="Chain"
               variant="outlined"
@@ -186,8 +191,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           name="rpc"
           control={control}
           render={({ field }) => (
-            <TextField
-              label="rpc"
+            <CustomTextField
+              label="RPC (optional)"
               variant="outlined"
               fullWidth
               multiline
@@ -218,7 +223,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
             <Stack direction="row" alignItems="center" gap={10} key={item.id} ml={3}>
               <Controller
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     InputProps={{
                       startAdornment: (
@@ -243,8 +248,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           name="faucets"
           control={control}
           render={({ field }) => (
-            <TextField
-              label="Faucets"
+            <CustomTextField
+              label="Faucets (optional)"
               variant="outlined"
               fullWidth
               multiline
@@ -263,13 +268,13 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
               Native Currency
             </Typography>
           </Stack>
-          <Stack direction="row">
+          <Stack sx={{ flexDirection: { xs: 'column', md: 'row' }, gap: { xs: '0px', md: '8px' } }}>
             <Controller
               name="nativeCurrency.name"
               control={control}
               rules={{ required: 'The field is required!' }}
               render={({ field }) => (
-                <TextField
+                <CustomTextField
                   error={!!errors.nativeCurrency?.name}
                   label="Name"
                   variant="outlined"
@@ -287,7 +292,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
               control={control}
               rules={{ required: 'The field is required!' }}
               render={({ field }) => (
-                <TextField
+                <CustomTextField
                   label="Symbol"
                   error={!!errors.nativeCurrency?.symbol}
                   fullWidth
@@ -305,7 +310,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
               control={control}
               rules={{ required: 'The field is required!', min: { value: 1, message: 'The field is required!' } }}
               render={({ field }) => (
-                <TextField
+                <CustomTextField
                   label="Decimals"
                   error={!!errors.nativeCurrency?.decimals}
                   variant="outlined"
@@ -326,8 +331,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!' }}
           render={({ field }) => (
-            <TextField
-              label="Infor URL"
+            <CustomTextField
+              label="Info URL"
               error={!!errors.infoURL}
               variant="outlined"
               fullWidth
@@ -344,7 +349,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!' }}
           render={({ field }) => (
-            <TextField
+            <CustomTextField
               label="Short Name"
               error={!!errors.shortName}
               variant="outlined"
@@ -362,9 +367,9 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!', min: { value: 1, message: 'The field is required!' } }}
           render={({ field }) => (
-            <TextField
+            <CustomTextField
               error={!!errors.chainId}
-              label="chainId"
+              label="Chain Id"
               variant="outlined"
               type="number"
               fullWidth
@@ -382,8 +387,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!', min: { value: 1, message: 'The field is required!' } }}
           render={({ field }) => (
-            <TextField
-              label="networkId"
+            <CustomTextField
+              label="Network Id"
               error={!!errors.networkId}
               variant="outlined"
               type="number"
@@ -401,8 +406,8 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
           control={control}
           rules={{ required: 'The field is required!', min: { value: 1, message: 'The field is required!' } }}
           render={({ field }) => (
-            <TextField
-              label="Slip44"
+            <CustomTextField
+              label="SLIP44"
               error={!!errors.slip44}
               variant="outlined"
               type="number"
@@ -417,7 +422,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
         />
         <Controller
           render={({ field }) => (
-            <TextField
+            <CustomTextField
               {...field}
               label="ENS"
               InputProps={{
@@ -448,17 +453,22 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
             </Button>
           </Stack>
           {explorersField.map((item, index) => (
-            <Stack direction="row" alignItems="center" key={item.id} ml={3}>
+            <Stack
+              alignItems="center"
+              key={item.id}
+              sx={{ flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: '0px', sm: '8px' } }}
+            >
               <Controller
                 render={({ field }) => (
-                  <TextField
-                    label="name"
+                  <CustomTextField
+                    label="Name"
                     {...field}
                     variant="outlined"
                     fullWidth
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    sx={{ justifyContent: 'center' }}
                   />
                 )}
                 name={`explorers.${index}.name`}
@@ -466,14 +476,15 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
               />
               <Controller
                 render={({ field }) => (
-                  <TextField
-                    label="url"
+                  <CustomTextField
+                    label="URL"
                     {...field}
                     fullWidth
                     variant="outlined"
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    sx={{ justifyContent: 'center' }}
                   />
                 )}
                 name={`explorers.${index}.url`}
@@ -481,14 +492,15 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
               />
               <Controller
                 render={({ field }) => (
-                  <TextField
-                    label="standard"
+                  <CustomTextField
+                    label="Standard"
                     fullWidth
                     {...field}
                     variant="outlined"
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    sx={{ justifyContent: 'center' }}
                   />
                 )}
                 name={`explorers.${index}.standard`}
@@ -500,7 +512,7 @@ function ChainForm({ handleSubmitForm, chainData }: ChainFormProps) {
             </Stack>
           ))}
         </GroupArrayField>
-        <Button type="submit" variant="outlined" fullWidth sx={{ ml: '8px' }}>
+        <Button type="submit" variant="outlined" disabled={!isValid}>
           {chainData ? 'Update' : 'Submit'}
         </Button>
       </FormControl>

@@ -6,19 +6,20 @@ import Typography from '@mui/material/Typography';
 
 import ChainForm, { ChainProps } from './ChainForm';
 import { useGetChainDetailsQuery, useUpdateChainMutation } from '@/services/chain-management ';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function ChainDetails() {
+  const navigate = useNavigate();
   const { chainId } = useParams();
 
-  const { data, isFetching, refetch: refetchChainDetails } = useGetChainDetailsQuery({ chainId });
+  const { data, isFetching } = useGetChainDetailsQuery({ chainId });
   const [updateChain, { isLoading: isUpdateChainLoading }] = useUpdateChainMutation({});
   const handleUpdateChain = async (chainData: ChainProps) => {
     try {
       await updateChain(chainData).unwrap();
       toast.success(window.T('Update Chain Success!!!'));
-      refetchChainDetails();
+      navigate('/chain-management');
       return true;
     } catch (error) {
       console.log(error);
