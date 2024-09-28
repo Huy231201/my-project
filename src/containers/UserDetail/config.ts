@@ -9,6 +9,12 @@ export const RecruitedHeadTable: readonly HeaderCellProps[] = [
     numeric: true,
   },
   {
+    id: 'userEmail',
+    order: 2,
+    label: window.T('User Email'),
+    width: 200,
+  },
+  {
     id: 'createdDateTime',
     order: 2,
     label: window.T('Wallet Creation Date'),
