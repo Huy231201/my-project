@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 
 function SimpleCard(props: SimpleCardProps) {
-  const { loading, label, subLabel, icon, content, tooltipContent } = props;
+  const { loading, label, subLabel, subLabel2, icon, content, tooltipContent } = props;
 
   return (
     <Box
@@ -35,6 +35,7 @@ function SimpleCard(props: SimpleCardProps) {
             }}
           >
             {content || 0}
+            <Typography>{subLabel2}</Typography>
           </Typography>
         )}
       </Box>

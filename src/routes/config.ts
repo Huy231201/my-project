@@ -16,24 +16,24 @@ export const routeConfig = [
   {
     permission: Role.METRICADMIN,
     route: routePath.HOME,
-    page: lazy(() => import('@/pages/BrowserMetric')),
+    page: lazy(() => import('@/pages/BrowserMetricNew')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
     permission: Role.METRICADMIN,
     route: routePath.BROWSER_METRIC,
-    page: lazy(() => import('@/pages/BrowserMetric')),
+    page: lazy(() => import('@/pages/BrowserMetricNew')),
     Layout: MainLayout,
     isPrivate: true,
   },
-  {
-    permission: Role.AFFILIATEADMIN,
-    route: routePath.OVERVIEW,
-    page: lazy(() => import('@/pages/Overview')),
-    Layout: MainLayout,
-    isPrivate: true,
-  },
+  // {
+  //   permission: Role.AFFILIATEADMIN,
+  //   route: routePath.OVERVIEW,
+  //   page: lazy(() => import('@/pages/Overview')),
+  //   Layout: MainLayout,
+  //   isPrivate: true,
+  // },
   {
     permission: Role.AFFILIATEADMIN,
     route: routePath.USER_DETAIL,

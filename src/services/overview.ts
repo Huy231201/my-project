@@ -4,6 +4,11 @@ import { removeNullParams } from '@/utils/common';
 
 export const Api = api.injectEndpoints({
   endpoints: builder => ({
+    getOverviewCurrent: builder.query({
+      query: () => ({
+        url: '/dashboard/overview-current',
+      }),
+    }),
     getOverview: builder.query({
       query: query => ({
         url: `/dashboard/overview?${queryString.stringify(removeNullParams(query))}`,
@@ -37,6 +42,7 @@ export const Api = api.injectEndpoints({
 });
 
 export const {
+  useGetOverviewCurrentQuery,
   useGetOverviewQuery,
   useGetMetricClickQuery,
   useGetMetricDownloadQuery,
