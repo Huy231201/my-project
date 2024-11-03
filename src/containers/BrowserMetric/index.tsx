@@ -8,7 +8,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { CheckboxField, DateRangeTwoPickerField } from '@/components/Fields';
 import CustomLineChart from './CustomLineChart';
-import { useGetMetricQuery } from '@/services/metric';
+import { useGetMetricQuery } from '@/services/metricz';
 import Modal, { DialogActions, DialogContent } from '@/components/Modal';
 import { ConfirmButton } from '@/components/Buttons';
 import { LocalStorage, LOCAL_KEYS } from '@/utils/storages';
@@ -57,7 +57,7 @@ function BrowserMetric() {
   const [formMetricData, setFormMetricData] = useState<MetricData>({});
 
   const [filter, setFilter] = useState<FilterProps>({
-    dateRange: [dayjs().subtract(3, 'month').toDate(), new Date()],
+    dateRange: [dayjs().subtract(6, 'month').toDate(), new Date()],
     dataUpdate: new Date().getTime(),
   });
 

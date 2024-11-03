@@ -1,6 +1,6 @@
 import IntersectionLineChart from '@/components/Chart/IntersectionLineChart';
 import { Dataset, MetricDetail } from '@/components/Chart/types';
-import { useGetMetricDetailQuery } from '@/services/metric';
+import { useGetMetricDetailQuery } from '@/services/metricz';
 import { ScriptableContext } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';

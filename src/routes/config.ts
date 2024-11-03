@@ -16,14 +16,14 @@ export const routeConfig = [
   {
     permission: Role.METRICADMIN,
     route: routePath.HOME,
-    page: lazy(() => import('@/pages/BrowserMetricNew')),
+    page: lazy(() => import('@/pages/BrowserMetric')),
     Layout: MainLayout,
     isPrivate: true,
   },
   {
     permission: Role.METRICADMIN,
     route: routePath.BROWSER_METRIC,
-    page: lazy(() => import('@/pages/BrowserMetricNew')),
+    page: lazy(() => import('@/pages/BrowserMetric')),
     Layout: MainLayout,
     isPrivate: true,
   },
