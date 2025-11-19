@@ -1,0 +1,77 @@
+name: "Push UI to Google registry"
+run-name: "Build tag [${{ github.ref_name }}]"
+
+on:
+    workflow_dispatch:
+    push:
+        tags:
+            - 'prod-*'
+            - 'staging-*'
+            - 'dev-*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Determine Environment
+      id: determine_env
+      run: |
+        tag=$(git describe --tags --abbrev=0)
+        env=$(echo "$tag" | cut -d'-' -f1)
+        echo "BUILD_ENV=$env" >> $GITHUB_ENV
+        echo "Determined BUILD_ENV=$env"
+
+    - name: Set GCP project & region from repository variables
+      id: set_project
+      env:
+        BUILD_ENV: ${{ env.BUILD_ENV }}
+      run: |
+        echo "Selecting GCP project from repo vars for BUILD_ENV='$BUILD_ENV'..."
+        case "$BUILD_ENV" in
+          prod )
+            echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID_PROD }}" >> $GITHUB_ENV
+            echo "GAR_REGION=${{ vars.GAR_REGION_PROD || vars.GAR_REGION }}" >> $GITHUB_ENV
+            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY_PROD || secrets.GAR_JSON_KEY }}" >> $GITHUB_ENV
+            ;;
+          staging ) 
+            echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID_STAGING }} " >> $GITHUB_ENV
+            echo "GAR_REGION=${{ vars.GAR_REGION_STAGING || vars.GAR_REGION }}" >> $GITHUB_ENV
+            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY_STAG || secrets.GAR_JSON_KEY }}" >> $GITHUB_ENV
+            ;;
+          uat )
+            echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID_UAT }}" >> $GITHUB_ENV
+            echo "GAR_REGION=${{ vars.GAR_REGION_UAT || vars.GAR_REGION }}" >> $GITHUB_ENV
+            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY_UAT || secrets.GAR_JSON_KEY }}" >> $GITHUB_ENV
+            ;;
+          dev )
+            echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID_DEV }}" >> $GITHUB_ENV
+            echo "GAR_REGION=${{ vars.GAR_REGION_DEV || vars.GAR_REGION }}" >> $GITHUB_ENV
+            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY_DEV || secrets.GAR_JSON_KEY }}" >> $GITHUB_ENV
+            ;;
+          * )
+            echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}" >> $GITHUB_ENV
+            echo "GAR_REGION=${{ vars.GAR_REGION }}" >> $GITHUB_ENV
+            ;;
+        esac
+        echo "Selected project: $GCP_PROJECT_ID, region: $GAR_REGION"
+
+    - name: Build and push [${{ env.BUILD_ENV }}]
+      if: startsWith(github.ref, 'refs/tags/prod-') || startsWith(github.ref, 'refs/tags/uat-') || startsWith(github.ref, 'refs/tags/dev-') || startsWith(github.ref, 'refs/tags/staging-')
+      uses: ./.github/actions/gar-push
+      with:
+        region: ${{ env.GAR_REGION }}
+        project-id: ${{ env.GCP_PROJECT_ID }}
+        repository: ${{ vars.REPOSITORY_NAME }}
+        image-name: herond-portal-ui
+        credentials-json: ${{ env.GAR_JSON_KEY }}
+        image-tag: ${{ github.ref_name }}
+        environment: ${{ env.BUILD_ENV }}
+        docker-file-path: ./Dockerfile
+        lark_webhook: ${{ secrets.LARK_WEBHOOK }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        build-args: | 
+          BUILD_VERSION=${{  github.ref_name }}
+          NODE_ENV=production

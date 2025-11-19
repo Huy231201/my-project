@@ -17,7 +17,8 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Build and push [Production]
-      if: startsWith(github.ref, 'refs/tags/prod-')
+      if: ${{false}}
+      #if: startsWith(github.ref, 'refs/tags/prod-')
       uses: ./.github/actions/docker-build
       with:
         registry-name: ${{ secrets.HEROND_PRODUCTION_ACR_USERNAME }}.azurecr.io
@@ -28,7 +29,8 @@ jobs:
         image-tag: "${{  github.ref_name }}"
 
     - name: Build and push [Staging]
-      if: startsWith(github.ref, 'refs/tags/staging-')
+      if: ${{false}}
+      #if: startsWith(github.ref, 'refs/tags/staging-')
       uses: ./.github/actions/docker-build
       with:
         registry-name: ${{ secrets.HEROND_PRODUCTION_ACR_USERNAME }}.azurecr.io
@@ -39,7 +41,8 @@ jobs:
         image-tag: "${{  github.ref_name }}"
 
     - name: Build and push [Dev]
-      if: startsWith(github.ref, 'refs/tags/dev-')
+      if: ${{false}}    
+      #if: startsWith(github.ref, 'refs/tags/dev-')
       uses: ./.github/actions/docker-build
       with:
         registry-name: ${{ secrets.HEROND_PRODUCTION_ACR_USERNAME }}.azurecr.io
