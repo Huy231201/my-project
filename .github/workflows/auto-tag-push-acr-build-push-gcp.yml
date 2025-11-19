@@ -54,7 +54,7 @@ jobs:
           * )
             echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}" >> $GITHUB_ENV
             echo "GAR_REGION=${{ vars.GAR_REGION }}" >> $GITHUB_ENV
-            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY }} >> $GITHUB_OUTPUT
+            echo "GAR_JSON_KEY=${{ secrets.GAR_JSON_KEY }}" >> $GITHUB_OUTPUT
             ;;
         esac
         echo "Selected project: $GCP_PROJECT_ID, region: $GAR_REGION"
