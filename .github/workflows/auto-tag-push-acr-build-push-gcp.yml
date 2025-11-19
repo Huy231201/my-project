@@ -2,16 +2,17 @@ name: "Push UI to Google registry"
 run-name: "Build tag [${{ github.ref_name }}]"
 
 on:
-    workflow_dispatch:
-    push:
-        tags:
-            - 'prod-*'
-            - 'staging-*'
-            - 'dev-*'
+  workflow_dispatch:
+  push:
+    tags:
+      - 'prod-*'
+      - 'staging-*'
+      - 'dev-*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -24,48 +25,58 @@ jobs:
         echo "BUILD_ENV=$env" >> $GITHUB_ENV
         echo "Determined BUILD_ENV=$env"
 
-    - name: Set GCP project & region from repository variables
+    - name: Set GCP project & region
       id: set_project
       env:
         BUILD_ENV: ${{ env.BUILD_ENV }}
+ 
+        KEY_PROD:    ${{ secrets.GAR_JSON_KEY_PROD }}
+        KEY_STAG:    ${{ secrets.GAR_JSON_KEY_STAG }}
+        KEY_UAT:     ${{ secrets.GAR_JSON_KEY_UAT }}
+        KEY_DEV:     ${{ secrets.GAR_JSON_KEY_DEV }}
+        KEY_DEFAULT: ${{ secrets.GAR_JSON_KEY }}
+
       run: |
         echo "Selecting GCP project from repo vars for BUILD_ENV='$BUILD_ENV'..."
 
+        # Choose correct secrets & vars based on ENV
         case "$BUILD_ENV" in
           prod )
             GCP_PROJECT_ID="${{ vars.GCP_PROJECT_ID_PROD }}"
             GAR_REGION="${{ vars.GAR_REGION_PROD }}"
-            GAR_JSON_KEY="${{ secrets.GAR_JSON_KEY_PROD }}"
+            GAR_JSON_KEY="$KEY_PROD"
             ;;
           staging )
             GCP_PROJECT_ID="${{ vars.GCP_PROJECT_ID_STAGING }}"
             GAR_REGION="${{ vars.GAR_REGION_STAGING }}"
-            GAR_JSON_KEY="${{ secrets.GAR_JSON_KEY_STAG }}"
+            GAR_JSON_KEY="$KEY_STAG"
             ;;
           uat )
             GCP_PROJECT_ID="${{ vars.GCP_PROJECT_ID_UAT }}"
             GAR_REGION="${{ vars.GAR_REGION_UAT }}"
-            GAR_JSON_KEY="${{ secrets.GAR_JSON_KEY_UAT }}"
+            GAR_JSON_KEY="$KEY_UAT"
             ;;
           dev )
             GCP_PROJECT_ID="${{ vars.GCP_PROJECT_ID_DEV }}"
             GAR_REGION="${{ vars.GAR_REGION_DEV }}"
-            GAR_JSON_KEY="${{ secrets.GAR_JSON_KEY_DEV }}"
+            GAR_JSON_KEY="$KEY_DEV"
             ;;
           * )
             GCP_PROJECT_ID="${{ vars.GCP_PROJECT_ID }}"
             GAR_REGION="${{ vars.GAR_REGION }}"
-            GAR_JSON_KEY="${{ secrets.GAR_JSON_KEY }}"
+            GAR_JSON_KEY="$KEY_DEFAULT"
             ;;
         esac
- 
+
+        # Export env (for shell)
         echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
         echo "GAR_REGION=$GAR_REGION" >> $GITHUB_ENV
- 
+
+        # Export outputs (for next step `with:`)
         echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_OUTPUT
         echo "GAR_REGION=$GAR_REGION" >> $GITHUB_OUTPUT
 
-        # Export GAR_JSON_KEY using HEREDOC — MUST for JSON/private keys
+        # Export secret using HEREDOC — REQUIRED FOR PRIVATE KEYS
         echo "GAR_JSON_KEY<<EOF" >> $GITHUB_OUTPUT
         printf "%s" "$GAR_JSON_KEY" >> $GITHUB_OUTPUT
         echo "" >> $GITHUB_OUTPUT
@@ -73,13 +84,12 @@ jobs:
 
         echo "Selected project: $GCP_PROJECT_ID, region: $GAR_REGION"
 
-
     - name: Build and push [${{ env.BUILD_ENV }}]
       if: startsWith(github.ref, 'refs/tags/prod-') || startsWith(github.ref, 'refs/tags/uat-') || startsWith(github.ref, 'refs/tags/dev-') || startsWith(github.ref, 'refs/tags/staging-')
       uses: ./.github/actions/gar-push
       with:
-        region: ${{ env.GAR_REGION }}
-        project-id: ${{ env.GCP_PROJECT_ID }}
+        region: ${{ steps.set_project.outputs.GAR_REGION }}
+        project-id: ${{ steps.set_project.outputs.GCP_PROJECT_ID }}
         repository: ${{ vars.REPOSITORY_NAME }}
         image-name: herond-portal-ui
         credentials-json: ${{ steps.set_project.outputs.GAR_JSON_KEY }}
@@ -88,6 +98,6 @@ jobs:
         docker-file-path: ./Dockerfile
         lark_webhook: ${{ secrets.LARK_WEBHOOK }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        build-args: | 
-          BUILD_VERSION=${{  github.ref_name }}
+        build-args: |
+          BUILD_VERSION=${{ github.ref_name }}
           NODE_ENV=production
