@@ -99,6 +99,6 @@ runs:
           **Build Logs**<br>[{{GITHUB_RUN_ID}}]({{GITHUB_JOB_URL}})
       env:
         LARK_WEBHOOK: ${{ inputs.lark_webhook }}
-        NEW_TAG: ${{ env.IMAGE_TAG }}
+        NEW_TAG: "${{ inputs.image-tag }}"
         LARK_MESSAGE_TEMPLATE: "${{ env.MSG_COLOR }}"
         LARK_MESSAGE_TITLE: "GAR Build: ${{ inputs.image-name }}"

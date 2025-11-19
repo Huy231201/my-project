@@ -8,6 +8,7 @@ on:
       - 'prod-*'
       - 'staging-*'
       - 'dev-*'
+      - 'uat-*'
 
 jobs:
   build:
@@ -67,16 +68,13 @@ jobs:
             GAR_JSON_KEY="$KEY_DEFAULT"
             ;;
         esac
-
-        # Export env (for shell)
+ 
         echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
         echo "GAR_REGION=$GAR_REGION" >> $GITHUB_ENV
-
-        # Export outputs (for next step `with:`)
+ 
         echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_OUTPUT
         echo "GAR_REGION=$GAR_REGION" >> $GITHUB_OUTPUT
-
-        # Export secret using HEREDOC — REQUIRED FOR PRIVATE KEYS
+ 
         echo "GAR_JSON_KEY<<EOF" >> $GITHUB_OUTPUT
         printf "%s" "$GAR_JSON_KEY" >> $GITHUB_OUTPUT
         echo "" >> $GITHUB_OUTPUT
@@ -90,7 +88,7 @@ jobs:
       with:
         region: ${{ steps.set_project.outputs.GAR_REGION }}
         project-id: ${{ steps.set_project.outputs.GCP_PROJECT_ID }}
-        repository: ${{ vars.REPOSITORY_NAME }}
+        repository: ${{ vars.GCP_REPOSITORY_NAME }}
         image-name: herond-portal-ui
         credentials-json: ${{ steps.set_project.outputs.GAR_JSON_KEY }}
         image-tag: ${{ github.ref_name }}
