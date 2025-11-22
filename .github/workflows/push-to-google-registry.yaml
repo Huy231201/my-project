@@ -1,0 +1,43 @@
+name: "Push API to Google registry"
+run-name: "Build tag [${{ github.ref_name }}]"
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "prod-*"
+      - "staging-*"
+      - "dev-*"
+      - "uat-*"
+
+jobs:
+  deploy:
+    uses: herondlabs/herond-common/.github/workflows/gar-build-push.yml@develop
+    with:
+      image-name: herond-portal-ui
+      repository: ${{ vars.GCP_REPOSITORY_NAME }}
+      
+      prod_project_id: ${{ vars.GCP_PROJECT_ID_PROD }}
+      prod_region:     ${{ vars.GAR_REGION_PROD }}
+      
+      stag_project_id: ${{ vars.GCP_PROJECT_ID_STAGING }}
+      stag_region:     ${{ vars.GAR_REGION_STAGING }}
+      
+      dev_project_id:  ${{ vars.GCP_PROJECT_ID_DEV }}
+      dev_region:      ${{ vars.GAR_REGION_DEV }}
+
+      docker-file-path: ./Dockerfile
+      build-args: |
+          BUILD_VERSION=${{ github.ref_name }}
+          NODE_ENV=production
+    
+
+    secrets:
+      key_prod: ${{ secrets.GAR_JSON_KEY_PROD }}
+      key_stag: ${{ secrets.GAR_JSON_KEY_STAG }}
+      key_dev:  ${{ secrets.GAR_JSON_KEY_DEV }}
+      key_uat:  ${{ secrets.GAR_JSON_KEY_UAT }}
+      
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      lark_webhook: ${{ secrets.LARK_WEBHOOK }}
+      gh_packages_token: ${{ secrets.GH_PACKAGES_TOKEN }}
