@@ -139,13 +139,13 @@ an existing open-source design system for an internal training fixture.
           </div>
           <div class="nav-item dropdown">
             <a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-bs-toggle="dropdown">
-              <span class="avatar avatar-sm bg-primary-lt">FE</span>
+              <span class="avatar avatar-sm bg-primary-lt" id="topbar-avatar">FE</span>
               <span class="d-none d-xl-block ps-2">
                 <div>Fresher Dev</div>
               </span>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <a href="#" class="dropdown-item"><i class="ti ti-user me-2"></i>Hồ sơ</a>
+              <a href="#" class="dropdown-item" data-app-page="profile"><i class="ti ti-user me-2"></i>Hồ sơ</a>
               <a href="#" class="dropdown-item"><i class="ti ti-settings me-2"></i>Cài đặt</a>
               <div class="dropdown-divider"></div>
               <a href="#" id="btn-logout" class="dropdown-item"><i class="ti ti-logout me-2"></i>Đăng xuất</a>
@@ -250,6 +250,48 @@ an existing open-source design system for an internal training fixture.
             <div class="card-footer d-flex align-items-center">
               <p class="m-0 text-secondary" id="page-info"></p>
               <ul class="pagination m-0 ms-auto" id="pagination"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile page -->
+        <div data-app-page-panel="profile" class="d-none">
+          <div class="row row-cards">
+            <div class="col-12 col-md-4">
+              <div class="card">
+                <div class="card-body text-center">
+                  <span class="avatar avatar-xl bg-primary-lt mb-3" id="profile-avatar" style="font-size: 1.5rem;">FE</span>
+                  <div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-change-avatar">
+                      <i class="ti ti-upload me-1"></i>Đổi ảnh đại diện
+                    </button>
+                    <input type="file" id="avatar-input" accept="image/*" class="d-none">
+                  </div>
+                  <p class="text-secondary small mt-2 mb-0">Ảnh JPG/PNG, tối đa 2MB.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Thông tin hồ sơ</h3>
+                </div>
+                <form id="profile-form">
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Họ tên</label>
+                      <input type="text" id="p-name" class="form-control" value="Fresher Dev" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="email" id="p-email" class="form-control" value="fresher@example.com" required>
+                    </div>
+                  </div>
+                  <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -572,6 +614,48 @@ an existing open-source design system for an internal training fixture.
     confirmModal.hide();
     renderTasks();
     showToast('Đã xóa', `Công việc "${removed.title}" đã bị xóa.`);
+  });
+
+  // ---------- profile ----------
+  const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+
+  function setAvatarImage(dataUrl) {
+    document.querySelectorAll('#topbar-avatar, #profile-avatar').forEach(el => {
+      el.style.backgroundImage = `url(${dataUrl})`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.textContent = '';
+    });
+  }
+
+  document.getElementById('btn-change-avatar').addEventListener('click', () => {
+    document.getElementById('avatar-input').click();
+  });
+
+  document.getElementById('avatar-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Lỗi', 'File phải là ảnh (JPG, PNG...).');
+      e.target.value = '';
+      return;
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      showToast('Lỗi', 'Ảnh vượt quá kích thước tối đa 2MB.');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAvatarImage(reader.result);
+      showToast('Đã lưu', 'Ảnh đại diện đã được cập nhật.');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('profile-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('Đã lưu', 'Thông tin hồ sơ đã được cập nhật.');
   });
 
   renderTasks();
