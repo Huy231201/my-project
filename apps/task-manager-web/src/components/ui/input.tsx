@@ -2,10 +2,9 @@ import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({ className, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive
-      type={type}
       data-slot="input"
       className={cn(
         "w-full min-w-0 rounded-md border border-input bg-transparent px-4 py-2.5 text-sm font-light outline-none transition-all duration-200",
