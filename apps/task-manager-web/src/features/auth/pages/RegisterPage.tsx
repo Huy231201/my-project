@@ -1,9 +1,36 @@
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/features/auth/components/FormField";
+import { useAuthForm } from "@/features/auth/hooks/useAuthForm";
+import {
+  validateName,
+  validateEmail,
+  validatePassword,
+} from "@/features/auth/validation";
+
+const INITIAL_VALUES = {
+  name: "",
+  email: "",
+  password: "",
+};
+
+const VALIDATORS = {
+  name: validateName,
+  email: validateEmail,
+  password: validatePassword,
+};
 
 export default function RegisterPage() {
   const { t } = useTranslation("auth");
+  const {
+    values,
+    errors,
+    unexpected,
+    success,
+    loading,
+    handleChange,
+    handleSubmit,
+  } = useAuthForm("register", INITIAL_VALUES, VALIDATORS);
 
   return (
     <>
@@ -11,7 +38,7 @@ export default function RegisterPage() {
         {t("register.title")}
       </h1>
 
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form noValidate onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4">
           <FormField
             id="name"
@@ -19,7 +46,9 @@ export default function RegisterPage() {
             type="text"
             autoComplete="name"
             placeholder={t("register.namePlaceholder")}
-            required
+            value={values.name}
+            onChange={handleChange}
+            error={errors.name && t(errors.name)}
           />
 
           <FormField
@@ -28,7 +57,9 @@ export default function RegisterPage() {
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
-            required
+            value={values.email}
+            onChange={handleChange}
+            error={errors.email && t(errors.email)}
           />
 
           <FormField
@@ -37,11 +68,19 @@ export default function RegisterPage() {
             type="password"
             autoComplete="new-password"
             placeholder={t("fields.passwordPlaceholder")}
-            required
-            minLength={8}
+            value={values.password}
+            onChange={handleChange}
+            error={errors.password && t(errors.password)}
           />
 
-          <Button type="submit" className="h-11 mb-2.5">
+          {success && (
+            <p className="text-sm text-green-600">{t("register.success")}</p>
+          )}
+          {unexpected && (
+            <p className="text-sm text-destructive">{t("errors.unexpected")}</p>
+          )}
+
+          <Button type="submit" className="h-11 mb-2.5" disabled={loading}>
             {t("register.submit")}
           </Button>
         </div>

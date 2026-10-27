@@ -5,15 +5,27 @@ import type { ComponentProps } from "react";
 type FormFieldProps = {
   id: string;
   label: string;
+  error?: string;
 } & ComponentProps<typeof Input>;
 
-export function FormField({ id, label, ...inputProps }: FormFieldProps) {
+export function FormField({ id, label, error, ...inputProps }: FormFieldProps) {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
       </Label>
-      <Input id={id} name={id} {...inputProps} />
+      <Input
+        id={id}
+        name={id}
+        {...inputProps}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+      />
+      {error && (
+        <p id={`${id}-error`} className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
