@@ -1,5 +1,6 @@
 import isEmail from "validator/lib/isEmail";
-import { PASSWORD_REGEX } from "@repo/shared-validation";
+import isByteLength from "validator/lib/isByteLength";
+import { PASSWORD_REGEX, PASSWORD_MAX_BYTES } from "@repo/shared-validation";
 
 export type ErrorKey =
   | "errors.nameRequired"
@@ -7,7 +8,8 @@ export type ErrorKey =
   | "errors.emailRequired"
   | "errors.emailInvalid"
   | "errors.passwordRule"
-  | "errors.passwordRequired";
+  | "errors.passwordRequired"
+  | "errors.passwordTooLong";
 
 type Field = "name" | "email" | "password";
 
@@ -23,13 +25,16 @@ export function validateEmail(value: string): ErrorKey | undefined {
 
   if (!email) return "errors.emailRequired";
 
-  if (!isEmail(email.trim())) {
+  if (!isEmail(email)) {
     return "errors.emailInvalid";
   }
 }
 
 export function validatePassword(value: string): ErrorKey | undefined {
   if (!PASSWORD_REGEX.test(value)) return "errors.passwordRule";
+  if (!isByteLength(value, { max: PASSWORD_MAX_BYTES })) {
+    return "errors.passwordTooLong";
+  }
 }
 
 export function validateLoginPassword(value: string): ErrorKey | undefined {
@@ -61,6 +66,11 @@ const SERVER_RULES: { pattern: RegExp; field: Field; key: ErrorKey }[] = [
     pattern: /^password should not be empty$/,
     field: "password",
     key: "errors.passwordRequired",
+  },
+  {
+    pattern: /^Password is too long$/,
+    field: "password",
+    key: "errors.passwordTooLong",
   },
 ];
 
