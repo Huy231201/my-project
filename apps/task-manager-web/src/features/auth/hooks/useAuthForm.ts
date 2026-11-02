@@ -8,6 +8,7 @@ export function useAuthForm<F extends string>(
   path: "register" | "login",
   initialValues: Record<F, string>,
   validators: Record<F, Validator>,
+  onSuccess?: () => void,
 ) {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Partial<Record<string, ErrorKey>>>({});
@@ -51,6 +52,7 @@ export function useAuthForm<F extends string>(
 
       if (success) {
         setSuccess(true);
+        onSuccess?.();
       } else if (status === 400) {
         const { fieldErrors, unexpected: hasUnknown } = mapServerErrors(
           data.message,

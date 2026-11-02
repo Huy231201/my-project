@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/features/auth/components/FormField";
 import { useAuthForm } from "@/features/auth/hooks/useAuthForm";
+import { useNavigate } from "react-router";
 import {
   validateName,
   validateEmail,
@@ -22,6 +23,7 @@ const VALIDATORS = {
 
 export default function RegisterPage() {
   const { t } = useTranslation("auth");
+  const navigate = useNavigate();
   const {
     values,
     errors,
@@ -30,7 +32,9 @@ export default function RegisterPage() {
     loading,
     handleChange,
     handleSubmit,
-  } = useAuthForm("register", INITIAL_VALUES, VALIDATORS);
+  } = useAuthForm("register", INITIAL_VALUES, VALIDATORS, () =>
+    navigate("/dashboard", { replace: true }),
+  );
 
   return (
     <>
