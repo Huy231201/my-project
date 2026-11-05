@@ -15,14 +15,8 @@ import type { Response } from 'express';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('register')
-  @UseGuards(ThrottlerGuard)
-  async register(
-    @Body() dto: RegisterDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { user, token } = await this.authService.register(dto);
 
+  private setAuthCookie(res: Response, token: string) {
     res.cookie('access_token', token, {
       httpOnly: true,
       sameSite: 'lax',
@@ -30,14 +24,28 @@ export class AuthController {
       maxAge: Number(process.env.JWT_EXPIRES_IN_MINUTES) * 60 * 1000,
       path: '/',
     });
+  }
 
+  @Post('register')
+  @UseGuards(ThrottlerGuard)
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, token } = await this.authService.register(dto);
+    this.setAuthCookie(res, token);
     return user;
   }
 
   @Post('login')
+  @UseGuards(ThrottlerGuard)
   @HttpCode(200)
-  login(@Body() dto: LoginDto) {
-    console.log('[login]', { ...dto, password: '***' });
-    return { message: 'ok' };
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, token } = await this.authService.login(dto);
+    this.setAuthCookie(res, token);
+    return user;
   }
 }

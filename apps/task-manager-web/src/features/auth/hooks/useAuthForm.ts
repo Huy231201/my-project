@@ -15,6 +15,7 @@ export function useAuthForm<F extends string>(
   const [unexpected, setUnexpected] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<ErrorKey | undefined>();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -22,6 +23,7 @@ export function useAuthForm<F extends string>(
     setErrors((prev) => ({ ...prev, [name]: undefined }));
     setSuccess(false);
     setUnexpected(false);
+    setFormError(undefined);
   }
 
   async function handleSubmit(e: React.SubmitEvent) {
@@ -44,6 +46,7 @@ export function useAuthForm<F extends string>(
     );
 
     setUnexpected(false);
+    setFormError(undefined);
     setSuccess(false);
     setLoading(true);
 
@@ -59,6 +62,8 @@ export function useAuthForm<F extends string>(
         );
         setErrors(fieldErrors);
         setUnexpected(hasUnknown);
+      } else if (status === 401) {
+        setFormError("errors.invalidCredentials");
       } else {
         setUnexpected(true);
       }
@@ -75,6 +80,7 @@ export function useAuthForm<F extends string>(
     unexpected,
     success,
     loading,
+    formError,
     handleChange,
     handleSubmit,
   };

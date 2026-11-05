@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/features/auth/components/FormField";
 import { useAuthForm } from "@/features/auth/hooks/useAuthForm";
+import { useNavigate } from "react-router";
 import {
   validateEmail,
   validateLoginPassword,
@@ -19,15 +20,19 @@ const VALIDATORS = {
 
 export default function LoginPage() {
   const { t } = useTranslation("auth");
+  const navigate = useNavigate();
   const {
     values,
     errors,
     unexpected,
     success,
     loading,
+    formError,
     handleChange,
     handleSubmit,
-  } = useAuthForm("login", INITIAL_VALUES, VALIDATORS);
+  } = useAuthForm("login", INITIAL_VALUES, VALIDATORS, () =>
+    navigate("/dashboard", { replace: true }),
+  );
 
   return (
     <>
@@ -64,6 +69,9 @@ export default function LoginPage() {
           )}
           {unexpected && (
             <p className="text-sm text-destructive">{t("errors.unexpected")}</p>
+          )}
+          {formError && (
+            <p className="text-sm text-destructive">{t(formError)}</p>
           )}
 
           <Button type="submit" className="h-11 mb-2.5" disabled={loading}>

@@ -9,7 +9,8 @@ export type ErrorKey =
   | "errors.emailInvalid"
   | "errors.passwordRule"
   | "errors.passwordRequired"
-  | "errors.passwordTooLong";
+  | "errors.passwordTooLong"
+  | "errors.invalidCredentials";
 
 type Field = "name" | "email" | "password";
 
