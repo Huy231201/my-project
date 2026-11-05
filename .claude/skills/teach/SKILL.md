@@ -112,7 +112,7 @@ Flow:
 4. After 5–8 questions: summary of strong and weak points, and which section to re-read.
 5. Offer a review schedule for the weak points: again after 1 day, 3 days, 7 days, with new questions each time, not the same ones.
 
-If the user wants a written exercise file, follow the format of `docs/exercises/auth-form-validation.md`: what to do, input/output table, references. Put answers in a `<details>` block so they are hidden by default.
+If the user wants a written exercise file, follow the format of `docs/exercises/01-auth-form-validation.md`: what to do, input/output table, references. Put answers in a `<details>` block so they are hidden by default.
 
 ## Why this method
 
