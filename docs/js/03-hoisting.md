@@ -1,6 +1,6 @@
-# Bài 3: Dùng biến trước dòng khai báo thì sao?
+# Bài 3: Dùng biến trước dòng khai báo thì sao? (Hoisting)
 
-Ba đoạn code dưới đây chỉ khác nhau đúng một dòng, nhưng cho ra ba kết quả khác nhau:
+Ba đoạn code chỉ khác nhau một dòng, nhưng ra ba kết quả khác nhau:
 
 ```js
 console.log(gia);
@@ -25,23 +25,26 @@ var gia = 100;
 undefined
 ```
 
-Đoạn thứ hai báo "chưa khởi tạo" (before initialization), chứ không báo "không tồn tại" như đoạn thứ nhất. Nghĩa là JS **đã biết có biến `gia`**, dù chưa chạy tới dòng khai báo nó. Đoạn thứ ba thì dùng biến trước khi khai báo mà không lỗi gì. Bài này trả lời ba câu hỏi:
+- Đoạn 2 báo "chưa khởi tạo", không báo "không tồn tại" như đoạn 1. Tức là JS **đã biết có `gia`** trước khi chạy tới dòng khai báo.
+- Đoạn 3 dùng biến trước khai báo mà không lỗi.
 
-1. JS biết trước tên biến bằng cách nào?
-2. Vì sao JS phải làm vậy?
-3. Vì sao `var` và `let` lại cho kết quả khác nhau?
+Sau bài này cần trả lời được:
+
+- JS biết trước tên biến bằng cách nào?
+- Vì sao JS phải làm vậy?
+- Vì sao `var`, `let`, `function` cho kết quả khác nhau?
 
 ## 0. Hình dung: soạn bát trước khi nấu
 
-Đầu bếp không vừa đọc công thức vừa nấu. Họ đọc hết công thức một lượt, bày sẵn ra bàn mỗi nguyên liệu một cái bát trống, có dán nhãn tên. Sau đó mới bắt đầu nấu, tới bước nào thì cho nguyên liệu vào bát đó.
+Đầu bếp đọc hết công thức một lượt, bày sẵn mỗi nguyên liệu một cái bát trống có dán nhãn. Sau đó mới nấu, tới bước nào thì cho nguyên liệu vào bát đó.
 
 | Nấu ăn | JavaScript |
 |---|---|
 | Đọc hết công thức trước | JS đọc lướt cả thân hàm trước khi chạy |
-| Bát trống có dán nhãn | tên biến được tạo sẵn trong hộp, chưa có giá trị |
-| Nấu tới bước nào, cho nguyên liệu vào bát | chạy tới dòng khai báo thì gán giá trị |
+| Bát trống có dán nhãn | tên biến tạo sẵn trong hộp, chưa có giá trị |
+| Tới bước nào, cho nguyên liệu vào bát | chạy tới dòng khai báo thì gán giá trị |
 
-## 1. JS tạo tên biến trước, rồi mới chạy từng dòng
+## 1. Tạo tên trước, chạy sau
 
 ```js
 1  function tinhGia() {
@@ -57,29 +60,31 @@ undefined
 100
 ```
 
-**Bước 1: dòng 6 gọi `tinhGia()`.** Như ở [bài 2](02-execution-context.md), JS tạo một hộp cho `tinhGia`. Nhưng trước khi chạy dòng 2, JS đọc lướt cả thân hàm, thấy dòng 3 có `var gia`, nên tạo sẵn tên `gia` trong hộp với giá trị `undefined`.
+**Bước 1: dòng 6 gọi `tinhGia()`.**
+
+- JS tạo hộp cho `tinhGia` ([bài 2](02-execution-context.md)).
+- Trước khi chạy dòng 2, JS đọc lướt thân hàm, thấy `var gia`, tạo sẵn `gia = undefined`.
 
 ```
 tinhGia      chưa chạy dòng nào   { gia: undefined }
 file         dừng ở dòng 6
 ```
 
-**Bước 2: dòng 2 `console.log(gia)`.** `gia` đã có trong hộp, giá trị là `undefined`, nên in ra `undefined`.
+**Bước 2: dòng 2.** `gia` có trong hộp, giá trị `undefined`, nên in `undefined`.
 
-**Bước 3: dòng 3 `var gia = 100`.** Tên `gia` đã có sẵn, nên dòng này chỉ còn làm một việc là gán `100` vào.
+**Bước 3: dòng 3.** Tên đã có, chỉ còn gán `100`.
 
 ```
 tinhGia      đang chạy dòng 3     { gia: 100 }
 file         dừng ở dòng 6
 ```
 
-**Bước 4: dòng 4 in ra** `100`.
+**Bước 4: dòng 4** in `100`.
 
-Việc tạo tên biến trước khi chạy dòng nào như vậy gọi là **hoisting** ("kéo lên"). Thực ra không có dòng code nào bị kéo đi đâu cả. Kết quả chỉ trông như thể dòng khai báo đã được đưa lên đầu hàm.
+- Tạo tên trước khi chạy như vậy gọi là **hoisting** ("kéo lên").
+- Không dòng code nào bị kéo đi đâu. Kết quả chỉ trông như dòng khai báo được đưa lên đầu hàm.
 
-## 2. Vì sao JS phải tạo tên trước
-
-Lần này có một biến `gia` ở ngoài hàm, và một biến `gia` khác khai báo bằng `let` ở trong hàm:
+## 2. Vì sao phải tạo tên trước
 
 ```js
 1  const gia = 1;
@@ -94,35 +99,46 @@ Lần này có một biến `gia` ở ngoài hàm, và một biến `gia` khác 
 ReferenceError: Cannot access 'gia' before initialization
 ```
 
-Nhiều người đoán dòng 3 sẽ in ra `1`, vì lúc đó `gia` bên trong hàm chưa được khai báo. Chạy từng bước sẽ thấy vì sao không phải vậy.
+Nhiều người đoán dòng 3 in `1`. Chạy từng bước:
 
-**Bước 1: dòng 6 gọi `tinhGia()`.** JS tạo hộp cho `tinhGia`, đọc lướt thân hàm, thấy dòng 4 có `let gia`, nên tạo sẵn tên `gia`. Khác với `var`, tên này được đánh dấu là **chưa khởi tạo**, chứ không có giá trị `undefined`.
+**Bước 1: dòng 6 gọi `tinhGia()`.**
+
+- Đọc lướt thân hàm, thấy `let gia`, tạo sẵn tên `gia`.
+- Khác `var`: tên này ở trạng thái **chưa khởi tạo**, không phải `undefined`.
 
 ```
 tinhGia      chưa chạy dòng nào   { gia: <chưa khởi tạo> }
 file         dừng ở dòng 6        { gia: 1, tinhGia }
 ```
 
-**Bước 2: dòng 3 `console.log(gia)`.** JS tìm `gia` theo quy tắc ở [bài 1](01-lexical-scope.md): tìm trong hộp của mình trước. Hộp `tinhGia` **có** tên `gia`, nên JS dừng tìm, không ra ngoài lấy `gia = 1`. Nhưng `gia` đang ở trạng thái chưa khởi tạo, nên JS báo lỗi.
+**Bước 2: dòng 3.**
 
-Giả sử JS không đọc lướt trước. Khi đó tới dòng 3, hộp `tinhGia` chưa có `gia`, JS sẽ ra ngoài lấy được `1`. Tới dòng 4 lại xuất hiện một `gia` khác có giá trị `2`. Cùng một chữ `gia` trong một hàm sẽ chỉ hai biến khác nhau, tuỳ code đã chạy tới đâu, và đọc code sẽ rất dễ nhầm. Nhờ tạo tên trước, chỉ cần nhìn code là biết: **trong cả hàm `tinhGia`, chữ `gia` luôn là biến của chính hàm**. Đây là lý do JS phải tạo tên trước.
+- Tìm `gia` trong hộp mình trước ([bài 1](01-lexical-scope.md)). Hộp `tinhGia` **có** `gia`, nên không ra ngoài lấy `1`.
+- `gia` chưa khởi tạo, nên báo lỗi.
+
+Nếu JS **không** tạo tên trước:
+
+- Dòng 3: hộp chưa có `gia`, ra ngoài lấy `1`.
+- Dòng 4: lại có một `gia` khác bằng `2`.
+- Cùng chữ `gia` trong một hàm chỉ hai biến khác nhau, tuỳ đang chạy tới dòng nào. Rất dễ nhầm.
+
+Tạo tên trước thì chỉ cần nhìn code là biết: **trong cả hàm, `gia` luôn là biến của chính hàm**.
 
 ## 3. Vì sao `var` và `let` khác nhau
 
-Cả hai đều được tạo tên trước. Chỗ khác nhau là giá trị lúc mới tạo:
-
-| Khai báo | Lúc mới tạo trong hộp | Đọc trước dòng khai báo |
+| Khai báo | Lúc mới tạo | Đọc trước dòng khai báo |
 |---|---|---|
-| `var` | `undefined` | in ra `undefined`, không báo lỗi |
-| `let`, `const` | chưa khởi tạo | báo lỗi `Cannot access ... before initialization` |
+| `var` | `undefined` | ra `undefined`, không lỗi |
+| `let`, `const` | chưa khởi tạo | báo lỗi |
 
-Hành vi của `var` không xuất phát từ một lý do hay ho nào. JS được viết rất vội vào năm 1995 (khoảng 10 ngày), với mục tiêu là ngôn ngữ dễ dãi cho các đoạn script nhỏ trên trang web. Brendan Eich, người tạo ra JS, từng nói hành vi này của `var` là hệ quả ngoài ý muốn của cách cài đặt lúc đó. Nó dễ gây lỗi, vì code chạy tiếp với giá trị `undefined` mà không ai hay biết.
+- Cả hai đều được tạo tên trước. Chỉ khác giá trị lúc mới tạo.
+- `var` ra `undefined` là tai nạn lịch sử: JS được viết vội trong khoảng 10 ngày năm 1995, Brendan Eich (người tạo ra JS) từng nói đây là hệ quả ngoài ý muốn của cách cài đặt lúc đó.
+- Nó dễ gây lỗi vì code chạy tiếp với `undefined` mà không ai biết.
+- Không xoá được, vì xoá thì hàng triệu trang web cũ hỏng.
+- Năm 2015 JS thêm `let`/`const`: giữ phần có ích (tạo tên trước), bỏ phần dễ lỗi (đọc sớm thì báo lỗi ngay).
+- Code mới: chỉ dùng `let`/`const`. TypeScript và ESLint (rule `no-var`) sẽ chặn `var`.
 
-JS không xoá được hành vi đó, vì xoá đi thì hàng triệu trang web cũ sẽ hỏng. Vì vậy năm 2015 JS thêm `let`/`const`: vẫn tạo tên trước để cả hàm hiểu chữ `gia` theo cùng một nghĩa, nhưng đọc sớm thì báo lỗi ngay.
-
-Khi viết code, chỉ dùng `let`/`const`. TypeScript và ESLint (rule `no-var`) sẽ chặn `var` từ trước khi chạy. Bạn vẫn cần hiểu `var` để đọc được code cũ.
-
-## 4. `function`: gọi trước dòng khai báo vẫn chạy được
+## 4. `function`: gọi trước dòng khai báo vẫn được
 
 ```js
 1  nauCanh();
@@ -141,17 +157,17 @@ xong nước dùng
 xong canh
 ```
 
-**Bước 1: bắt đầu chạy file.** JS tạo hộp cho file và đọc lướt cả file trước khi chạy dòng 1. JS thấy hai khai báo `function`. Với `function`, JS không chỉ tạo tên mà **đưa luôn cả code của hàm** vào hộp.
+- Đọc lướt file, JS thấy hai khai báo `function`.
+- Với `function`, JS đưa **cả code của hàm** vào hộp, không chỉ tên.
 
 ```
 file         chưa chạy dòng nào   { nauCanh: <hàm>, nauNuocDung: <hàm> }
 ```
 
-**Bước 2: dòng 1 gọi `nauCanh()`.** Tên `nauCanh` đã có sẵn trong hộp, kèm theo code, nên gọi được ngay. Từ đây mọi thứ chạy y như bài 2: `nauCanh` gọi `nauNuocDung`, và lúc đó `nauNuocDung` cũng đã có sẵn trong hộp file.
+- Dòng 1 gọi `nauCanh()` được ngay.
+- Nhờ vậy viết phần chính ở trên, hàm phụ ở dưới được. Phần này là có chủ đích, khác `var`.
 
-Nhờ vậy, bạn có thể viết phần chính ở trên và các hàm phụ ở dưới, đọc từ trên xuống như đọc mục lục. Đây là phần hoisting được làm ra có chủ đích, khác với `var`.
-
-Hàm viết bằng arrow function rồi gán vào `const` thì khác. Lúc này nó là một khai báo `const`, chứ không phải khai báo `function`:
+Arrow function gán vào `const` thì là khai báo `const`:
 
 ```js
 1  nauCanh();
@@ -165,15 +181,11 @@ Hàm viết bằng arrow function rồi gán vào `const` thì khác. Lúc này 
 ReferenceError: Cannot access 'nauCanh' before initialization
 ```
 
-Ở bước đọc lướt, `nauCanh` được tạo như mọi biến `const` khác, ở trạng thái chưa khởi tạo. Code của hàm chỉ được gán vào khi chạy tới dòng 3.
-
-Bảng ở mục 3 có thêm một dòng:
-
-| Khai báo | Lúc mới tạo trong hộp | Dùng trước dòng khai báo |
+| Khai báo | Lúc mới tạo | Dùng trước dòng khai báo |
 |---|---|---|
-| `var` | `undefined` | ra `undefined`, không báo lỗi |
+| `var` | `undefined` | ra `undefined` |
 | `let`, `const` (kể cả `const f = () => {}`) | chưa khởi tạo | báo lỗi |
-| `function f() {}` | đã có sẵn code của hàm | gọi được bình thường |
+| `function f() {}` | có sẵn code của hàm | gọi được |
 
 ## 5. Vì sao `var` bỏ qua block
 
@@ -194,14 +206,17 @@ canh
 ReferenceError: rau is not defined
 ```
 
-**Bước 1: dòng 9 gọi `nau()`.** JS tạo hộp cho `nau` và đọc lướt thân hàm. `var mon` nằm trong block `if`, nhưng `var` **luôn được ghi vào hộp của hàm**, nên `mon` có mặt trong hộp `nau` ngay từ đầu. Còn `let rau` thì không được ghi vào hộp `nau`.
+**Bước 1: dòng 9 gọi `nau()`.**
+
+- `var mon` nằm trong block, nhưng `var` **luôn ghi vào hộp của hàm**.
+- `let rau` không được ghi vào hộp `nau`.
 
 ```
 nau          chưa chạy dòng nào   { mon: undefined }
 file         dừng ở dòng 9
 ```
 
-**Bước 2: dòng 2 chạy vào block `if`.** Với `let`/`const`, mỗi block có một hộp nhỏ riêng. JS tạo hộp nhỏ này nằm bên trong hộp `nau`, đọc lướt block, rồi tạo `rau` trong đó.
+**Bước 2: dòng 2 vào block.** Với `let`/`const`, mỗi block có hộp nhỏ riêng, nằm trong hộp hàm.
 
 ```
 nau          đang chạy dòng 3     { mon: undefined }
@@ -209,29 +224,30 @@ nau          đang chạy dòng 3     { mon: undefined }
 file         dừng ở dòng 9
 ```
 
-**Bước 3: dòng 3 và dòng 4.** Ở dòng 3, JS tìm `mon` trong hộp block nhưng không có, nên ra hộp `nau` và gán `'canh'` vào đó. Ở dòng 4, JS gán `'rau ngót'` vào `rau` trong hộp block.
+**Bước 3: dòng 3–4.**
 
-```
-nau          đang chạy dòng 4     { mon: 'canh' }
-  └ block if                      { rau: 'rau ngót' }
-file         dừng ở dòng 9
-```
+- `mon`: hộp block không có, ra hộp `nau`, gán `'canh'`.
+- `rau`: gán `'rau ngót'` trong hộp block.
 
-**Bước 4: dòng 5, hết block.** JS bỏ hộp block đi, và `rau` mất theo hộp, giống như hộp của một hàm chạy xong ở bài 2.
+**Bước 4: dòng 5, hết block.** Không còn gì trỏ tới hộp block, nên nó bị xoá, `rau` mất theo.
 
 ```
 nau          đang chạy dòng 6     { mon: 'canh' }
 file         dừng ở dòng 9
 ```
 
-**Bước 5: dòng 6 in ra** `canh`. Tới dòng 7, JS tìm `rau` trong hộp `nau` rồi ra hộp file, đều không có, nên báo `rau is not defined`.
+**Bước 5:** dòng 6 in `canh`. Dòng 7 không tìm thấy `rau` ở đâu, báo lỗi.
 
-Lý do vẫn nằm ở lịch sử như mục 3. Năm 1995 JS chỉ có hộp cho hàm và cho file, chưa có hộp cho block, nên `var` chỉ biết ghi vào hộp của hàm. Hộp block chỉ xuất hiện từ năm 2015, cùng lúc với `let`/`const`. `var` vẫn giữ cách cũ để code cũ không bị hỏng.
+Vì sao:
+
+- Năm 1995 JS chỉ có hộp cho hàm và file, chưa có hộp cho block. `var` chỉ biết ghi vào hộp hàm.
+- Hộp block có từ 2015, cùng `let`/`const`.
+- `var` giữ cách cũ để code cũ không hỏng.
 
 ## Tóm tắt
 
-- Trước khi chạy một hàm, JS đọc lướt thân hàm và tạo sẵn mọi tên được khai báo trong hộp. Việc này gọi là hoisting.
-- JS làm vậy để trong cả hàm, một tên luôn chỉ đúng một biến.
-- `var` lúc mới tạo có giá trị `undefined`. `let`/`const` lúc mới tạo ở trạng thái chưa khởi tạo, đọc sớm thì báo lỗi. `function` có sẵn cả code của hàm.
-- `const f = () => {}` là khai báo `const`, nên không gọi trước dòng khai báo được.
-- `var` luôn ghi vào hộp của hàm, nên bỏ qua block. `let`/`const` có hộp riêng cho mỗi block.
+- Trước khi chạy một hàm, JS đọc lướt và tạo sẵn mọi tên được khai báo. Đó là hoisting.
+- Làm vậy để trong cả hàm, một tên luôn chỉ đúng một biến.
+- `var` mới tạo là `undefined`, `let`/`const` là chưa khởi tạo (đọc sớm báo lỗi), `function` có sẵn code.
+- `const f = () => {}` là `const`, không gọi trước được.
+- `var` ghi vào hộp hàm nên bỏ qua block. `let`/`const` có hộp riêng cho mỗi block.
