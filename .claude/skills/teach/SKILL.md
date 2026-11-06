@@ -50,7 +50,7 @@ Open the lesson with one overview diagram where each line points to a section nu
 
 ## Real output, not imagined output
 
-Run the commands yourself before writing about them (DNS lookups, `curl -v`, `curl -w` timings, `netstat`, a small Node script). Paste real output, trimmed with `...` if long, and state the date and OS once at the top. Numbers beat adjectives: "186 ms without cache, 7 ms with cache", not "much faster". Derive numbers honestly — `curl` `time_*` values are cumulative, subtract to get each phase.
+Run the commands yourself before writing about them (DNS lookups, `curl -v`, `curl -w` timings, `netstat`, a small Node script). Paste real output, trimmed with `...` if long; strip stack frames and absolute paths down to the lines that teach something. Do not add a "Chạy trên <OS>, Node <version>, ngày <date>" line to the lesson. Numbers beat adjectives: "186 ms without cache, 7 ms with cache", not "much faster". Derive numbers honestly — `curl` `time_*` values are cumulative, subtract to get each phase.
 
 When a picture cannot be real (what an attacker on Wi-Fi sees), say it is an illustration.
 
@@ -62,18 +62,109 @@ Give the macOS/Linux equivalent the first time a Windows command appears.
 
 Before each section, list the concept chain hidden in its title and define from parent to child. "TCP handshake" hides: network → packet → router → IP → TCP → sequence number → ACK → handshake. The most basic words get skipped because they feel obvious — check them hardest. Define each term in one sentence at first use, with the English term in parentheses.
 
+## Keep it short and the examples tiny
+
+The learner rejected a full-length draft as "dài quá" and the next one as "ví dụ khó hiểu quá". Rules that came out of it:
+
+- **Short first, but never cut the mechanism.** Aim for 4–5 sections of a few paragraphs each. Cut side topics (`this` in a scope lesson), comparisons with other languages, command tables, long "lỗi thường gặp" lists. Never cut what the concept is, why it is needed, and how it is built step by step — after trimming those, the learner asked "sao cắt hết ý rồi", "call stack là gì, làm sao build call stack???".
+- **One idea per example, 3–8 lines.** No nested loops, no tracing several variables at once. Everyday names and values (`demTao`, `tong = 5`, `city = 'Hà Nội'`) beat abstract ones (`outer`, `inner`, `x`). If the example needs a trace table to follow, it is too hard — split it.
+- **Teach the rule, not the term.** State the behaviour in one plain sentence ("hàm tìm biến ở chỗ nó được viết, không phải chỗ nó được gọi"), show it, and only then give the official name as a label to recognise in docs. Do not spend a paragraph on etymology. If the learner asks "có cần hiểu X không?", answer which rule matters and what later topic depends on it.
+- **When the learner says they do not get it**, re-explain in chat with a different angle (a box diagram drawn over the same code works well) before touching the file.
+
+## Explain the essence by running it step by step
+
+What finally worked for the JS series ("ổn rồi đó") is `docs/js/02-execution-context.md` — use it as the reference for concept lessons about how code runs. The learner's own words: "phải giải thích được bản chất, kiểu nó chạy từng bước một". The shape:
+
+1. **Hook**: a real output the learner already sees at work (an error stack trace), plus the puzzle it raises ("Node biết ai gọi hàm này bằng cách nào?"). The lesson ends by coming back to it.
+2. **Picture and one tiny example** for the first idea (approved earlier, kept as is).
+3. **Walk the engine through a numbered example, one step per paragraph.** Number the code lines. Each step: a bold title with the line and the event ("Bước 3: dòng 7 gọi `nauNuocDung()`"), one or two sentences on what the engine does and why, then a snapshot of the full state after that step:
+
+   ```
+   nauNuocDung  đang chạy dòng 2     { nuoc: 'nước xương' }
+   nauCanh      dừng ở dòng 7        { rau: 'rau ngót' }
+   file         dừng ở dòng 10
+   ```
+
+   Show the state, not just the output: which boxes exist, which line each is on, which variables each holds. Point at the moment the picture matches ("giống nồi canh để trên bếp").
+4. **Name the concept after the steps**, then reduce the steps to the 2–3 rules the engine repeats.
+5. **Close the hook** with the same snapshot format, so the learner sees the hook output is that state.
+
+Keep the walkthrough to one example of ~10 lines and 5–7 steps. The earlier 7-row trace table carried the same facts but was called "chán": steps as short paragraphs with state snapshots read better than a table.
+
+## Always explain why it exists and what came before
+
+In lessons 3 and 4 the learner stopped after the mechanism and asked "Tại sao JS phải làm vậy, nó dễ lỗi mà tại sao lại có khái niệm này" and "Tại sao sinh ra nó làm gì, gặp vấn đề gì mà phải có closure, không dùng closure thì trước đó người ta làm như thế nào". Both times the version they approved had these as sections right after the mechanism walkthrough. Put them in the first draft, do not wait to be asked:
+
+1. **Vì sao phải có nó** — show what breaks without it, with the same step-by-step snapshots ("giả sử JS không đọc lướt trước, dòng 3 sẽ ra ngoài lấy `gia = 1`, rồi dòng 4 lại có một `gia` khác"). If it is a consequence of two other features, say which two (closure = functions are values + lexical scope).
+2. **Lịch sử** — which part was designed on purpose and which was an accident or a compromise (`var` → `undefined` is an artifact of 1995; `let`/`const` in 2015 kept the useful part; old behaviour stays so old sites do not break). One short paragraph, no dates beyond what explains the design.
+3. **Trước đó / không có nó thì làm thế nào** — the real alternatives, each with a runnable example and its real output, and the concrete downside (global variable collides; C passes a data pointer by hand; jQuery `data-id`; an object whose field anyone can overwrite).
+4. **Áp dụng** — one line on what to do in today's code (`let`/`const` only, ESLint `no-var`; hooks rely on closures).
+
+References: `docs/js/03-hoisting.md` sections 2–3 and `docs/js/04-closure.md` sections 2–3.
+
+When the learner answers such an explanation with "viết lại", rewrite the lesson-so-far from the top with the explanation woven in as its own sections, in the same step-by-step style — do not append it at the end.
+
+## Make it interesting, not a lecture
+
+The learner called a correct, complete explanation "chán": definition → why → rules → a 7-row trace table, all in textbook headings. What to do instead:
+
+- **Hook with something the learner already sees at work.** For call stack: the stack trace printed under every error in the console is the call stack — start there, not from a definition. For scope: a bug they would really write. For closure: a React callback reading old state.
+- **Open with a puzzle, not a heading.** Show short code with a surprising output, or ask "JS gọi hàm xong thì làm sao biết quay về dòng nào?", and let the explanation be the answer to that.
+- **Talk, do not lecture.** Plain sentences like a colleague at the next desk; at most one table per idea; no section headings inside a chat reply for a single idea.
+- **Answer the learner's own words first.** When they ask "X là gì, làm sao Y", the first lines answer exactly that, before any picture.
+- **Fix only what was criticised.** Each complaint so far ("dài quá", "ví dụ khó", "phi logic", "cắt hết ý") was answered by swinging to the opposite extreme, which produced the next complaint. Change the one thing named and keep the rest.
+
+## The picture must be realistic and carry the whole lesson
+
+The learner rejected pictures that do not happen in real life ("không thực tế", "phi logic") and pictures that were stretched to cover an idea of a different nature ("không cùng bản chất"). Before using a picture, check:
+
+- **Every step in it is something people really do.** Act it out in your head. If a step only exists to make the mapping work, the picture is wrong.
+- **One picture covers every idea of the lesson naturally.** List the lesson's ideas first, then pick the picture. If one idea does not fit, either the picture is wrong or that idea belongs to another lesson — move it, do not bend the picture.
+- **The code example uses the picture's own names**, so the learner reads the picture and the code as one thing.
+
+Real case, lesson "execution context" with two ideas: (1) each call gets fresh variables, (2) a function calling another pauses and resumes (call stack).
+
+| Picture | Verdict |
+|---|---|
+| Giấy nháp: mỗi bài một tờ nháp mới | Fits idea 1 only |
+| Giấy nháp, "góc tờ ghi: thiếu số thì xem tờ khác" | Rejected: nobody writes that; the idea was really scope chain (lesson 1), not execution context |
+| Giấy nháp, "đặt tờ nháp b lên trên tờ nháp a" | Rejected: "nháp đặt lên nháp là sao", nobody does that |
+| Nấu ăn: mỗi lần nấu một nồi sạch; đang nấu canh thì bắc thêm nồi nấu nước dùng, xong quay lại canh | Accepted: both ideas happen in a real kitchen |
+
+Example that went with the accepted picture — names come from the picture, one idea, real output:
+
+```js
+function nauCanh() {
+  let muoi = 0;
+  muoi = muoi + 1;
+  console.log('số muỗng muối:', muoi);
+}
+nauCanh();
+nauCanh();
+nauCanh();
+```
+
+```
+số muỗng muối: 1
+số muỗng muối: 1
+số muỗng muối: 1
+```
+
 ## Write mode
+
+Lessons in a series (`docs/js/01-…`, `02-…`) are built **one idea at a time in chat**, not as a full draft. For each idea: non-tech picture with its mapping, one tiny example with real output, the name of the concept, and one check question — then stop and wait. Do not post the next idea, the rest of the lesson, or the next lesson until the learner reacts.
+
+"ok ghi" approves only the ideas already shown in chat. Write exactly those to the file and nothing more — never fill in unreviewed sections to "complete" the lesson. Then continue with the next idea of the same lesson in chat. Move to the next lesson only after every idea of the current one has been shown and approved, and the learner says so.
 
 Structure that worked:
 
 1. Title as a plain question or event ("Chuyện gì xảy ra từ lúc gõ `facebook.com`...").
 2. The list of questions the lesson answers.
-3. Overview diagram.
-4. Section 0: background concepts the rest depends on.
-5. One section per step, in execution order. Each answers the four questions and has an illustration.
-6. A command table: "muốn xem gì → lệnh Windows → lệnh macOS/Linux".
-7. "Lỗi thường gặp" when the topic has them (real error messages).
-8. Short summary, one bullet per section.
+3. Section 0: background concepts the rest depends on, plus the non-tech picture and its mapping table.
+4. One section per step, in execution order, each with one small example and its real output.
+5. Short summary, one bullet per section.
+
+Add an overview diagram, a command table or "Lỗi thường gặp" only when the topic is long enough to need them.
 
 Link to existing lessons instead of repeating them (`[Bài 1, mục 5](../nestjs/01-web-server.md)`). Look at sibling files in the docs folder and match their numbering and tone.
 
