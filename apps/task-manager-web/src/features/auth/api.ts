@@ -16,3 +16,18 @@ export async function postAuth(path: "register" | "login", body: object) {
     data,
   };
 }
+
+export async function getMe() {
+  const response = await fetch(`${API_URL}/auth/me`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  return {
+    success: response.ok,
+    status: response.status,
+    data,
+  };
+}

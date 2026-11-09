@@ -1,3 +1,6 @@
 {
-  "appName": "Task Manager"
+  "appName": "Task Manager",
+  "dashboard": {
+    "greeting": "Xin chào, {{name}}"
+  }
 }

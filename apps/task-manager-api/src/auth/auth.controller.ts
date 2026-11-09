@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   UseGuards,
@@ -11,6 +12,8 @@ import { RegisterDto } from './dto/register.dto.js';
 import { AuthService } from './auth.service.js';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import type { Response } from 'express';
+import { JwtAuthGuard, type AuthUser } from './jwt-auth.guard.js';
+import { CurrentUser } from './decorators/current-user.decorator.js';
 
 @Controller('auth')
 export class AuthController {
@@ -46,6 +49,12 @@ export class AuthController {
   ) {
     const { user, token } = await this.authService.login(dto);
     this.setAuthCookie(res, token);
+    return user;
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  me(@CurrentUser() user: AuthUser) {
     return user;
   }
 }

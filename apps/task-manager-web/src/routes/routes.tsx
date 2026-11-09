@@ -3,6 +3,7 @@ import AuthLayout from "@/features/auth/layout/AuthLayout";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
 import DashboardPage from "@/features/dashboard/pages/DashboardPage";
+import { dashboardLoader } from "@/features/dashboard/loader";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
+    loader: dashboardLoader,
     element: <DashboardPage />,
   },
 ]);
