@@ -1,6 +1,13 @@
 {
   "appName": "Task Manager",
-  "dashboard": {
-    "greeting": "Hello, {{name}}"
+  "searchPlaceholder": "Search by task name or assignee...",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Sign out"
   }
 }

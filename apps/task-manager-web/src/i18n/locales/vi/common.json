@@ -1,6 +1,13 @@
 {
   "appName": "Task Manager",
-  "dashboard": {
-    "greeting": "Xin chào, {{name}}"
+  "searchPlaceholder": "Tìm theo tên việc hoặc người phụ trách...",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "tasks": "Công việc"
+  },
+  "userMenu": {
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
   }
 }
