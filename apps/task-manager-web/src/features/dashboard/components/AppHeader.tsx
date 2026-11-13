@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Avatar from "react-avatar";
 import {
   DropdownMenu,
@@ -43,7 +44,10 @@ export default function AppHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <div className="flex items-center gap-2 rounded-sm cursor-pointer px-2 h-10 hover:bg-muted">
+              <Button
+                variant="outline"
+                className="border-none flex items-center gap-2 rounded-sm cursor-pointer px-2 h-10 hover:bg-muted"
+              >
                 <Avatar
                   name={user.name}
                   maxInitials={2}
@@ -52,7 +56,7 @@ export default function AppHeader() {
                   className="!bg-muted !text-primary !ring-1 !ring-border"
                 />
                 <p className="hidden lg:block">{user.name}</p>
-              </div>
+              </Button>
             }
           />
           <DropdownMenuContent className="w-40 px-0 py-2">

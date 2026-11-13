@@ -9,6 +9,8 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { JwtService } from '@nestjs/jwt';
+import { createHash, randomBytes } from 'node:crypto';
+import { REFRESH_TOKEN_TTL_DAYS } from './auth.constants.js';
 
 const SALT_ROUNDS = 10;
 const DUMMY_HASH =
@@ -20,6 +22,38 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
   ) {}
+
+  private generateRefreshToken(): string {
+    return randomBytes(64).toString('hex');
+  }
+
+  private hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
+  }
+
+  private async generateTokens(userId: string) {
+    const accessToken = await this.jwtService.signAsync({ sub: userId });
+
+    const refreshToken = this.generateRefreshToken();
+
+    const tokenHash = this.hashToken(refreshToken);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
+
+    await this.prisma.refreshToken.create({
+      data: {
+        tokenHash,
+        userId,
+        expiresAt,
+      },
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 
   async register(dto: RegisterDto) {
     const existing = await this.prisma.user.findUnique({
@@ -53,8 +87,11 @@ export class AuthService {
       throw error;
     }
 
-    const token = await this.jwtService.signAsync({ sub: user.id });
-    return { user, token };
+    const tokens = await this.generateTokens(user.id);
+    return {
+      user,
+      ...tokens,
+    };
   }
 
   async login(dto: LoginDto) {
@@ -70,7 +107,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const token = await this.jwtService.signAsync({ sub: user.id });
+    const tokens = await this.generateTokens(user.id);
 
     return {
       user: {
@@ -78,7 +115,89 @@ export class AuthService {
         name: user.name,
         email: user.email,
       },
-      token,
+      ...tokens,
     };
+  }
+
+  async refreshTokens(refreshToken?: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const tokenHash = this.hashToken(refreshToken);
+    const storedToken = await this.prisma.refreshToken.findUnique({
+      where: { tokenHash },
+    });
+    const now = new Date();
+
+    if (storedToken?.revokedAt) {
+      await this.prisma.refreshToken.updateMany({
+        where: { userId: storedToken.userId, revokedAt: null },
+        data: { revokedAt: now },
+      });
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    if (!storedToken || storedToken.expiresAt <= now) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const accessToken = await this.jwtService.signAsync({
+      sub: storedToken.userId,
+    });
+
+    const newRefreshToken = this.generateRefreshToken();
+    const newTokenHash = this.hashToken(newRefreshToken);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
+
+    await this.prisma.$transaction(async (tx) => {
+      const result = await tx.refreshToken.updateMany({
+        where: {
+          id: storedToken.id,
+          revokedAt: null,
+          expiresAt: { gt: now },
+        },
+        data: {
+          revokedAt: now,
+        },
+      });
+
+      if (result.count !== 1) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      await tx.refreshToken.create({
+        data: {
+          tokenHash: newTokenHash,
+          userId: storedToken.userId,
+          expiresAt,
+        },
+      });
+    });
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+    };
+  }
+
+  async logout(refreshToken?: string) {
+    if (!refreshToken) {
+      return;
+    }
+
+    const tokenHash = this.hashToken(refreshToken);
+    const now = new Date();
+
+    await this.prisma.refreshToken.updateMany({
+      where: {
+        tokenHash,
+        revokedAt: null,
+      },
+      data: {
+        revokedAt: now,
+      },
+    });
   }
 }
